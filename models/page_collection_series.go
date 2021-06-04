@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -22,14 +23,14 @@ type PageCollectionSeries struct {
 
 	// An array of data points for this series.
 	// Required: true
-	Data []*PageDataPoint `json:"data"`
+	Data []*PageCollectionSeriesDataItems0 `json:"data"`
 
-	// The metric represented by this series.
+	// metric
 	// Required: true
-	Metric *PageMetric `json:"metric"`
+	Metric *PageCollectionSeriesMetric `json:"metric"`
 
-	// Information about a specific page.
-	Page *Page `json:"page,omitempty"`
+	// page
+	Page *PageCollectionSeriesPage `json:"page,omitempty"`
 
 	// Indicates that this series represents all pages visited in this run.
 	//               Metrics from each page are summed. Not included in the response if `include_summary`
@@ -199,6 +200,404 @@ func (m *PageCollectionSeries) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PageCollectionSeries) UnmarshalBinary(b []byte) error {
 	var res PageCollectionSeries
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PageCollectionSeriesDataItems0 page collection series data items0
+//
+// swagger:model PageCollectionSeriesDataItems0
+type PageCollectionSeriesDataItems0 struct {
+
+	// The start timestamp for the data point (UTC)
+	// Required: true
+	// Format: date-time
+	From *strfmt.DateTime `json:"from"`
+
+	// The unique id for this page and run (run-level page data only).
+	PageHistoryID int32 `json:"page_history_id,omitempty"`
+
+	// The unique id for this run (run-level data only).
+	RunID int32 `json:"run_id,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Required: true
+	// Format: date-time
+	To *strfmt.DateTime `json:"to"`
+
+	// The value of the metric.
+	// Required: true
+	Value *float64 `json:"value"`
+}
+
+// Validate validates this page collection series data items0
+func (m *PageCollectionSeriesDataItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PageCollectionSeriesDataItems0) validateFrom(formats strfmt.Registry) error {
+
+	if err := validate.Required("from", "body", m.From); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PageCollectionSeriesDataItems0) validateTo(formats strfmt.Registry) error {
+
+	if err := validate.Required("to", "body", m.To); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", m.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PageCollectionSeriesDataItems0) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this page collection series data items0 based on context it is used
+func (m *PageCollectionSeriesDataItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PageCollectionSeriesDataItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PageCollectionSeriesDataItems0) UnmarshalBinary(b []byte) error {
+	var res PageCollectionSeriesDataItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PageCollectionSeriesMetric page collection series metric
+//
+// swagger:model PageCollectionSeriesMetric
+type PageCollectionSeriesMetric struct {
+
+	// A short description of the metric.
+	// Example: Time until document has fully loaded and parsed the HTML document
+	Description string `json:"description,omitempty"`
+
+	// A titleized label for the metric.
+	// Example: DOM Load Time
+	// Required: true
+	Label *string `json:"label"`
+
+	// The metric name. If rollup data is returned,
+	//              the metric will be prefixed by `median_`, `average_`, `max_`, or `min_`.
+	// Example: dom_load_time
+	// Required: true
+	// Enum: [server_time dom_load_time start_render onload_time visually_complete fully_loaded_time speed_index request_count content_size html_count html_size image_count image_size javascript_count javascript_size css_count css_size video_count video_size font_count font_size other_count other_size client_error_count connection_error_count server_error_count error_count]
+	Name *string `json:"name"`
+
+	// The units for the metric value.
+	// Example: milliseconds
+	// Required: true
+	// Enum: [milliseconds count bytes]
+	Unit *string `json:"unit"`
+}
+
+// Validate validates this page collection series metric
+func (m *PageCollectionSeriesMetric) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUnit(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PageCollectionSeriesMetric) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var pageCollectionSeriesMetricTypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["server_time","dom_load_time","start_render","onload_time","visually_complete","fully_loaded_time","speed_index","request_count","content_size","html_count","html_size","image_count","image_size","javascript_count","javascript_size","css_count","css_size","video_count","video_size","font_count","font_size","other_count","other_size","client_error_count","connection_error_count","server_error_count","error_count"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pageCollectionSeriesMetricTypeNamePropEnum = append(pageCollectionSeriesMetricTypeNamePropEnum, v)
+	}
+}
+
+const (
+
+	// PageCollectionSeriesMetricNameServerTime captures enum value "server_time"
+	PageCollectionSeriesMetricNameServerTime string = "server_time"
+
+	// PageCollectionSeriesMetricNameDomLoadTime captures enum value "dom_load_time"
+	PageCollectionSeriesMetricNameDomLoadTime string = "dom_load_time"
+
+	// PageCollectionSeriesMetricNameStartRender captures enum value "start_render"
+	PageCollectionSeriesMetricNameStartRender string = "start_render"
+
+	// PageCollectionSeriesMetricNameOnloadTime captures enum value "onload_time"
+	PageCollectionSeriesMetricNameOnloadTime string = "onload_time"
+
+	// PageCollectionSeriesMetricNameVisuallyComplete captures enum value "visually_complete"
+	PageCollectionSeriesMetricNameVisuallyComplete string = "visually_complete"
+
+	// PageCollectionSeriesMetricNameFullyLoadedTime captures enum value "fully_loaded_time"
+	PageCollectionSeriesMetricNameFullyLoadedTime string = "fully_loaded_time"
+
+	// PageCollectionSeriesMetricNameSpeedIndex captures enum value "speed_index"
+	PageCollectionSeriesMetricNameSpeedIndex string = "speed_index"
+
+	// PageCollectionSeriesMetricNameRequestCount captures enum value "request_count"
+	PageCollectionSeriesMetricNameRequestCount string = "request_count"
+
+	// PageCollectionSeriesMetricNameContentSize captures enum value "content_size"
+	PageCollectionSeriesMetricNameContentSize string = "content_size"
+
+	// PageCollectionSeriesMetricNameHTMLCount captures enum value "html_count"
+	PageCollectionSeriesMetricNameHTMLCount string = "html_count"
+
+	// PageCollectionSeriesMetricNameHTMLSize captures enum value "html_size"
+	PageCollectionSeriesMetricNameHTMLSize string = "html_size"
+
+	// PageCollectionSeriesMetricNameImageCount captures enum value "image_count"
+	PageCollectionSeriesMetricNameImageCount string = "image_count"
+
+	// PageCollectionSeriesMetricNameImageSize captures enum value "image_size"
+	PageCollectionSeriesMetricNameImageSize string = "image_size"
+
+	// PageCollectionSeriesMetricNameJavascriptCount captures enum value "javascript_count"
+	PageCollectionSeriesMetricNameJavascriptCount string = "javascript_count"
+
+	// PageCollectionSeriesMetricNameJavascriptSize captures enum value "javascript_size"
+	PageCollectionSeriesMetricNameJavascriptSize string = "javascript_size"
+
+	// PageCollectionSeriesMetricNameCSSCount captures enum value "css_count"
+	PageCollectionSeriesMetricNameCSSCount string = "css_count"
+
+	// PageCollectionSeriesMetricNameCSSSize captures enum value "css_size"
+	PageCollectionSeriesMetricNameCSSSize string = "css_size"
+
+	// PageCollectionSeriesMetricNameVideoCount captures enum value "video_count"
+	PageCollectionSeriesMetricNameVideoCount string = "video_count"
+
+	// PageCollectionSeriesMetricNameVideoSize captures enum value "video_size"
+	PageCollectionSeriesMetricNameVideoSize string = "video_size"
+
+	// PageCollectionSeriesMetricNameFontCount captures enum value "font_count"
+	PageCollectionSeriesMetricNameFontCount string = "font_count"
+
+	// PageCollectionSeriesMetricNameFontSize captures enum value "font_size"
+	PageCollectionSeriesMetricNameFontSize string = "font_size"
+
+	// PageCollectionSeriesMetricNameOtherCount captures enum value "other_count"
+	PageCollectionSeriesMetricNameOtherCount string = "other_count"
+
+	// PageCollectionSeriesMetricNameOtherSize captures enum value "other_size"
+	PageCollectionSeriesMetricNameOtherSize string = "other_size"
+
+	// PageCollectionSeriesMetricNameClientErrorCount captures enum value "client_error_count"
+	PageCollectionSeriesMetricNameClientErrorCount string = "client_error_count"
+
+	// PageCollectionSeriesMetricNameConnectionErrorCount captures enum value "connection_error_count"
+	PageCollectionSeriesMetricNameConnectionErrorCount string = "connection_error_count"
+
+	// PageCollectionSeriesMetricNameServerErrorCount captures enum value "server_error_count"
+	PageCollectionSeriesMetricNameServerErrorCount string = "server_error_count"
+
+	// PageCollectionSeriesMetricNameErrorCount captures enum value "error_count"
+	PageCollectionSeriesMetricNameErrorCount string = "error_count"
+)
+
+// prop value enum
+func (m *PageCollectionSeriesMetric) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pageCollectionSeriesMetricTypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PageCollectionSeriesMetric) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"name", "body", m.Name); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateNameEnum("metric"+"."+"name", "body", *m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var pageCollectionSeriesMetricTypeUnitPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","bytes"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pageCollectionSeriesMetricTypeUnitPropEnum = append(pageCollectionSeriesMetricTypeUnitPropEnum, v)
+	}
+}
+
+const (
+
+	// PageCollectionSeriesMetricUnitMilliseconds captures enum value "milliseconds"
+	PageCollectionSeriesMetricUnitMilliseconds string = "milliseconds"
+
+	// PageCollectionSeriesMetricUnitCount captures enum value "count"
+	PageCollectionSeriesMetricUnitCount string = "count"
+
+	// PageCollectionSeriesMetricUnitBytes captures enum value "bytes"
+	PageCollectionSeriesMetricUnitBytes string = "bytes"
+)
+
+// prop value enum
+func (m *PageCollectionSeriesMetric) validateUnitEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pageCollectionSeriesMetricTypeUnitPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PageCollectionSeriesMetric) validateUnit(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"unit", "body", m.Unit); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateUnitEnum("metric"+"."+"unit", "body", *m.Unit); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this page collection series metric based on context it is used
+func (m *PageCollectionSeriesMetric) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PageCollectionSeriesMetric) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PageCollectionSeriesMetric) UnmarshalBinary(b []byte) error {
+	var res PageCollectionSeriesMetric
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PageCollectionSeriesPage page collection series page
+//
+// swagger:model PageCollectionSeriesPage
+type PageCollectionSeriesPage struct {
+
+	// The hostname of the page.
+	// Example: example.com
+	Hostname string `json:"hostname,omitempty"`
+
+	// The unique ID for the page.
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// The full URL of the page.
+	// Example: http://example.com
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this page collection series page
+func (m *PageCollectionSeriesPage) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this page collection series page based on context it is used
+func (m *PageCollectionSeriesPage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PageCollectionSeriesPage) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PageCollectionSeriesPage) UnmarshalBinary(b []byte) error {
+	var res PageCollectionSeriesPage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -6,7 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"strconv"
@@ -21,25 +20,51 @@ import (
 //
 // swagger:model monitoring_check
 type MonitoringCheck struct {
-	createdAtField strfmt.DateTime
 
-	frequencyField int64
+	// When the check was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
 
-	idField *int32
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	Frequency int64 `json:"frequency,omitempty"`
 
-	linksField *CheckLinks
+	// The unique ID for the check
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
 
-	mutedField bool
+	// links
+	Links *MonitoringCheckAO0Links `json:"links,omitempty"`
 
-	nameField string
+	// If notifications for this check are muted or not
+	// Example: false
+	Muted bool `json:"muted,omitempty"`
 
-	pausedField bool
+	// The unique name for the check
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
 
-	statusField *Status
+	// If the check is paused or not
+	// Example: false
+	Paused bool `json:"paused,omitempty"`
 
-	tagsField []*Tag
+	// status
+	Status *MonitoringCheckAO0Status `json:"status,omitempty"`
 
-	updatedAtField strfmt.DateTime
+	// An array of tags applied to the check
+	Tags []*MonitoringCheckTagsItems0 `json:"tags"`
+
+	// The check type
+	// Required: true
+	// Enum: [http http_multi_step port real_browser benchmark content uptime monitoring api]
+	Type string `json:"type"`
+
+	// When the check was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
 
 	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
 	AutoRetry *bool `json:"auto_retry,omitempty"`
@@ -54,13 +79,46 @@ type MonitoringCheck struct {
 	HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
 
 	// The integrations to send metrics to
-	Integrations []*Integration `json:"integrations"`
+	Integrations []*MonitoringCheckIntegrationsItems0 `json:"integrations"`
 
 	// The locations to run the check from
-	Locations []*Location `json:"locations"`
+	Locations []*MonitoringCheckLocationsItems0 `json:"locations"`
 
-	// notifications
-	Notifications *Notifications `json:"notifications,omitempty"`
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*MonitoringCheckEscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Only allow notifications during these timeframes
+		NotificationWindows []interface{} `json:"notification_windows"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Min Items: 1
+		// Unique: true
+		NotifyWho []*MonitoringCheckNotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
 
 	// Mark a run as a failure if the total response time
 	//                                    is above this threshold (in milliseconds)
@@ -72,167 +130,17 @@ type MonitoringCheck struct {
 	RoundRobin bool `json:"round_robin,omitempty"`
 }
 
-// CreatedAt gets the created at of this subtype
-func (m *MonitoringCheck) CreatedAt() strfmt.DateTime {
-	return m.createdAtField
-}
-
-// SetCreatedAt sets the created at of this subtype
-func (m *MonitoringCheck) SetCreatedAt(val strfmt.DateTime) {
-	m.createdAtField = val
-}
-
-// Frequency gets the frequency of this subtype
-func (m *MonitoringCheck) Frequency() int64 {
-	return m.frequencyField
-}
-
-// SetFrequency sets the frequency of this subtype
-func (m *MonitoringCheck) SetFrequency(val int64) {
-	m.frequencyField = val
-}
-
-// ID gets the id of this subtype
-func (m *MonitoringCheck) ID() *int32 {
-	return m.idField
-}
-
-// SetID sets the id of this subtype
-func (m *MonitoringCheck) SetID(val *int32) {
-	m.idField = val
-}
-
-// Links gets the links of this subtype
-func (m *MonitoringCheck) Links() *CheckLinks {
-	return m.linksField
-}
-
-// SetLinks sets the links of this subtype
-func (m *MonitoringCheck) SetLinks(val *CheckLinks) {
-	m.linksField = val
-}
-
-// Muted gets the muted of this subtype
-func (m *MonitoringCheck) Muted() bool {
-	return m.mutedField
-}
-
-// SetMuted sets the muted of this subtype
-func (m *MonitoringCheck) SetMuted(val bool) {
-	m.mutedField = val
-}
-
-// Name gets the name of this subtype
-func (m *MonitoringCheck) Name() string {
-	return m.nameField
-}
-
-// SetName sets the name of this subtype
-func (m *MonitoringCheck) SetName(val string) {
-	m.nameField = val
-}
-
-// Paused gets the paused of this subtype
-func (m *MonitoringCheck) Paused() bool {
-	return m.pausedField
-}
-
-// SetPaused sets the paused of this subtype
-func (m *MonitoringCheck) SetPaused(val bool) {
-	m.pausedField = val
-}
-
-// Status gets the status of this subtype
-func (m *MonitoringCheck) Status() *Status {
-	return m.statusField
-}
-
-// SetStatus sets the status of this subtype
-func (m *MonitoringCheck) SetStatus(val *Status) {
-	m.statusField = val
-}
-
-// Tags gets the tags of this subtype
-func (m *MonitoringCheck) Tags() []*Tag {
-	return m.tagsField
-}
-
-// SetTags sets the tags of this subtype
-func (m *MonitoringCheck) SetTags(val []*Tag) {
-	m.tagsField = val
-}
-
-// Type gets the type of this subtype
-func (m *MonitoringCheck) Type() string {
-	return "monitoring_check"
-}
-
-// SetType sets the type of this subtype
-func (m *MonitoringCheck) SetType(val string) {
-}
-
-// UpdatedAt gets the updated at of this subtype
-func (m *MonitoringCheck) UpdatedAt() strfmt.DateTime {
-	return m.updatedAtField
-}
-
-// SetUpdatedAt sets the updated at of this subtype
-func (m *MonitoringCheck) SetUpdatedAt(val strfmt.DateTime) {
-	m.updatedAtField = val
-}
-
-// UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
+// UnmarshalJSON unmarshals this object from a JSON structure
 func (m *MonitoringCheck) UnmarshalJSON(raw []byte) error {
-	var data struct {
-
-		// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
-		AutoRetry *bool `json:"auto_retry,omitempty"`
-
-		// blackout periods
-		BlackoutPeriods []interface{} `json:"blackout_periods"`
-
-		// True if the check is not paused
-		Enabled *bool `json:"enabled,omitempty"`
-
-		// http request headers
-		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
-
-		// The integrations to send metrics to
-		Integrations []*Integration `json:"integrations"`
-
-		// The locations to run the check from
-		Locations []*Location `json:"locations"`
-
-		// notifications
-		Notifications *Notifications `json:"notifications,omitempty"`
-
-		// Mark a run as a failure if the total response time
-		//                                    is above this threshold (in milliseconds)
-		// Maximum: 60000
-		// Minimum: 0
-		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
-
-		// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
-		RoundRobin bool `json:"round_robin,omitempty"`
-	}
-	buf := bytes.NewBuffer(raw)
-	dec := json.NewDecoder(buf)
-	dec.UseNumber()
-
-	if err := dec.Decode(&data); err != nil {
-		return err
-	}
-
-	var base struct {
-		/* Just the base type fields. Used for unmashalling polymorphic types.*/
-
+	// AO0
+	var dataAO0 struct {
 		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
 
 		Frequency int64 `json:"frequency,omitempty"`
 
 		ID *int32 `json:"id"`
 
-		Links *CheckLinks `json:"links,omitempty"`
+		Links *MonitoringCheckAO0Links `json:"links,omitempty"`
 
 		Muted bool `json:"muted,omitempty"`
 
@@ -240,129 +148,130 @@ func (m *MonitoringCheck) UnmarshalJSON(raw []byte) error {
 
 		Paused bool `json:"paused,omitempty"`
 
-		Status *Status `json:"status,omitempty"`
+		Status *MonitoringCheckAO0Status `json:"status,omitempty"`
 
-		Tags []*Tag `json:"tags"`
+		Tags []*MonitoringCheckTagsItems0 `json:"tags"`
 
 		Type string `json:"type"`
 
 		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
 	}
-	buf = bytes.NewBuffer(raw)
-	dec = json.NewDecoder(buf)
-	dec.UseNumber()
-
-	if err := dec.Decode(&base); err != nil {
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
 
-	var result MonitoringCheck
+	m.CreatedAt = dataAO0.CreatedAt
 
-	result.createdAtField = base.CreatedAt
+	m.Frequency = dataAO0.Frequency
 
-	result.frequencyField = base.Frequency
+	m.ID = dataAO0.ID
 
-	result.idField = base.ID
+	m.Links = dataAO0.Links
 
-	result.linksField = base.Links
+	m.Muted = dataAO0.Muted
 
-	result.mutedField = base.Muted
+	m.Name = dataAO0.Name
 
-	result.nameField = base.Name
+	m.Paused = dataAO0.Paused
 
-	result.pausedField = base.Paused
+	m.Status = dataAO0.Status
 
-	result.statusField = base.Status
+	m.Tags = dataAO0.Tags
 
-	result.tagsField = base.Tags
+	m.Type = dataAO0.Type
 
-	if base.Type != result.Type() {
-		/* Not the type we're looking for. */
-		return errors.New(422, "invalid type value: %q", base.Type)
+	m.UpdatedAt = dataAO0.UpdatedAt
+
+	// AO1
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*MonitoringCheckIntegrationsItems0 `json:"integrations"`
+
+		Locations []*MonitoringCheckLocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*MonitoringCheckEscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*MonitoringCheckNotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
 	}
-	result.updatedAtField = base.UpdatedAt
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
 
-	result.AutoRetry = data.AutoRetry
-	result.BlackoutPeriods = data.BlackoutPeriods
-	result.Enabled = data.Enabled
-	result.HTTPRequestHeaders = data.HTTPRequestHeaders
-	result.Integrations = data.Integrations
-	result.Locations = data.Locations
-	result.Notifications = data.Notifications
-	result.ResponseTimeMonitorMilliseconds = data.ResponseTimeMonitorMilliseconds
-	result.RoundRobin = data.RoundRobin
+	m.AutoRetry = dataAO1.AutoRetry
 
-	*m = result
+	m.BlackoutPeriods = dataAO1.BlackoutPeriods
+
+	m.Enabled = dataAO1.Enabled
+
+	m.HTTPRequestHeaders = dataAO1.HTTPRequestHeaders
+
+	m.Integrations = dataAO1.Integrations
+
+	m.Locations = dataAO1.Locations
+
+	m.Notifications = dataAO1.Notifications
+
+	m.ResponseTimeMonitorMilliseconds = dataAO1.ResponseTimeMonitorMilliseconds
+
+	m.RoundRobin = dataAO1.RoundRobin
 
 	return nil
 }
 
-// MarshalJSON marshals this object with a polymorphic type to a JSON structure
+// MarshalJSON marshals this object to a JSON structure
 func (m MonitoringCheck) MarshalJSON() ([]byte, error) {
-	var b1, b2, b3 []byte
-	var err error
-	b1, err = json.Marshal(struct {
+	_parts := make([][]byte, 0, 2)
 
-		// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
-		AutoRetry *bool `json:"auto_retry,omitempty"`
-
-		// blackout periods
-		BlackoutPeriods []interface{} `json:"blackout_periods"`
-
-		// True if the check is not paused
-		Enabled *bool `json:"enabled,omitempty"`
-
-		// http request headers
-		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
-
-		// The integrations to send metrics to
-		Integrations []*Integration `json:"integrations"`
-
-		// The locations to run the check from
-		Locations []*Location `json:"locations"`
-
-		// notifications
-		Notifications *Notifications `json:"notifications,omitempty"`
-
-		// Mark a run as a failure if the total response time
-		//                                    is above this threshold (in milliseconds)
-		// Maximum: 60000
-		// Minimum: 0
-		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
-
-		// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
-		RoundRobin bool `json:"round_robin,omitempty"`
-	}{
-
-		AutoRetry: m.AutoRetry,
-
-		BlackoutPeriods: m.BlackoutPeriods,
-
-		Enabled: m.Enabled,
-
-		HTTPRequestHeaders: m.HTTPRequestHeaders,
-
-		Integrations: m.Integrations,
-
-		Locations: m.Locations,
-
-		Notifications: m.Notifications,
-
-		ResponseTimeMonitorMilliseconds: m.ResponseTimeMonitorMilliseconds,
-
-		RoundRobin: m.RoundRobin,
-	})
-	if err != nil {
-		return nil, err
-	}
-	b2, err = json.Marshal(struct {
+	var dataAO0 struct {
 		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
 
 		Frequency int64 `json:"frequency,omitempty"`
 
 		ID *int32 `json:"id"`
 
-		Links *CheckLinks `json:"links,omitempty"`
+		Links *MonitoringCheckAO0Links `json:"links,omitempty"`
 
 		Muted bool `json:"muted,omitempty"`
 
@@ -370,42 +279,119 @@ func (m MonitoringCheck) MarshalJSON() ([]byte, error) {
 
 		Paused bool `json:"paused,omitempty"`
 
-		Status *Status `json:"status,omitempty"`
+		Status *MonitoringCheckAO0Status `json:"status,omitempty"`
 
-		Tags []*Tag `json:"tags"`
+		Tags []*MonitoringCheckTagsItems0 `json:"tags"`
 
 		Type string `json:"type"`
 
 		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
-	}{
-
-		CreatedAt: m.CreatedAt(),
-
-		Frequency: m.Frequency(),
-
-		ID: m.ID(),
-
-		Links: m.Links(),
-
-		Muted: m.Muted(),
-
-		Name: m.Name(),
-
-		Paused: m.Paused(),
-
-		Status: m.Status(),
-
-		Tags: m.Tags(),
-
-		Type: m.Type(),
-
-		UpdatedAt: m.UpdatedAt(),
-	})
-	if err != nil {
-		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	dataAO0.CreatedAt = m.CreatedAt
+
+	dataAO0.Frequency = m.Frequency
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Links = m.Links
+
+	dataAO0.Muted = m.Muted
+
+	dataAO0.Name = m.Name
+
+	dataAO0.Paused = m.Paused
+
+	dataAO0.Status = m.Status
+
+	dataAO0.Tags = m.Tags
+
+	dataAO0.Type = m.Type
+
+	dataAO0.UpdatedAt = m.UpdatedAt
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*MonitoringCheckIntegrationsItems0 `json:"integrations"`
+
+		Locations []*MonitoringCheckLocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*MonitoringCheckEscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*MonitoringCheckNotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
+	}
+
+	dataAO1.AutoRetry = m.AutoRetry
+
+	dataAO1.BlackoutPeriods = m.BlackoutPeriods
+
+	dataAO1.Enabled = m.Enabled
+
+	dataAO1.HTTPRequestHeaders = m.HTTPRequestHeaders
+
+	dataAO1.Integrations = m.Integrations
+
+	dataAO1.Locations = m.Locations
+
+	dataAO1.Notifications = m.Notifications
+
+	dataAO1.ResponseTimeMonitorMilliseconds = m.ResponseTimeMonitorMilliseconds
+
+	dataAO1.RoundRobin = m.RoundRobin
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
 }
 
 // Validate validates this monitoring check
@@ -429,6 +415,10 @@ func (m *MonitoringCheck) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -460,11 +450,11 @@ func (m *MonitoringCheck) Validate(formats strfmt.Registry) error {
 
 func (m *MonitoringCheck) validateCreatedAt(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.CreatedAt()) { // not required
+	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("created_at", "body", "date-time", m.CreatedAt().String(), formats); err != nil {
+	if err := validate.FormatOf("created_at", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
 		return err
 	}
 
@@ -473,7 +463,7 @@ func (m *MonitoringCheck) validateCreatedAt(formats strfmt.Registry) error {
 
 func (m *MonitoringCheck) validateID(formats strfmt.Registry) error {
 
-	if err := validate.Required("id", "body", m.ID()); err != nil {
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 
@@ -482,12 +472,12 @@ func (m *MonitoringCheck) validateID(formats strfmt.Registry) error {
 
 func (m *MonitoringCheck) validateLinks(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Links()) { // not required
+	if swag.IsZero(m.Links) { // not required
 		return nil
 	}
 
-	if m.Links() != nil {
-		if err := m.Links().Validate(formats); err != nil {
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("links")
 			}
@@ -500,12 +490,12 @@ func (m *MonitoringCheck) validateLinks(formats strfmt.Registry) error {
 
 func (m *MonitoringCheck) validateStatus(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Status()) { // not required
+	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
 
-	if m.Status() != nil {
-		if err := m.Status().Validate(formats); err != nil {
+	if m.Status != nil {
+		if err := m.Status.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
 			}
@@ -518,17 +508,17 @@ func (m *MonitoringCheck) validateStatus(formats strfmt.Registry) error {
 
 func (m *MonitoringCheck) validateTags(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Tags()) { // not required
+	if swag.IsZero(m.Tags) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Tags()); i++ {
-		if swag.IsZero(m.tagsField[i]) { // not required
+	for i := 0; i < len(m.Tags); i++ {
+		if swag.IsZero(m.Tags[i]) { // not required
 			continue
 		}
 
-		if m.tagsField[i] != nil {
-			if err := m.tagsField[i].Validate(formats); err != nil {
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
@@ -541,13 +531,47 @@ func (m *MonitoringCheck) validateTags(formats strfmt.Registry) error {
 	return nil
 }
 
+var monitoringCheckTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","api"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckTypeTypePropEnum = append(monitoringCheckTypeTypePropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheck) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheck) validateType(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *MonitoringCheck) validateUpdatedAt(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.UpdatedAt()) { // not required
+	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("updated_at", "body", "date-time", m.UpdatedAt().String(), formats); err != nil {
+	if err := validate.FormatOf("updated_at", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
 		return err
 	}
 
@@ -610,13 +634,54 @@ func (m *MonitoringCheck) validateNotifications(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if m.Notifications != nil {
-		if err := m.Notifications.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("notifications")
-			}
-			return err
+	for i := 0; i < len(m.Notifications.Escalations); i++ {
+		if swag.IsZero(m.Notifications.Escalations[i]) { // not required
+			continue
 		}
+
+		if m.Notifications.Escalations[i] != nil {
+			if err := m.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(m.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(m.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	iNotifyWhoSize := int64(len(m.Notifications.NotifyWho))
+
+	if err := validate.MinItems("notifications"+"."+"notify_who", "body", iNotifyWhoSize, 1); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", m.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Notifications.NotifyWho); i++ {
+		if swag.IsZero(m.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.Notifications.NotifyWho[i] != nil {
+			if err := m.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -675,8 +740,8 @@ func (m *MonitoringCheck) ContextValidate(ctx context.Context, formats strfmt.Re
 
 func (m *MonitoringCheck) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Links() != nil {
-		if err := m.Links().ContextValidate(ctx, formats); err != nil {
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("links")
 			}
@@ -689,8 +754,8 @@ func (m *MonitoringCheck) contextValidateLinks(ctx context.Context, formats strf
 
 func (m *MonitoringCheck) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Status() != nil {
-		if err := m.Status().ContextValidate(ctx, formats); err != nil {
+	if m.Status != nil {
+		if err := m.Status.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
 			}
@@ -703,10 +768,10 @@ func (m *MonitoringCheck) contextValidateStatus(ctx context.Context, formats str
 
 func (m *MonitoringCheck) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.Tags()); i++ {
+	for i := 0; i < len(m.Tags); i++ {
 
-		if m.tagsField[i] != nil {
-			if err := m.tagsField[i].ContextValidate(ctx, formats); err != nil {
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
@@ -757,13 +822,30 @@ func (m *MonitoringCheck) contextValidateLocations(ctx context.Context, formats 
 
 func (m *MonitoringCheck) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Notifications != nil {
-		if err := m.Notifications.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("notifications")
+	for i := 0; i < len(m.Notifications.Escalations); i++ {
+
+		if m.Notifications.Escalations[i] != nil {
+			if err := m.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
 			}
-			return err
 		}
+
+	}
+
+	for i := 0; i < len(m.Notifications.NotifyWho); i++ {
+
+		if m.Notifications.NotifyWho[i] != nil {
+			if err := m.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -780,6 +862,880 @@ func (m *MonitoringCheck) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *MonitoringCheck) UnmarshalBinary(b []byte) error {
 	var res MonitoringCheck
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckAO0Links monitoring check a o0 links
+//
+// swagger:model MonitoringCheckAO0Links
+type MonitoringCheckAO0Links struct {
+
+	// The URL for the last run of this check
+	// Example: https://monitoring.rigor.com/checks/1/runs/1
+	LastRun string `json:"last_run,omitempty"`
+
+	// The URL for the available metrics for this check
+	// Example: https://monitoring-api.rigor.com/v2/checks/1/metrics
+	Metrics string `json:"metrics,omitempty"`
+
+	// The URL for the check detail
+	// Example: https://monitoring-api.rigor.com/v2/checks/1
+	Self string `json:"self,omitempty"`
+
+	// The URL for the HTML view for this check
+	// Example: https://monitoring.rigor.com/checks/http/1
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this monitoring check a o0 links
+func (m *MonitoringCheckAO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check a o0 links based on context it is used
+func (m *MonitoringCheckAO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckAO0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckAO0Links) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckAO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckAO0Status monitoring check a o0 status
+//
+// swagger:model MonitoringCheckAO0Status
+type MonitoringCheckAO0Status struct {
+
+	// True if the fail limit has been reached
+	// Example: false
+	HasFailure bool `json:"has_failure,omitempty"`
+
+	// True if the fail limit has been reached for at least one location
+	// Example: false
+	HasLocationFailure string `json:"has_location_failure,omitempty"`
+
+	// The timestamp of the last alert (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastAlertAt strfmt.DateTime `json:"last_alert_at,omitempty"`
+
+	// The response code from the last run
+	// Example: 200
+	LastCode int32 `json:"last_code,omitempty"`
+
+	// The timestamp of the last failed run (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastFailureAt strfmt.DateTime `json:"last_failure_at,omitempty"`
+
+	// The message from the last run
+	// Example: OK
+	LastMessage string `json:"last_message,omitempty"`
+
+	// The response time from the last run
+	// Example: 50
+	LastResponseTime string `json:"last_response_time,omitempty"`
+
+	// The timestamp of the last run (UTC)
+	// Example: 2021-05-25T17:49:05Z
+	// Format: date-time
+	LastRunAt strfmt.DateTime `json:"last_run_at,omitempty"`
+}
+
+// Validate validates this monitoring check a o0 status
+func (m *MonitoringCheckAO0Status) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLastAlertAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLastFailureAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLastRunAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckAO0Status) validateLastAlertAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastAlertAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_alert_at", "body", "date-time", m.LastAlertAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckAO0Status) validateLastFailureAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastFailureAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_failure_at", "body", "date-time", m.LastFailureAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckAO0Status) validateLastRunAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastRunAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_run_at", "body", "date-time", m.LastRunAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this monitoring check a o0 status based on context it is used
+func (m *MonitoringCheckAO0Status) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckAO0Status) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckAO0Status) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckAO0Status
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckEscalationsItems0 An additional notification to send if an alert is unacknowledged
+//
+// swagger:model MonitoringCheckEscalationsItems0
+type MonitoringCheckEscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *MonitoringCheckEscalationsItems0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*MonitoringCheckEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// Validate validates this monitoring check escalations items0
+func (m *MonitoringCheckEscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+	if swag.IsZero(m.NotificationWindow) { // not required
+		return nil
+	}
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+	if swag.IsZero(m.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+		if swag.IsZero(m.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check escalations items0 based on the context it is used
+func (m *MonitoringCheckEscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckEscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckEscalationsItems0NotificationWindow monitoring check escalations items0 notification window
+//
+// swagger:model MonitoringCheckEscalationsItems0NotificationWindow
+type MonitoringCheckEscalationsItems0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this monitoring check escalations items0 notification window
+func (m *MonitoringCheckEscalationsItems0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check escalations items0 notification window based on context it is used
+func (m *MonitoringCheckEscalationsItems0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckEscalationsItems0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckEscalationsItems0NotifyWhoItems0 Where to send escalations
+//
+// swagger:model MonitoringCheckEscalationsItems0NotifyWhoItems0
+type MonitoringCheckEscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *MonitoringCheckEscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this monitoring check escalations items0 notify who items0
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check escalations items0 notify who items0 based on the context it is used
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckEscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckEscalationsItems0NotifyWhoItems0Links monitoring check escalations items0 notify who items0 links
+//
+// swagger:model MonitoringCheckEscalationsItems0NotifyWhoItems0Links
+type MonitoringCheckEscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this monitoring check escalations items0 notify who items0 links
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check escalations items0 notify who items0 links based on context it is used
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckEscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckEscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckIntegrationsItems0 monitoring check integrations items0
+// Example: {"id":1,"name":"Some Great Integration"}
+//
+// swagger:model MonitoringCheckIntegrationsItems0
+type MonitoringCheckIntegrationsItems0 struct {
+
+	// The unique ID for the integration
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the integration
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this monitoring check integrations items0
+func (m *MonitoringCheckIntegrationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check integrations items0 based on context it is used
+func (m *MonitoringCheckIntegrationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckIntegrationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckIntegrationsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckIntegrationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckLocationsItems0 monitoring check locations items0
+// Example: {"id":1,"name":"N. Virginia","region_code":"na-us-virginia","world_region":"NA"}
+//
+// swagger:model MonitoringCheckLocationsItems0
+type MonitoringCheckLocationsItems0 struct {
+
+	// The unique ID for the location
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the location
+	Name string `json:"name,omitempty"`
+
+	// A readable code representing the location
+	RegionCode string `json:"region_code,omitempty"`
+
+	// The region the location is in
+	WorldRegion string `json:"world_region,omitempty"`
+}
+
+// Validate validates this monitoring check locations items0
+func (m *MonitoringCheckLocationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check locations items0 based on context it is used
+func (m *MonitoringCheckLocationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckLocationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckLocationsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckLocationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckNotifyWhoItems0 Where to send notifications
+//
+// swagger:model MonitoringCheckNotifyWhoItems0
+type MonitoringCheckNotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *MonitoringCheckNotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MonitoringCheckNotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *MonitoringCheckNotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.CustomUserEmail = dataAO0.CustomUserEmail
+
+	m.ID = dataAO0.ID
+
+	m.Links = dataAO0.Links
+
+	m.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Call = dataAO1.Call
+
+	m.Email = dataAO1.Email
+
+	m.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MonitoringCheckNotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *MonitoringCheckNotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomUserEmail = m.CustomUserEmail
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Links = m.Links
+
+	dataAO0.Type = m.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = m.Call
+
+	dataAO1.Email = m.Email
+
+	dataAO1.Sms = m.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this monitoring check notify who items0
+func (m *MonitoringCheckNotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckNotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check notify who items0 based on the context it is used
+func (m *MonitoringCheckNotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckNotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckNotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckNotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckNotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckNotifyWhoItems0AO0Links monitoring check notify who items0 a o0 links
+//
+// swagger:model MonitoringCheckNotifyWhoItems0AO0Links
+type MonitoringCheckNotifyWhoItems0AO0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this monitoring check notify who items0 a o0 links
+func (m *MonitoringCheckNotifyWhoItems0AO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check notify who items0 a o0 links based on context it is used
+func (m *MonitoringCheckNotifyWhoItems0AO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckNotifyWhoItems0AO0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckNotifyWhoItems0AO0Links) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckNotifyWhoItems0AO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckTagsItems0 monitoring check tags items0
+//
+// swagger:model MonitoringCheckTagsItems0
+type MonitoringCheckTagsItems0 struct {
+
+	// id
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// name
+	// Example: example tag
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this monitoring check tags items0
+func (m *MonitoringCheckTagsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check tags items0 based on context it is used
+func (m *MonitoringCheckTagsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckTagsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckTagsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckTagsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

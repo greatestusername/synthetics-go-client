@@ -30,7 +30,14 @@ type CheckNotifyWho struct {
 	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
 	Type string `json:"type,omitempty"`
 
-	NotifyViaMethods
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
@@ -58,11 +65,22 @@ func (m *CheckNotifyWho) UnmarshalJSON(raw []byte) error {
 	m.Type = dataAO0.Type
 
 	// AO1
-	var aO1 NotifyViaMethods
-	if err := swag.ReadJSON(raw, &aO1); err != nil {
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
 	}
-	m.NotifyViaMethods = aO1
+
+	m.Call = dataAO1.Call
+
+	m.Email = dataAO1.Email
+
+	m.Sms = dataAO1.Sms
 
 	return nil
 }
@@ -94,12 +112,25 @@ func (m CheckNotifyWho) MarshalJSON() ([]byte, error) {
 		return nil, errAO0
 	}
 	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
 
-	aO1, err := swag.WriteJSON(m.NotifyViaMethods)
-	if err != nil {
-		return nil, err
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
 	}
-	_parts = append(_parts, aO1)
+
+	dataAO1.Call = m.Call
+
+	dataAO1.Email = m.Email
+
+	dataAO1.Sms = m.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
 	return swag.ConcatJSON(_parts...), nil
 }
 
@@ -108,11 +139,6 @@ func (m *CheckNotifyWho) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateLinks(formats); err != nil {
-		res = append(res, err)
-	}
-
-	// validation for a type composition with NotifyViaMethods
-	if err := m.NotifyViaMethods.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -145,11 +171,6 @@ func (m *CheckNotifyWho) ContextValidate(ctx context.Context, formats strfmt.Reg
 	var res []error
 
 	if err := m.contextValidateLinks(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	// validation for a type composition with NotifyViaMethods
-	if err := m.NotifyViaMethods.ContextValidate(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 

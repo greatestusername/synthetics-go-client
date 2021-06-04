@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,25 +20,50 @@ import (
 //
 // swagger:model metric_series
 type MetricSeries struct {
-	MetricName
+
+	// The format of the data for this metric.
+	// Example: percent
+	// Enum: [milliseconds count percent]
+	Format string `json:"format,omitempty"`
+
+	// A readable label for the metric, in Title Case.
+	// Example: Percentage Uptime
+	// Enum: [Mean Response Time Maximum Response Time Minimum Response Time Response Time Standard Deviation Run Count Error Count Percentage Uptime Percentage Downtime SLA Percentage]
+	Label string `json:"label,omitempty"`
+
+	// The name of the metric, in snake_case.
+	// Example: percentage_uptime
+	// Enum: [average_response_time max_response_time min_response_time standard_deviation run_count error_count percentage_uptime percentage_downtime sla_percentage]
+	Name string `json:"name,omitempty"`
 
 	// An array of data points
 	// Min Items: 0
-	Points []*PointWithLocations `json:"points"`
+	Points []*MetricSeriesPointsItems0 `json:"points"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *MetricSeries) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 MetricName
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.MetricName = aO0
+
+	m.Format = dataAO0.Format
+
+	m.Label = dataAO0.Label
+
+	m.Name = dataAO0.Name
 
 	// AO1
 	var dataAO1 struct {
-		Points []*PointWithLocations `json:"points"`
+		Points []*MetricSeriesPointsItems0 `json:"points"`
 	}
 	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
@@ -52,13 +78,27 @@ func (m *MetricSeries) UnmarshalJSON(raw []byte) error {
 func (m MetricSeries) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.MetricName)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.Format = m.Format
+
+	dataAO0.Label = m.Label
+
+	dataAO0.Name = m.Name
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
-		Points []*PointWithLocations `json:"points"`
+		Points []*MetricSeriesPointsItems0 `json:"points"`
 	}
 
 	dataAO1.Points = m.Points
@@ -75,8 +115,15 @@ func (m MetricSeries) MarshalJSON() ([]byte, error) {
 func (m *MetricSeries) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with MetricName
-	if err := m.MetricName.Validate(formats); err != nil {
+	if err := m.validateFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -87,6 +134,108 @@ func (m *MetricSeries) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var metricSeriesTypeFormatPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","percent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		metricSeriesTypeFormatPropEnum = append(metricSeriesTypeFormatPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MetricSeries) validateFormatEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, metricSeriesTypeFormatPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MetricSeries) validateFormat(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Format) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateFormatEnum("format", "body", m.Format); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var metricSeriesTypeLabelPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Mean Response Time","Maximum Response Time","Minimum Response Time","Response Time Standard Deviation","Run Count","Error Count","Percentage Uptime","Percentage Downtime","SLA Percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		metricSeriesTypeLabelPropEnum = append(metricSeriesTypeLabelPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MetricSeries) validateLabelEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, metricSeriesTypeLabelPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MetricSeries) validateLabel(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Label) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateLabelEnum("label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var metricSeriesTypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		metricSeriesTypeNamePropEnum = append(metricSeriesTypeNamePropEnum, v)
+	}
+}
+
+// property enum
+func (m *MetricSeries) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, metricSeriesTypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MetricSeries) validateName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNameEnum("name", "body", m.Name); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -124,11 +273,6 @@ func (m *MetricSeries) validatePoints(formats strfmt.Registry) error {
 // ContextValidate validate this metric series based on the context it is used
 func (m *MetricSeries) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
-
-	// validation for a type composition with MetricName
-	if err := m.MetricName.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.contextValidatePoints(ctx, formats); err != nil {
 		res = append(res, err)
@@ -169,6 +313,166 @@ func (m *MetricSeries) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *MetricSeries) UnmarshalBinary(b []byte) error {
 	var res MetricSeries
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MetricSeriesPointsItems0 metric series points items0
+//
+// swagger:model MetricSeriesPointsItems0
+type MetricSeriesPointsItems0 struct {
+
+	// The start timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+
+	// The value for the data point. May be run-level or aggregate data.
+	// Example: 99.3
+	Value float64 `json:"value,omitempty"`
+
+	// A list of location IDs the check ran from during this point's timeframe
+	Locations []int32 `json:"locations"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MetricSeriesPointsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.From = dataAO0.From
+
+	m.To = dataAO0.To
+
+	m.Value = dataAO0.Value
+
+	// AO1
+	var dataAO1 struct {
+		Locations []int32 `json:"locations"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Locations = dataAO1.Locations
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MetricSeriesPointsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
+	}
+
+	dataAO0.From = m.From
+
+	dataAO0.To = m.To
+
+	dataAO0.Value = m.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Locations []int32 `json:"locations"`
+	}
+
+	dataAO1.Locations = m.Locations
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this metric series points items0
+func (m *MetricSeriesPointsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MetricSeriesPointsItems0) validateFrom(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MetricSeriesPointsItems0) validateTo(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", m.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this metric series points items0 based on context it is used
+func (m *MetricSeriesPointsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MetricSeriesPointsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MetricSeriesPointsItems0) UnmarshalBinary(b []byte) error {
+	var res MetricSeriesPointsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

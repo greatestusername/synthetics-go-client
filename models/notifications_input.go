@@ -21,7 +21,7 @@ import (
 type NotificationsInput struct {
 
 	// escalations
-	Escalations []*CheckEscalationInput `json:"escalations"`
+	Escalations []*NotificationsInputEscalationsItems0 `json:"escalations"`
 
 	// Muted checks do not send any alert notifications
 	Muted *bool `json:"muted,omitempty"`
@@ -37,16 +37,23 @@ type NotificationsInput struct {
 
 	// notify who
 	// Unique: true
-	NotifyWho []*CheckNotifyWhoInput `json:"notify_who"`
+	NotifyWho []*NotificationsInputNotifyWhoItems0 `json:"notify_who"`
 
-	NotifyViaMethods
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *NotificationsInput) UnmarshalJSON(raw []byte) error {
 	// AO0
 	var dataAO0 struct {
-		Escalations []*CheckEscalationInput `json:"escalations"`
+		Escalations []*NotificationsInputEscalationsItems0 `json:"escalations"`
 
 		Muted *bool `json:"muted,omitempty"`
 
@@ -54,7 +61,7 @@ func (m *NotificationsInput) UnmarshalJSON(raw []byte) error {
 
 		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
 
-		NotifyWho []*CheckNotifyWhoInput `json:"notify_who"`
+		NotifyWho []*NotificationsInputNotifyWhoItems0 `json:"notify_who"`
 	}
 	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
@@ -71,11 +78,22 @@ func (m *NotificationsInput) UnmarshalJSON(raw []byte) error {
 	m.NotifyWho = dataAO0.NotifyWho
 
 	// AO1
-	var aO1 NotifyViaMethods
-	if err := swag.ReadJSON(raw, &aO1); err != nil {
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
 	}
-	m.NotifyViaMethods = aO1
+
+	m.Call = dataAO1.Call
+
+	m.Email = dataAO1.Email
+
+	m.Sms = dataAO1.Sms
 
 	return nil
 }
@@ -85,7 +103,7 @@ func (m NotificationsInput) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
 	var dataAO0 struct {
-		Escalations []*CheckEscalationInput `json:"escalations"`
+		Escalations []*NotificationsInputEscalationsItems0 `json:"escalations"`
 
 		Muted *bool `json:"muted,omitempty"`
 
@@ -93,7 +111,7 @@ func (m NotificationsInput) MarshalJSON() ([]byte, error) {
 
 		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
 
-		NotifyWho []*CheckNotifyWhoInput `json:"notify_who"`
+		NotifyWho []*NotificationsInputNotifyWhoItems0 `json:"notify_who"`
 	}
 
 	dataAO0.Escalations = m.Escalations
@@ -111,12 +129,25 @@ func (m NotificationsInput) MarshalJSON() ([]byte, error) {
 		return nil, errAO0
 	}
 	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
 
-	aO1, err := swag.WriteJSON(m.NotifyViaMethods)
-	if err != nil {
-		return nil, err
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
 	}
-	_parts = append(_parts, aO1)
+
+	dataAO1.Call = m.Call
+
+	dataAO1.Email = m.Email
+
+	dataAO1.Sms = m.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
 	return swag.ConcatJSON(_parts...), nil
 }
 
@@ -133,11 +164,6 @@ func (m *NotificationsInput) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNotifyWho(formats); err != nil {
-		res = append(res, err)
-	}
-
-	// validation for a type composition with NotifyViaMethods
-	if err := m.NotifyViaMethods.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -230,11 +256,6 @@ func (m *NotificationsInput) ContextValidate(ctx context.Context, formats strfmt
 		res = append(res, err)
 	}
 
-	// validation for a type composition with NotifyViaMethods
-	if err := m.NotifyViaMethods.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -288,6 +309,568 @@ func (m *NotificationsInput) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *NotificationsInput) UnmarshalBinary(b []byte) error {
 	var res NotificationsInput
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// NotificationsInputEscalationsItems0 An additional notification to send if an alert is unacknowledged
+//
+// swagger:model NotificationsInputEscalationsItems0
+type NotificationsInputEscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *NotificationsInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*NotificationsInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *NotificationsInputEscalationsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *NotificationsInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*NotificationsInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.AfterMinutes = dataAO0.AfterMinutes
+
+	m.Call = dataAO0.Call
+
+	m.Email = dataAO0.Email
+
+	m.IsRepeat = dataAO0.IsRepeat
+
+	m.NotificationWindow = dataAO0.NotificationWindow
+
+	m.NotifyWho = dataAO0.NotifyWho
+
+	m.Sms = dataAO0.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m NotificationsInputEscalationsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *NotificationsInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*NotificationsInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO0.AfterMinutes = m.AfterMinutes
+
+	dataAO0.Call = m.Call
+
+	dataAO0.Email = m.Email
+
+	dataAO0.IsRepeat = m.IsRepeat
+
+	dataAO0.NotificationWindow = m.NotificationWindow
+
+	dataAO0.NotifyWho = m.NotifyWho
+
+	dataAO0.Sms = m.Sms
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this notifications input escalations items0
+func (m *NotificationsInputEscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotificationWindow) { // not required
+		return nil
+	}
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+		if swag.IsZero(m.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this notifications input escalations items0 based on the context it is used
+func (m *NotificationsInputEscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res NotificationsInputEscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// NotificationsInputEscalationsItems0AO0NotificationWindow notifications input escalations items0 a o0 notification window
+//
+// swagger:model NotificationsInputEscalationsItems0AO0NotificationWindow
+type NotificationsInputEscalationsItems0AO0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this notifications input escalations items0 a o0 notification window
+func (m *NotificationsInputEscalationsItems0AO0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this notifications input escalations items0 a o0 notification window based on context it is used
+func (m *NotificationsInputEscalationsItems0AO0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0AO0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0AO0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res NotificationsInputEscalationsItems0AO0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// NotificationsInputEscalationsItems0NotifyWhoItems0 Where to send escalations
+//
+// swagger:model NotificationsInputEscalationsItems0NotifyWhoItems0
+type NotificationsInputEscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *NotificationsInputEscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this notifications input escalations items0 notify who items0
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this notifications input escalations items0 notify who items0 based on the context it is used
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res NotificationsInputEscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// NotificationsInputEscalationsItems0NotifyWhoItems0Links notifications input escalations items0 notify who items0 links
+//
+// swagger:model NotificationsInputEscalationsItems0NotifyWhoItems0Links
+type NotificationsInputEscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this notifications input escalations items0 notify who items0 links
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this notifications input escalations items0 notify who items0 links based on context it is used
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *NotificationsInputEscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res NotificationsInputEscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// NotificationsInputNotifyWhoItems0 Where to send notifications
+//
+// swagger:model NotificationsInputNotifyWhoItems0
+type NotificationsInputNotifyWhoItems0 struct {
+
+	// A custom email to notify. Other fields can be left blank when setting this.
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *NotificationsInputNotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.CustomEmail = dataAO0.CustomEmail
+
+	m.ID = dataAO0.ID
+
+	m.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Call = dataAO1.Call
+
+	m.Email = dataAO1.Email
+
+	m.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m NotificationsInputNotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomEmail = m.CustomEmail
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Type = m.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = m.Call
+
+	dataAO1.Email = m.Email
+
+	dataAO1.Sms = m.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this notifications input notify who items0
+func (m *NotificationsInputNotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validates this notifications input notify who items0 based on context it is used
+func (m *NotificationsInputNotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *NotificationsInputNotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *NotificationsInputNotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res NotificationsInputNotifyWhoItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

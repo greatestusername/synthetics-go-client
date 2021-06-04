@@ -27,18 +27,60 @@ type ComparisonReport interface {
 	runtime.Validatable
 	runtime.ContextValidatable
 
-	ComparisonReportGeneric()
+	// The function used to aggregate data for the Comparison Report
+	// Example: mean
+	// Enum: [mean median max min sum stddev percentile_90 percentile_95 percentile_99]
+	Aggregate() string
+	SetAggregate(string)
 
-	checksField()
+	// Used to aggregate and display data at this interval. It must be shorter
+	//                               than the duration of the report timeframe.
+	// Example: 1m
+	// Enum: [1m 5m 10m 15m 30m 1h 3h 6h 12h 24h 2d 3d 1w 2w 30d]
+	DataPointInterval() string
+	SetDataPointInterval(string)
 
-	// Information about the account that owns the Comparison Report
-	Account() *Account
-	SetAccount(*Account)
+	// When set to `true`, excludes failed runs from the Comparison Report results
+	// Example: false
+	ExcludeFailures() bool
+	SetExcludeFailures(bool)
+
+	// The beginning of the report timeframe (if range is "custom")
+	// Example: 2021-05-24T17:54:05Z
+	From() string
+	SetFrom(string)
+
+	// The metric to compare on the Comparison Report
+	// Example: first_byte_time_ms
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	Metric() string
+	SetMetric(string)
+
+	// The unique name for the Comparison Report
+	// Example: Example Comparison Report
+	Name() string
+	SetName(string)
+
+	// The time range that the Comparison Report spans over. Set to `custom`
+	//                               when the report is set to a static timeframe.
+	// Example: custom
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month last_month last_3_months last_6_months custom]
+	Range() string
+	SetRange(string)
+
+	// The end of the report timeframe (if range is "custom")
+	// Example: 2021-05-25T17:54:05Z
+	To() string
+	SetTo(string)
+
+	// account
+	Account() *ComparisonReportAO1Account
+	SetAccount(*ComparisonReportAO1Account)
 
 	// An array of Real Browser checks selected for the Comparison Report. Needs to have
 	//                                   at least two checks per comparison report
-	Checks() []*ComparisonCheck
-	SetChecks([]*ComparisonCheck)
+	Checks() []*ComparisonReportChecksItems0
+	SetChecks([]*ComparisonReportChecksItems0)
 
 	// When the Comparison Report was created (UTC)
 	// Example: 2021-05-25T17:54:05Z
@@ -53,8 +95,8 @@ type ComparisonReport interface {
 
 	// An array of location IDs selected for the Comparison Report. If this array is empty,
 	//                                   the report will include data from all locations.
-	Locations() []*ReportLocation
-	SetLocations([]*ReportLocation)
+	Locations() []*ComparisonReportLocationsItems0
+	SetLocations([]*ComparisonReportLocationsItems0)
 
 	// A shareable link that can be viewed by anyone
 	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
@@ -73,16 +115,46 @@ type ComparisonReport interface {
 
 type comparisonReport struct {
 
-	ComparisonReportGeneric
+	// The function used to aggregate data for the Comparison Report
+	// Example: mean
+	// Enum: [mean median max min sum stddev percentile_90 percentile_95 percentile_99]
+	Aggregate string `json:"aggregate,omitempty"`
 
-	checksField *[]Check
+	// Used to aggregate and display data at this interval. It must be shorter
+	//                               than the duration of the report timeframe.
+	// Example: 1m
+	// Enum: [1m 5m 10m 15m 30m 1h 3h 6h 12h 24h 2d 3d 1w 2w 30d]
+	DataPointInterval string `json:"data_point_interval,omitempty"`
 
-	// Information about the account that owns the Comparison Report
-	Account *Account `json:"account,omitempty"`
+	// When set to `true`, excludes failed runs from the Comparison Report results
+	// Example: false
+	ExcludeFailures bool `json:"exclude_failures,omitempty"`
+
+	// The beginning of the report timeframe (if range is "custom")
+	// Example: 2021-05-24T17:54:05Z
+	From string `json:"from,omitempty"`
+
+	// The metric to compare on the Comparison Report
+	// Example: first_byte_time_ms
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	Metric string `json:"metric,omitempty"`
+
+	// The time range that the Comparison Report spans over. Set to `custom`
+	//                               when the report is set to a static timeframe.
+	// Example: custom
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month last_month last_3_months last_6_months custom]
+	Range string `json:"range,omitempty"`
+
+	// The end of the report timeframe (if range is "custom")
+	// Example: 2021-05-25T17:54:05Z
+	To string `json:"to,omitempty"`
+
+	// account
+	Account *ComparisonReportAO1Account `json:"account,omitempty"`
 
 	// An array of Real Browser checks selected for the Comparison Report. Needs to have
 	//                                   at least two checks per comparison report
-	Checks []*ComparisonCheck `json:"checks"`
+	Checks []*ComparisonReportChecksItems0 `json:"checks"`
 
 	// When the Comparison Report was created (UTC)
 	// Example: 2021-05-25T17:54:05Z
@@ -95,7 +167,7 @@ type comparisonReport struct {
 
 	// An array of location IDs selected for the Comparison Report. If this array is empty,
 	//                                   the report will include data from all locations.
-	Locations []*ReportLocation `json:"locations"`
+	Locations []*ComparisonReportLocationsItems0 `json:"locations"`
 
 	// A shareable link that can be viewed by anyone
 	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
@@ -158,7 +230,7 @@ func unmarshalComparisonReport(data []byte, consumer runtime.Consumer) (Comparis
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
-		return nil, nil
+		return &result, nil
 	}
 	return nil, errors.New(422, "invalid name value: %q", getType.Name)
 }
@@ -167,8 +239,19 @@ func unmarshalComparisonReport(data []byte, consumer runtime.Consumer) (Comparis
 func (m *comparisonReport) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with ComparisonReportGeneric
-	if err := m.ComparisonReportGeneric.Validate(formats); err != nil {
+	if err := m.validateAggregate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDataPointInterval(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetric(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRange(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -198,6 +281,142 @@ func (m *comparisonReport) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+var comparisonReportTypeAggregatePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mean","median","max","min","sum","stddev","percentile_90","percentile_95","percentile_99"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportTypeAggregatePropEnum = append(comparisonReportTypeAggregatePropEnum, v)
+	}
+}
+
+// property enum
+func (m *comparisonReport) validateAggregateEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportTypeAggregatePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *comparisonReport) validateAggregate(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Aggregate) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateAggregateEnum("aggregate", "body", m.Aggregate); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportTypeDataPointIntervalPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["1m","5m","10m","15m","30m","1h","3h","6h","12h","24h","2d","3d","1w","2w","30d"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportTypeDataPointIntervalPropEnum = append(comparisonReportTypeDataPointIntervalPropEnum, v)
+	}
+}
+
+// property enum
+func (m *comparisonReport) validateDataPointIntervalEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportTypeDataPointIntervalPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *comparisonReport) validateDataPointInterval(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DataPointInterval) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateDataPointIntervalEnum("data_point_interval", "body", m.DataPointInterval); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportTypeMetricPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["first_byte_time_ms","dom_interactive_time_ms","dom_load_time_ms","dom_complete_time_ms","start_render_ms","onload_time_ms","visually_complete_ms","fully_loaded_time_ms","first_paint_time_ms","first_contentful_paint_time_ms","first_meaningful_paint_time_ms","first_interactive_time_ms","first_cpu_idle_time_ms","first_request_dns_time_ms","first_request_connect_time_ms","first_request_ssl_time_ms","first_request_send_time_ms","first_request_wait_time_ms","first_request_receive_time_ms","speed_index","requests","content_bytes","html_files","html_bytes","image_files","image_bytes","javascript_files","javascript_bytes","css_files","css_bytes","video_files","video_bytes","font_files","font_bytes","other_files","other_bytes","client_errors","connection_errors","server_errors","errors","run_count","success_count","failure_count","lighthouse_performance_score","availability","downtime","total_blocking_time_ms","largest_contentful_paint_time_ms","cumulative_layout_shift"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportTypeMetricPropEnum = append(comparisonReportTypeMetricPropEnum, v)
+	}
+}
+
+// property enum
+func (m *comparisonReport) validateMetricEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportTypeMetricPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *comparisonReport) validateMetric(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Metric) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateMetricEnum("metric", "body", m.Metric); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportTypeRangePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["last_hour","last_4_hours","last_8_hours","last_12_hours","last_24_hours","yesterday","today","last_7_days","last_30_days","this_week","last_week","this_month","last_month","last_3_months","last_6_months","custom"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportTypeRangePropEnum = append(comparisonReportTypeRangePropEnum, v)
+	}
+}
+
+// property enum
+func (m *comparisonReport) validateRangeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportTypeRangePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *comparisonReport) validateRange(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Range) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateRangeEnum("range", "body", m.Range); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *comparisonReport) validateAccount(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Account) { // not required
@@ -223,12 +442,12 @@ func (m *comparisonReport) validateChecks(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Checks); i++ {
-		if swag.IsZero(m.Checks[i]) { // not required
+		if swag.IsZero(m.checksField[i]) { // not required
 			continue
 		}
 
-		if m.Checks[i] != nil {
-			if err := m.Checks[i].Validate(formats); err != nil {
+		if m.checksField[i] != nil {
+			if err := m.checksField[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
 				}
@@ -261,12 +480,12 @@ func (m *comparisonReport) validateLocations(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Locations); i++ {
-		if swag.IsZero(m.Locations[i]) { // not required
+		if swag.IsZero(m.locationsField[i]) { // not required
 			continue
 		}
 
-		if m.Locations[i] != nil {
-			if err := m.Locations[i].Validate(formats); err != nil {
+		if m.locationsField[i] != nil {
+			if err := m.locationsField[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
 				}
@@ -295,11 +514,6 @@ func (m *comparisonReport) validateUpdatedAt(formats strfmt.Registry) error {
 // ContextValidate validate this comparison report based on the context it is used
 func (m *comparisonReport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
-
-	// validation for a type composition with ComparisonReportGeneric
-	if err := m.ComparisonReportGeneric.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.contextValidateAccount(ctx, formats); err != nil {
 		res = append(res, err)
@@ -337,8 +551,8 @@ func (m *comparisonReport) contextValidateChecks(ctx context.Context, formats st
 
 	for i := 0; i < len(m.Checks); i++ {
 
-		if m.Checks[i] != nil {
-			if err := m.Checks[i].ContextValidate(ctx, formats); err != nil {
+		if m.checksField[i] != nil {
+			if err := m.checksField[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
 				}
@@ -355,8 +569,8 @@ func (m *comparisonReport) contextValidateLocations(ctx context.Context, formats
 
 	for i := 0; i < len(m.Locations); i++ {
 
-		if m.Locations[i] != nil {
-			if err := m.Locations[i].ContextValidate(ctx, formats); err != nil {
+		if m.locationsField[i] != nil {
+			if err := m.locationsField[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
 				}
@@ -366,5 +580,294 @@ func (m *comparisonReport) contextValidateLocations(ctx context.Context, formats
 
 	}
 
+	return nil
+}
+
+// ComparisonReportAO1Account comparison report a o1 account
+//
+// swagger:model ComparisonReportAO1Account
+type ComparisonReportAO1Account struct {
+
+	// The unique ID of the account
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// The name of the account
+	// Example: Example Company
+	// Required: true
+	Name *string `json:"name"`
+}
+
+// Validate validates this comparison report a o1 account
+func (m *ComparisonReportAO1Account) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportAO1Account) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("account"+"."+"id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportAO1Account) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("account"+"."+"name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report a o1 account based on context it is used
+func (m *ComparisonReportAO1Account) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportAO1Account) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportAO1Account) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportAO1Account
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ComparisonReportChecksItems0 comparison report checks items0
+//
+// swagger:model ComparisonReportChecksItems0
+type ComparisonReportChecksItems0 struct {
+
+	// When set to `true`, the metrics from this check are used as a baseline for the other checks
+	// Example: true
+	Baseline bool `json:"baseline,omitempty"`
+
+	// The unique ID of the check attached to the Comparison Report
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// An optional alias to use in place of the check name in the Comparison Report
+	// Example: Example Nickname
+	Nickname string `json:"nickname,omitempty"`
+
+	// The name of the check attached to the Comparison Report
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *ComparisonReportChecksItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.Baseline = dataAO0.Baseline
+
+	m.ID = dataAO0.ID
+
+	m.Nickname = dataAO0.Nickname
+
+	// AO1
+	var dataAO1 struct {
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Name = dataAO1.Name
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m ComparisonReportChecksItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
+	}
+
+	dataAO0.Baseline = m.Baseline
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Nickname = m.Nickname
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Name string `json:"name,omitempty"`
+	}
+
+	dataAO1.Name = m.Name
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this comparison report checks items0
+func (m *ComparisonReportChecksItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportChecksItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report checks items0 based on context it is used
+func (m *ComparisonReportChecksItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportChecksItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportChecksItems0) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportChecksItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ComparisonReportLocationsItems0 comparison report locations items0
+//
+// swagger:model ComparisonReportLocationsItems0
+type ComparisonReportLocationsItems0 struct {
+
+	// The unique ID of the location
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// The name of the location
+	// Example: Example Location
+	// Required: true
+	Name *string `json:"name"`
+}
+
+// Validate validates this comparison report locations items0
+func (m *ComparisonReportLocationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportLocationsItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportLocationsItems0) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report locations items0 based on context it is used
+func (m *ComparisonReportLocationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportLocationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportLocationsItems0) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportLocationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
 	return nil
 }

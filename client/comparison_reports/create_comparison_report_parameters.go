@@ -14,8 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewCreateComparisonReportParams creates a new CreateComparisonReportParams object,
@@ -65,7 +63,7 @@ type CreateComparisonReportParams struct {
 
 	   The configuration for the new Comparison Report
 	*/
-	ComparisonReportDetail *models.ComparisonReportInput
+	ComparisonReportDetail CreateComparisonReportBody
 
 	timeout    time.Duration
 	Context    context.Context
@@ -121,13 +119,13 @@ func (o *CreateComparisonReportParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithComparisonReportDetail adds the comparisonReportDetail to the create comparison report params
-func (o *CreateComparisonReportParams) WithComparisonReportDetail(comparisonReportDetail *models.ComparisonReportInput) *CreateComparisonReportParams {
+func (o *CreateComparisonReportParams) WithComparisonReportDetail(comparisonReportDetail CreateComparisonReportBody) *CreateComparisonReportParams {
 	o.SetComparisonReportDetail(comparisonReportDetail)
 	return o
 }
 
 // SetComparisonReportDetail adds the comparisonReportDetail to the create comparison report params
-func (o *CreateComparisonReportParams) SetComparisonReportDetail(comparisonReportDetail *models.ComparisonReportInput) {
+func (o *CreateComparisonReportParams) SetComparisonReportDetail(comparisonReportDetail CreateComparisonReportBody) {
 	o.ComparisonReportDetail = comparisonReportDetail
 }
 
@@ -138,10 +136,8 @@ func (o *CreateComparisonReportParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
-	if o.ComparisonReportDetail != nil {
-		if err := r.SetBodyParam(o.ComparisonReportDetail); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.ComparisonReportDetail); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

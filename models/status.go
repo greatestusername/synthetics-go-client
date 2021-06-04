@@ -47,7 +47,7 @@ type Status struct {
 
 	// The response time from the last run
 	// Example: 50
-	LastResponseTime int32 `json:"last_response_time,omitempty"`
+	LastResponseTime string `json:"last_response_time,omitempty"`
 
 	// The timestamp of the last run (UTC)
 	// Example: 2021-05-25T17:49:05Z

@@ -20,7 +20,7 @@ import (
 type SeleniumSideTest struct {
 
 	// commands
-	Commands []*SeleniumSideCommand `json:"commands"`
+	Commands []*SeleniumSideTestCommandsItems0 `json:"commands"`
 
 	// The check ID
 	// Example: 1
@@ -116,6 +116,55 @@ func (m *SeleniumSideTest) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *SeleniumSideTest) UnmarshalBinary(b []byte) error {
 	var res SeleniumSideTest
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SeleniumSideTestCommandsItems0 selenium side test commands items0
+//
+// swagger:model SeleniumSideTestCommandsItems0
+type SeleniumSideTestCommandsItems0 struct {
+
+	// command
+	// Example: open
+	Command string `json:"command,omitempty"`
+
+	// The step name
+	// Example: Open the first page
+	Comment string `json:"comment,omitempty"`
+
+	// target
+	// Example: /path/to/follow
+	Target string `json:"target,omitempty"`
+
+	// value
+	Value string `json:"value,omitempty"`
+}
+
+// Validate validates this selenium side test commands items0
+func (m *SeleniumSideTestCommandsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this selenium side test commands items0 based on context it is used
+func (m *SeleniumSideTestCommandsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SeleniumSideTestCommandsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SeleniumSideTestCommandsItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideTestCommandsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

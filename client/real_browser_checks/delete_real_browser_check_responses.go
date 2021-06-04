@@ -6,13 +6,17 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DeleteRealBrowserCheckReader is a Reader for the DeleteRealBrowserCheck structure.
@@ -44,24 +48,256 @@ func NewDeleteRealBrowserCheckOK() *DeleteRealBrowserCheckOK {
 Successful deletion
 */
 type DeleteRealBrowserCheckOK struct {
-	Payload *models.APISuccessResponse
+	Payload *DeleteRealBrowserCheckOKBody
 }
 
 func (o *DeleteRealBrowserCheckOK) Error() string {
 	return fmt.Sprintf("[DELETE /v2/checks/real_browsers/{id}][%d] deleteRealBrowserCheckOK  %+v", 200, o.Payload)
 }
-func (o *DeleteRealBrowserCheckOK) GetPayload() *models.APISuccessResponse {
+func (o *DeleteRealBrowserCheckOK) GetPayload() *DeleteRealBrowserCheckOKBody {
 	return o.Payload
 }
 
 func (o *DeleteRealBrowserCheckOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.APISuccessResponse)
+	o.Payload = new(DeleteRealBrowserCheckOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*DeleteRealBrowserCheckOKBody A success message
+swagger:model DeleteRealBrowserCheckOKBody
+*/
+type DeleteRealBrowserCheckOKBody struct {
+
+	// A collection of error messages
+	Errors []*DeleteRealBrowserCheckOKBodyErrorsItems0 `json:"errors"`
+
+	// A high-level status message
+	Message string `json:"message,omitempty"`
+
+	// result
+	// Enum: [success error]
+	Result string `json:"result,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *DeleteRealBrowserCheckOKBody) UnmarshalJSON(raw []byte) error {
+	// DeleteRealBrowserCheckOKBodyAO0
+	var dataDeleteRealBrowserCheckOKBodyAO0 struct {
+		Errors []*DeleteRealBrowserCheckOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataDeleteRealBrowserCheckOKBodyAO0); err != nil {
+		return err
+	}
+
+	o.Errors = dataDeleteRealBrowserCheckOKBodyAO0.Errors
+
+	o.Message = dataDeleteRealBrowserCheckOKBodyAO0.Message
+
+	o.Result = dataDeleteRealBrowserCheckOKBodyAO0.Result
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o DeleteRealBrowserCheckOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataDeleteRealBrowserCheckOKBodyAO0 struct {
+		Errors []*DeleteRealBrowserCheckOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+
+	dataDeleteRealBrowserCheckOKBodyAO0.Errors = o.Errors
+
+	dataDeleteRealBrowserCheckOKBodyAO0.Message = o.Message
+
+	dataDeleteRealBrowserCheckOKBodyAO0.Result = o.Result
+
+	jsonDataDeleteRealBrowserCheckOKBodyAO0, errDeleteRealBrowserCheckOKBodyAO0 := swag.WriteJSON(dataDeleteRealBrowserCheckOKBodyAO0)
+	if errDeleteRealBrowserCheckOKBodyAO0 != nil {
+		return nil, errDeleteRealBrowserCheckOKBodyAO0
+	}
+	_parts = append(_parts, jsonDataDeleteRealBrowserCheckOKBodyAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this delete real browser check o k body
+func (o *DeleteRealBrowserCheckOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateErrors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResult(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteRealBrowserCheckOKBody) validateErrors(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Errors) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Errors); i++ {
+		if swag.IsZero(o.Errors[i]) { // not required
+			continue
+		}
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteRealBrowserCheckOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var deleteRealBrowserCheckOKBodyTypeResultPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["success","error"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deleteRealBrowserCheckOKBodyTypeResultPropEnum = append(deleteRealBrowserCheckOKBodyTypeResultPropEnum, v)
+	}
+}
+
+// property enum
+func (o *DeleteRealBrowserCheckOKBody) validateResultEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deleteRealBrowserCheckOKBodyTypeResultPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *DeleteRealBrowserCheckOKBody) validateResult(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Result) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateResultEnum("deleteRealBrowserCheckOK"+"."+"result", "body", o.Result); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this delete real browser check o k body based on the context it is used
+func (o *DeleteRealBrowserCheckOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateErrors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteRealBrowserCheckOKBody) contextValidateErrors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Errors); i++ {
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteRealBrowserCheckOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteRealBrowserCheckOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteRealBrowserCheckOKBody) UnmarshalBinary(b []byte) error {
+	var res DeleteRealBrowserCheckOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*DeleteRealBrowserCheckOKBodyErrorsItems0 delete real browser check o k body errors items0
+swagger:model DeleteRealBrowserCheckOKBodyErrorsItems0
+*/
+type DeleteRealBrowserCheckOKBodyErrorsItems0 struct {
+
+	// Additional detail about the error, if available
+	Description string `json:"description,omitempty"`
+
+	// A summary of the error
+	Title string `json:"title,omitempty"`
+}
+
+// Validate validates this delete real browser check o k body errors items0
+func (o *DeleteRealBrowserCheckOKBodyErrorsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this delete real browser check o k body errors items0 based on context it is used
+func (o *DeleteRealBrowserCheckOKBodyErrorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteRealBrowserCheckOKBodyErrorsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteRealBrowserCheckOKBodyErrorsItems0) UnmarshalBinary(b []byte) error {
+	var res DeleteRealBrowserCheckOKBodyErrorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

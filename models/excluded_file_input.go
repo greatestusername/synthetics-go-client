@@ -7,17 +7,29 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ExcludedFileInput excluded file input
 //
 // swagger:model excluded_file_input
 type ExcludedFileInput struct {
-	ExcludedFileBasics
+
+	// The type of exclusion.
+	//               "preset": exclude a preset URL (default).
+	//               "custom": exclude a custom URL.
+	//               "all_except": whitelist a custom URL. Whitelisted URLs override all others.
+	// Enum: [preset custom all_except]
+	ExclusionType *string `json:"exclusion_type,omitempty"`
+
+	// The name of the excluded preset URL. Null if the `exclusion_type` is not "preset".
+	// Enum: [chartbeat clicktale comscore coremetrics crazy-egg eloqua gomez google-analytics hubspot liveperson mixpanel omniture optimizely pardot quantcast spectate tealium white-ops]
+	PresetName string `json:"preset_name,omitempty"`
 
 	// A regular expression to match against all URLs visited during the check run
 	// Example: static\\.chartbeat\\.com
@@ -27,11 +39,18 @@ type ExcludedFileInput struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *ExcludedFileInput) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 ExcludedFileBasics
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.ExcludedFileBasics = aO0
+
+	m.ExclusionType = dataAO0.ExclusionType
+
+	m.PresetName = dataAO0.PresetName
 
 	// AO1
 	var dataAO1 struct {
@@ -50,11 +69,21 @@ func (m *ExcludedFileInput) UnmarshalJSON(raw []byte) error {
 func (m ExcludedFileInput) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.ExcludedFileBasics)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.ExclusionType = m.ExclusionType
+
+	dataAO0.PresetName = m.PresetName
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		Pattern string `json:"pattern,omitempty"`
 	}
@@ -73,8 +102,11 @@ func (m ExcludedFileInput) MarshalJSON() ([]byte, error) {
 func (m *ExcludedFileInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with ExcludedFileBasics
-	if err := m.ExcludedFileBasics.Validate(formats); err != nil {
+	if err := m.validateExclusionType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePresetName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,18 +116,76 @@ func (m *ExcludedFileInput) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this excluded file input based on the context it is used
+var excludedFileInputTypeExclusionTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["preset","custom","all_except"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		excludedFileInputTypeExclusionTypePropEnum = append(excludedFileInputTypeExclusionTypePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ExcludedFileInput) validateExclusionTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, excludedFileInputTypeExclusionTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ExcludedFileInput) validateExclusionType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ExclusionType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateExclusionTypeEnum("exclusion_type", "body", *m.ExclusionType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var excludedFileInputTypePresetNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["chartbeat","clicktale","comscore","coremetrics","crazy-egg","eloqua","gomez","google-analytics","hubspot","liveperson","mixpanel","omniture","optimizely","pardot","quantcast","spectate","tealium","white-ops"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		excludedFileInputTypePresetNamePropEnum = append(excludedFileInputTypePresetNamePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ExcludedFileInput) validatePresetNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, excludedFileInputTypePresetNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ExcludedFileInput) validatePresetName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.PresetName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validatePresetNameEnum("preset_name", "body", m.PresetName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this excluded file input based on context it is used
 func (m *ExcludedFileInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	// validation for a type composition with ExcludedFileBasics
-	if err := m.ExcludedFileBasics.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

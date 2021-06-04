@@ -90,13 +90,13 @@ func (o *GetHTTPCheckParams) SetDefaults() {
 
 // WithTimeout adds the timeout to the get HTTP check params
 func (o *GetHTTPCheckParams) WithTimeout(timeout time.Duration) *GetHTTPCheckParams {
-	o.SetTimeout(999999)
+	o.SetTimeout(timeout)
 	return o
 }
 
 // SetTimeout adds the timeout to the get HTTP check params
 func (o *GetHTTPCheckParams) SetTimeout(timeout time.Duration) {
-	o.timeout = 999999
+	o.timeout = timeout
 }
 
 // WithContext adds the context to the get HTTP check params

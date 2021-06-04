@@ -11,13 +11,26 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ComparisonCheck comparison check
 //
 // swagger:model comparison_check
 type ComparisonCheck struct {
-	ComparisonCheckGeneric
+
+	// When set to `true`, the metrics from this check are used as a baseline for the other checks
+	// Example: true
+	Baseline bool `json:"baseline,omitempty"`
+
+	// The unique ID of the check attached to the Comparison Report
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// An optional alias to use in place of the check name in the Comparison Report
+	// Example: Example Nickname
+	Nickname string `json:"nickname,omitempty"`
 
 	// The name of the check attached to the Comparison Report
 	// Example: Example Check
@@ -27,11 +40,22 @@ type ComparisonCheck struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *ComparisonCheck) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 ComparisonCheckGeneric
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.ComparisonCheckGeneric = aO0
+
+	m.Baseline = dataAO0.Baseline
+
+	m.ID = dataAO0.ID
+
+	m.Nickname = dataAO0.Nickname
 
 	// AO1
 	var dataAO1 struct {
@@ -50,11 +74,25 @@ func (m *ComparisonCheck) UnmarshalJSON(raw []byte) error {
 func (m ComparisonCheck) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.ComparisonCheckGeneric)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.Baseline = m.Baseline
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Nickname = m.Nickname
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		Name string `json:"name,omitempty"`
 	}
@@ -73,8 +111,7 @@ func (m ComparisonCheck) MarshalJSON() ([]byte, error) {
 func (m *ComparisonCheck) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with ComparisonCheckGeneric
-	if err := m.ComparisonCheckGeneric.Validate(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,18 +121,17 @@ func (m *ComparisonCheck) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this comparison check based on the context it is used
+func (m *ComparisonCheck) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison check based on context it is used
 func (m *ComparisonCheck) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	// validation for a type composition with ComparisonCheckGeneric
-	if err := m.ComparisonCheckGeneric.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

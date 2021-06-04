@@ -6,15 +6,17 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // CreateRealBrowserCheckReader is a Reader for the CreateRealBrowserCheck structure.
@@ -40,9 +42,9 @@ func (o *CreateRealBrowserCheckReader) ReadResponse(response runtime.ClientRespo
 func NewCreateRealBrowserCheckOK() *CreateRealBrowserCheckOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &CreateRealBrowserCheckOK{
@@ -60,7 +62,7 @@ type CreateRealBrowserCheckOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +72,17 @@ type CreateRealBrowserCheckOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.RealBrowserCheck
+	Payload *CreateRealBrowserCheckOKBody
 }
 
 func (o *CreateRealBrowserCheckOK) Error() string {
 	return fmt.Sprintf("[POST /v2/checks/real_browsers][%d] createRealBrowserCheckOK  %+v", 200, o.Payload)
 }
-func (o *CreateRealBrowserCheckOK) GetPayload() *models.RealBrowserCheck {
+func (o *CreateRealBrowserCheckOK) GetPayload() *CreateRealBrowserCheckOKBody {
 	return o.Payload
 }
 
@@ -119,12 +121,5793 @@ func (o *CreateRealBrowserCheckOK) readResponse(response runtime.ClientResponse,
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.RealBrowserCheck)
+	o.Payload = new(CreateRealBrowserCheckOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*CreateRealBrowserCheckBody The parameters for a Real Browser check
+swagger:model CreateRealBrowserCheckBody
+*/
+type CreateRealBrowserCheckBody struct {
+	CreateRealBrowserCheckParamsBodyAllOf0
+
+	// auto update user agent
+	AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+	// browser
+	Browser *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser `json:"browser,omitempty"`
+
+	// connection
+	Connection *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+	// cookies
+	Cookies []*CreateRealBrowserCheckParamsBodyCookiesItems0 `json:"cookies"`
+
+	// Key-value pairs specifying the original host (key) and replacement host (value)
+	// Example: {"original.domain.com":"new.domain.com","original.host.com":"123.456.789.1"}
+	DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+	// When true, the check will fail if the browser encounters invalid security certificates.
+	EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+	// excluded files
+	ExcludedFiles []*CreateRealBrowserCheckParamsBodyExcludedFilesItems0 `json:"excluded_files"`
+
+	// threshold monitors
+	ThresholdMonitors []*CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+	// The start URL for the check
+	// Example: http://example.com
+	URL string `json:"url,omitempty"`
+
+	// user agent
+	// Example: Mozilla/5.0 (X11; Linux x86_64; Rigor) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36
+	UserAgent string `json:"user_agent,omitempty"`
+
+	// viewport
+	Viewport *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport `json:"viewport,omitempty"`
+
+	// Wait for full metrics to become available before proceeding with steps. When disabled, steps will proceed earlier but some metrics may be missing.
+	WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckBody) UnmarshalJSON(raw []byte) error {
+	// CreateRealBrowserCheckParamsBodyAO0
+	var createRealBrowserCheckParamsBodyAO0 CreateRealBrowserCheckParamsBodyAllOf0
+	if err := swag.ReadJSON(raw, &createRealBrowserCheckParamsBodyAO0); err != nil {
+		return err
+	}
+	o.CreateRealBrowserCheckParamsBodyAllOf0 = createRealBrowserCheckParamsBodyAO0
+
+	// CreateRealBrowserCheckParamsBodyAO1
+	var dataCreateRealBrowserCheckParamsBodyAO1 struct {
+		AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+		Browser *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser `json:"browser,omitempty"`
+
+		Connection *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+		Cookies []*CreateRealBrowserCheckParamsBodyCookiesItems0 `json:"cookies"`
+
+		DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+		EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+		ExcludedFiles []*CreateRealBrowserCheckParamsBodyExcludedFilesItems0 `json:"excluded_files"`
+
+		ThresholdMonitors []*CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+		URL string `json:"url,omitempty"`
+
+		UserAgent string `json:"user_agent,omitempty"`
+
+		Viewport *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport `json:"viewport,omitempty"`
+
+		WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataCreateRealBrowserCheckParamsBodyAO1); err != nil {
+		return err
+	}
+
+	o.AutoUpdateUserAgent = dataCreateRealBrowserCheckParamsBodyAO1.AutoUpdateUserAgent
+
+	o.Browser = dataCreateRealBrowserCheckParamsBodyAO1.Browser
+
+	o.Connection = dataCreateRealBrowserCheckParamsBodyAO1.Connection
+
+	o.Cookies = dataCreateRealBrowserCheckParamsBodyAO1.Cookies
+
+	o.DNSOverrides = dataCreateRealBrowserCheckParamsBodyAO1.DNSOverrides
+
+	o.EnforceSslValidation = dataCreateRealBrowserCheckParamsBodyAO1.EnforceSslValidation
+
+	o.ExcludedFiles = dataCreateRealBrowserCheckParamsBodyAO1.ExcludedFiles
+
+	o.ThresholdMonitors = dataCreateRealBrowserCheckParamsBodyAO1.ThresholdMonitors
+
+	o.URL = dataCreateRealBrowserCheckParamsBodyAO1.URL
+
+	o.UserAgent = dataCreateRealBrowserCheckParamsBodyAO1.UserAgent
+
+	o.Viewport = dataCreateRealBrowserCheckParamsBodyAO1.Viewport
+
+	o.WaitForFullMetrics = dataCreateRealBrowserCheckParamsBodyAO1.WaitForFullMetrics
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	createRealBrowserCheckParamsBodyAO0, err := swag.WriteJSON(o.CreateRealBrowserCheckParamsBodyAllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, createRealBrowserCheckParamsBodyAO0)
+	var dataCreateRealBrowserCheckParamsBodyAO1 struct {
+		AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+		Browser *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser `json:"browser,omitempty"`
+
+		Connection *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+		Cookies []*CreateRealBrowserCheckParamsBodyCookiesItems0 `json:"cookies"`
+
+		DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+		EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+		ExcludedFiles []*CreateRealBrowserCheckParamsBodyExcludedFilesItems0 `json:"excluded_files"`
+
+		ThresholdMonitors []*CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+		URL string `json:"url,omitempty"`
+
+		UserAgent string `json:"user_agent,omitempty"`
+
+		Viewport *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport `json:"viewport,omitempty"`
+
+		WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+	}
+
+	dataCreateRealBrowserCheckParamsBodyAO1.AutoUpdateUserAgent = o.AutoUpdateUserAgent
+
+	dataCreateRealBrowserCheckParamsBodyAO1.Browser = o.Browser
+
+	dataCreateRealBrowserCheckParamsBodyAO1.Connection = o.Connection
+
+	dataCreateRealBrowserCheckParamsBodyAO1.Cookies = o.Cookies
+
+	dataCreateRealBrowserCheckParamsBodyAO1.DNSOverrides = o.DNSOverrides
+
+	dataCreateRealBrowserCheckParamsBodyAO1.EnforceSslValidation = o.EnforceSslValidation
+
+	dataCreateRealBrowserCheckParamsBodyAO1.ExcludedFiles = o.ExcludedFiles
+
+	dataCreateRealBrowserCheckParamsBodyAO1.ThresholdMonitors = o.ThresholdMonitors
+
+	dataCreateRealBrowserCheckParamsBodyAO1.URL = o.URL
+
+	dataCreateRealBrowserCheckParamsBodyAO1.UserAgent = o.UserAgent
+
+	dataCreateRealBrowserCheckParamsBodyAO1.Viewport = o.Viewport
+
+	dataCreateRealBrowserCheckParamsBodyAO1.WaitForFullMetrics = o.WaitForFullMetrics
+
+	jsonDataCreateRealBrowserCheckParamsBodyAO1, errCreateRealBrowserCheckParamsBodyAO1 := swag.WriteJSON(dataCreateRealBrowserCheckParamsBodyAO1)
+	if errCreateRealBrowserCheckParamsBodyAO1 != nil {
+		return nil, errCreateRealBrowserCheckParamsBodyAO1
+	}
+	_parts = append(_parts, jsonDataCreateRealBrowserCheckParamsBodyAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check body
+func (o *CreateRealBrowserCheckBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateRealBrowserCheckParamsBodyAllOf0
+	if err := o.CreateRealBrowserCheckParamsBodyAllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateBrowser(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateConnection(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateCookies(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateExcludedFiles(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateThresholdMonitors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateViewport(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateBrowser(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Browser) { // not required
+		return nil
+	}
+
+	if o.Browser != nil {
+		if err := o.Browser.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "browser")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateConnection(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Connection) { // not required
+		return nil
+	}
+
+	if o.Connection != nil {
+		if err := o.Connection.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateCookies(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Cookies) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Cookies); i++ {
+		if swag.IsZero(o.Cookies[i]) { // not required
+			continue
+		}
+
+		if o.Cookies[i] != nil {
+			if err := o.Cookies[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "cookies" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateExcludedFiles(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ExcludedFiles) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.ExcludedFiles); i++ {
+		if swag.IsZero(o.ExcludedFiles[i]) { // not required
+			continue
+		}
+
+		if o.ExcludedFiles[i] != nil {
+			if err := o.ExcludedFiles[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "excluded_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateThresholdMonitors(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ThresholdMonitors) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.ThresholdMonitors); i++ {
+		if swag.IsZero(o.ThresholdMonitors[i]) { // not required
+			continue
+		}
+
+		if o.ThresholdMonitors[i] != nil {
+			if err := o.ThresholdMonitors[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "threshold_monitors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) validateViewport(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Viewport) { // not required
+		return nil
+	}
+
+	if o.Viewport != nil {
+		if err := o.Viewport.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "viewport")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check body based on the context it is used
+func (o *CreateRealBrowserCheckBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateRealBrowserCheckParamsBodyAllOf0
+	if err := o.CreateRealBrowserCheckParamsBodyAllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateBrowser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateConnection(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateCookies(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateExcludedFiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateThresholdMonitors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateViewport(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateBrowser(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Browser != nil {
+		if err := o.Browser.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "browser")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateConnection(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Connection != nil {
+		if err := o.Connection.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateCookies(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Cookies); i++ {
+
+		if o.Cookies[i] != nil {
+			if err := o.Cookies[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "cookies" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateExcludedFiles(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.ExcludedFiles); i++ {
+
+		if o.ExcludedFiles[i] != nil {
+			if err := o.ExcludedFiles[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "excluded_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateThresholdMonitors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.ThresholdMonitors); i++ {
+
+		if o.ThresholdMonitors[i] != nil {
+			if err := o.ThresholdMonitors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "threshold_monitors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckBody) contextValidateViewport(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Viewport != nil {
+		if err := o.Viewport.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "viewport")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckBody) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBody A Real Browser check
+swagger:model CreateRealBrowserCheckOKBody
+*/
+type CreateRealBrowserCheckOKBody struct {
+	CreateRealBrowserCheckOKBodyAllOf0
+
+	// auto update user agent
+	AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+	// browser
+	Browser *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser `json:"browser,omitempty"`
+
+	// connection
+	Connection *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+	// cookies
+	Cookies []*CreateRealBrowserCheckOKBodyCookiesItems0 `json:"cookies"`
+
+	// Key-value pairs specifying the original host (key) and replacement host (value)
+	// Example: {"original.domain.com":"new.domain.com","original.host.com":"123.456.789.1"}
+	DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+	// When true, the check will fail if the browser encounters invalid security certificates.
+	EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+	// excluded files
+	ExcludedFiles []*CreateRealBrowserCheckOKBodyExcludedFilesItems0 `json:"excluded_files"`
+
+	// A list of JavaScript files attached to this check
+	JavascriptFiles []*CreateRealBrowserCheckOKBodyJavascriptFilesItems0 `json:"javascript_files"`
+
+	// A list of steps to take when this check runs
+	Steps []*CreateRealBrowserCheckOKBodyStepsItems0 `json:"steps"`
+
+	// threshold monitors
+	ThresholdMonitors []*CreateRealBrowserCheckOKBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+	// The start URL for the check
+	// Example: http://example.com
+	URL string `json:"url,omitempty"`
+
+	// user agent
+	// Example: Mozilla/5.0 (X11; Linux x86_64; Rigor) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36
+	UserAgent string `json:"user_agent,omitempty"`
+
+	// viewport
+	Viewport *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport `json:"viewport,omitempty"`
+
+	// Wait for full metrics to become available before proceeding with steps. When disabled, steps will proceed earlier but some metrics may be missing.
+	WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckOKBody) UnmarshalJSON(raw []byte) error {
+	// CreateRealBrowserCheckOKBodyAO0
+	var createRealBrowserCheckOKBodyAO0 CreateRealBrowserCheckOKBodyAllOf0
+	if err := swag.ReadJSON(raw, &createRealBrowserCheckOKBodyAO0); err != nil {
+		return err
+	}
+	o.CreateRealBrowserCheckOKBodyAllOf0 = createRealBrowserCheckOKBodyAO0
+
+	// CreateRealBrowserCheckOKBodyAO1
+	var dataCreateRealBrowserCheckOKBodyAO1 struct {
+		AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+		Browser *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser `json:"browser,omitempty"`
+
+		Connection *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+		Cookies []*CreateRealBrowserCheckOKBodyCookiesItems0 `json:"cookies"`
+
+		DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+		EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+		ExcludedFiles []*CreateRealBrowserCheckOKBodyExcludedFilesItems0 `json:"excluded_files"`
+
+		JavascriptFiles []*CreateRealBrowserCheckOKBodyJavascriptFilesItems0 `json:"javascript_files"`
+
+		Steps []*CreateRealBrowserCheckOKBodyStepsItems0 `json:"steps"`
+
+		ThresholdMonitors []*CreateRealBrowserCheckOKBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+		URL string `json:"url,omitempty"`
+
+		UserAgent string `json:"user_agent,omitempty"`
+
+		Viewport *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport `json:"viewport,omitempty"`
+
+		WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataCreateRealBrowserCheckOKBodyAO1); err != nil {
+		return err
+	}
+
+	o.AutoUpdateUserAgent = dataCreateRealBrowserCheckOKBodyAO1.AutoUpdateUserAgent
+
+	o.Browser = dataCreateRealBrowserCheckOKBodyAO1.Browser
+
+	o.Connection = dataCreateRealBrowserCheckOKBodyAO1.Connection
+
+	o.Cookies = dataCreateRealBrowserCheckOKBodyAO1.Cookies
+
+	o.DNSOverrides = dataCreateRealBrowserCheckOKBodyAO1.DNSOverrides
+
+	o.EnforceSslValidation = dataCreateRealBrowserCheckOKBodyAO1.EnforceSslValidation
+
+	o.ExcludedFiles = dataCreateRealBrowserCheckOKBodyAO1.ExcludedFiles
+
+	o.JavascriptFiles = dataCreateRealBrowserCheckOKBodyAO1.JavascriptFiles
+
+	o.Steps = dataCreateRealBrowserCheckOKBodyAO1.Steps
+
+	o.ThresholdMonitors = dataCreateRealBrowserCheckOKBodyAO1.ThresholdMonitors
+
+	o.URL = dataCreateRealBrowserCheckOKBodyAO1.URL
+
+	o.UserAgent = dataCreateRealBrowserCheckOKBodyAO1.UserAgent
+
+	o.Viewport = dataCreateRealBrowserCheckOKBodyAO1.Viewport
+
+	o.WaitForFullMetrics = dataCreateRealBrowserCheckOKBodyAO1.WaitForFullMetrics
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	createRealBrowserCheckOKBodyAO0, err := swag.WriteJSON(o.CreateRealBrowserCheckOKBodyAllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, createRealBrowserCheckOKBodyAO0)
+	var dataCreateRealBrowserCheckOKBodyAO1 struct {
+		AutoUpdateUserAgent *bool `json:"auto_update_user_agent,omitempty"`
+
+		Browser *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser `json:"browser,omitempty"`
+
+		Connection *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+		Cookies []*CreateRealBrowserCheckOKBodyCookiesItems0 `json:"cookies"`
+
+		DNSOverrides interface{} `json:"dns_overrides,omitempty"`
+
+		EnforceSslValidation *bool `json:"enforce_ssl_validation,omitempty"`
+
+		ExcludedFiles []*CreateRealBrowserCheckOKBodyExcludedFilesItems0 `json:"excluded_files"`
+
+		JavascriptFiles []*CreateRealBrowserCheckOKBodyJavascriptFilesItems0 `json:"javascript_files"`
+
+		Steps []*CreateRealBrowserCheckOKBodyStepsItems0 `json:"steps"`
+
+		ThresholdMonitors []*CreateRealBrowserCheckOKBodyThresholdMonitorsItems0 `json:"threshold_monitors"`
+
+		URL string `json:"url,omitempty"`
+
+		UserAgent string `json:"user_agent,omitempty"`
+
+		Viewport *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport `json:"viewport,omitempty"`
+
+		WaitForFullMetrics *bool `json:"wait_for_full_metrics,omitempty"`
+	}
+
+	dataCreateRealBrowserCheckOKBodyAO1.AutoUpdateUserAgent = o.AutoUpdateUserAgent
+
+	dataCreateRealBrowserCheckOKBodyAO1.Browser = o.Browser
+
+	dataCreateRealBrowserCheckOKBodyAO1.Connection = o.Connection
+
+	dataCreateRealBrowserCheckOKBodyAO1.Cookies = o.Cookies
+
+	dataCreateRealBrowserCheckOKBodyAO1.DNSOverrides = o.DNSOverrides
+
+	dataCreateRealBrowserCheckOKBodyAO1.EnforceSslValidation = o.EnforceSslValidation
+
+	dataCreateRealBrowserCheckOKBodyAO1.ExcludedFiles = o.ExcludedFiles
+
+	dataCreateRealBrowserCheckOKBodyAO1.JavascriptFiles = o.JavascriptFiles
+
+	dataCreateRealBrowserCheckOKBodyAO1.Steps = o.Steps
+
+	dataCreateRealBrowserCheckOKBodyAO1.ThresholdMonitors = o.ThresholdMonitors
+
+	dataCreateRealBrowserCheckOKBodyAO1.URL = o.URL
+
+	dataCreateRealBrowserCheckOKBodyAO1.UserAgent = o.UserAgent
+
+	dataCreateRealBrowserCheckOKBodyAO1.Viewport = o.Viewport
+
+	dataCreateRealBrowserCheckOKBodyAO1.WaitForFullMetrics = o.WaitForFullMetrics
+
+	jsonDataCreateRealBrowserCheckOKBodyAO1, errCreateRealBrowserCheckOKBodyAO1 := swag.WriteJSON(dataCreateRealBrowserCheckOKBodyAO1)
+	if errCreateRealBrowserCheckOKBodyAO1 != nil {
+		return nil, errCreateRealBrowserCheckOKBodyAO1
+	}
+	_parts = append(_parts, jsonDataCreateRealBrowserCheckOKBodyAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check o k body
+func (o *CreateRealBrowserCheckOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateRealBrowserCheckOKBodyAllOf0
+	if err := o.CreateRealBrowserCheckOKBodyAllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateBrowser(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateConnection(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateCookies(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateExcludedFiles(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateJavascriptFiles(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSteps(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateThresholdMonitors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateViewport(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateBrowser(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Browser) { // not required
+		return nil
+	}
+
+	if o.Browser != nil {
+		if err := o.Browser.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "browser")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateConnection(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Connection) { // not required
+		return nil
+	}
+
+	if o.Connection != nil {
+		if err := o.Connection.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateCookies(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Cookies) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Cookies); i++ {
+		if swag.IsZero(o.Cookies[i]) { // not required
+			continue
+		}
+
+		if o.Cookies[i] != nil {
+			if err := o.Cookies[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "cookies" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateExcludedFiles(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ExcludedFiles) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.ExcludedFiles); i++ {
+		if swag.IsZero(o.ExcludedFiles[i]) { // not required
+			continue
+		}
+
+		if o.ExcludedFiles[i] != nil {
+			if err := o.ExcludedFiles[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "excluded_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateJavascriptFiles(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.JavascriptFiles) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.JavascriptFiles); i++ {
+		if swag.IsZero(o.JavascriptFiles[i]) { // not required
+			continue
+		}
+
+		if o.JavascriptFiles[i] != nil {
+			if err := o.JavascriptFiles[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "javascript_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateSteps(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Steps) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Steps); i++ {
+		if swag.IsZero(o.Steps[i]) { // not required
+			continue
+		}
+
+		if o.Steps[i] != nil {
+			if err := o.Steps[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "steps" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateThresholdMonitors(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ThresholdMonitors) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.ThresholdMonitors); i++ {
+		if swag.IsZero(o.ThresholdMonitors[i]) { // not required
+			continue
+		}
+
+		if o.ThresholdMonitors[i] != nil {
+			if err := o.ThresholdMonitors[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "threshold_monitors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) validateViewport(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Viewport) { // not required
+		return nil
+	}
+
+	if o.Viewport != nil {
+		if err := o.Viewport.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "viewport")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body based on the context it is used
+func (o *CreateRealBrowserCheckOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateRealBrowserCheckOKBodyAllOf0
+	if err := o.CreateRealBrowserCheckOKBodyAllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateBrowser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateConnection(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateCookies(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateExcludedFiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateJavascriptFiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateSteps(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateThresholdMonitors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateViewport(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateBrowser(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Browser != nil {
+		if err := o.Browser.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "browser")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateConnection(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Connection != nil {
+		if err := o.Connection.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateCookies(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Cookies); i++ {
+
+		if o.Cookies[i] != nil {
+			if err := o.Cookies[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "cookies" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateExcludedFiles(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.ExcludedFiles); i++ {
+
+		if o.ExcludedFiles[i] != nil {
+			if err := o.ExcludedFiles[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "excluded_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateJavascriptFiles(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.JavascriptFiles); i++ {
+
+		if o.JavascriptFiles[i] != nil {
+			if err := o.JavascriptFiles[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "javascript_files" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateSteps(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Steps); i++ {
+
+		if o.Steps[i] != nil {
+			if err := o.Steps[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "steps" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateThresholdMonitors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.ThresholdMonitors); i++ {
+
+		if o.ThresholdMonitors[i] != nil {
+			if err := o.ThresholdMonitors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createRealBrowserCheckOK" + "." + "threshold_monitors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBody) contextValidateViewport(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Viewport != nil {
+		if err := o.Viewport.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createRealBrowserCheckOK" + "." + "viewport")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBody) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0 A monitoring check
+swagger:model CreateRealBrowserCheckOKBodyAllOf0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0 struct {
+
+	// When the check was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	Frequency int64 `json:"frequency,omitempty"`
+
+	// The unique ID for the check
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// links
+	Links *CreateRealBrowserCheckOKBodyAllOf0AO0Links `json:"links,omitempty"`
+
+	// If notifications for this check are muted or not
+	// Example: false
+	Muted bool `json:"muted,omitempty"`
+
+	// The unique name for the check
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// If the check is paused or not
+	// Example: false
+	Paused bool `json:"paused,omitempty"`
+
+	// status
+	Status *CreateRealBrowserCheckOKBodyAllOf0AO0Status `json:"status,omitempty"`
+
+	// An array of tags applied to the check
+	Tags []*CreateRealBrowserCheckOKBodyAllOf0TagsItems0 `json:"tags"`
+
+	// The check type
+	// Required: true
+	// Enum: [http http_multi_step port real_browser benchmark content uptime monitoring api]
+	Type string `json:"type"`
+
+	// When the check was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
+	AutoRetry *bool `json:"auto_retry,omitempty"`
+
+	// blackout periods
+	BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+	// True if the check is not paused
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// http request headers
+	HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+	// The integrations to send metrics to
+	Integrations []*CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0 `json:"integrations"`
+
+	// The locations to run the check from
+	Locations []*CreateRealBrowserCheckOKBodyAllOf0LocationsItems0 `json:"locations"`
+
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Only allow notifications during these timeframes
+		NotificationWindows []interface{} `json:"notification_windows"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Min Items: 1
+		// Unique: true
+		NotifyWho []*CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
+
+	// Mark a run as a failure if the total response time
+	//                                    is above this threshold (in milliseconds)
+	// Maximum: 60000
+	// Minimum: 0
+	ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+	// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
+	RoundRobin bool `json:"round_robin,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckOKBodyAllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		Frequency int64 `json:"frequency,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Links *CreateRealBrowserCheckOKBodyAllOf0AO0Links `json:"links,omitempty"`
+
+		Muted bool `json:"muted,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		Paused bool `json:"paused,omitempty"`
+
+		Status *CreateRealBrowserCheckOKBodyAllOf0AO0Status `json:"status,omitempty"`
+
+		Tags []*CreateRealBrowserCheckOKBodyAllOf0TagsItems0 `json:"tags"`
+
+		Type string `json:"type"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CreatedAt = dataAO0.CreatedAt
+
+	o.Frequency = dataAO0.Frequency
+
+	o.ID = dataAO0.ID
+
+	o.Links = dataAO0.Links
+
+	o.Muted = dataAO0.Muted
+
+	o.Name = dataAO0.Name
+
+	o.Paused = dataAO0.Paused
+
+	o.Status = dataAO0.Status
+
+	o.Tags = dataAO0.Tags
+
+	o.Type = dataAO0.Type
+
+	o.UpdatedAt = dataAO0.UpdatedAt
+
+	// AO1
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0 `json:"integrations"`
+
+		Locations []*CreateRealBrowserCheckOKBodyAllOf0LocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.AutoRetry = dataAO1.AutoRetry
+
+	o.BlackoutPeriods = dataAO1.BlackoutPeriods
+
+	o.Enabled = dataAO1.Enabled
+
+	o.HTTPRequestHeaders = dataAO1.HTTPRequestHeaders
+
+	o.Integrations = dataAO1.Integrations
+
+	o.Locations = dataAO1.Locations
+
+	o.Notifications = dataAO1.Notifications
+
+	o.ResponseTimeMonitorMilliseconds = dataAO1.ResponseTimeMonitorMilliseconds
+
+	o.RoundRobin = dataAO1.RoundRobin
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckOKBodyAllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		Frequency int64 `json:"frequency,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Links *CreateRealBrowserCheckOKBodyAllOf0AO0Links `json:"links,omitempty"`
+
+		Muted bool `json:"muted,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		Paused bool `json:"paused,omitempty"`
+
+		Status *CreateRealBrowserCheckOKBodyAllOf0AO0Status `json:"status,omitempty"`
+
+		Tags []*CreateRealBrowserCheckOKBodyAllOf0TagsItems0 `json:"tags"`
+
+		Type string `json:"type"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+
+	dataAO0.CreatedAt = o.CreatedAt
+
+	dataAO0.Frequency = o.Frequency
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Links = o.Links
+
+	dataAO0.Muted = o.Muted
+
+	dataAO0.Name = o.Name
+
+	dataAO0.Paused = o.Paused
+
+	dataAO0.Status = o.Status
+
+	dataAO0.Tags = o.Tags
+
+	dataAO0.Type = o.Type
+
+	dataAO0.UpdatedAt = o.UpdatedAt
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0 `json:"integrations"`
+
+		Locations []*CreateRealBrowserCheckOKBodyAllOf0LocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
+	}
+
+	dataAO1.AutoRetry = o.AutoRetry
+
+	dataAO1.BlackoutPeriods = o.BlackoutPeriods
+
+	dataAO1.Enabled = o.Enabled
+
+	dataAO1.HTTPRequestHeaders = o.HTTPRequestHeaders
+
+	dataAO1.Integrations = o.Integrations
+
+	dataAO1.Locations = o.Locations
+
+	dataAO1.Notifications = o.Notifications
+
+	dataAO1.ResponseTimeMonitorMilliseconds = o.ResponseTimeMonitorMilliseconds
+
+	dataAO1.RoundRobin = o.RoundRobin
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check o k body all of0
+func (o *CreateRealBrowserCheckOKBodyAllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateIntegrations(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLocations(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifications(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResponseTimeMonitorMilliseconds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Status) { // not required
+		return nil
+	}
+
+	if o.Status != nil {
+		if err := o.Status.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateTags(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Tags); i++ {
+		if swag.IsZero(o.Tags[i]) { // not required
+			continue
+		}
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckOKBodyAllOf0TypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","api"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyAllOf0TypeTypePropEnum = append(createRealBrowserCheckOKBodyAllOf0TypeTypePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyAllOf0TypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateType(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := o.validateTypeEnum("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateIntegrations(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Integrations) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Integrations); i++ {
+		if swag.IsZero(o.Integrations[i]) { // not required
+			continue
+		}
+
+		if o.Integrations[i] != nil {
+			if err := o.Integrations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("integrations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateLocations(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Locations) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Locations); i++ {
+		if swag.IsZero(o.Locations[i]) { // not required
+			continue
+		}
+
+		if o.Locations[i] != nil {
+			if err := o.Locations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateNotifications(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Notifications) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+		if swag.IsZero(o.Notifications.Escalations[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	iNotifyWhoSize := int64(len(o.Notifications.NotifyWho))
+
+	if err := validate.MinItems("notifications"+"."+"notify_who", "body", iNotifyWhoSize, 1); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", o.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+		if swag.IsZero(o.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) validateResponseTimeMonitorMilliseconds(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ResponseTimeMonitorMilliseconds) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 0, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 60000, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body all of0 based on the context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateIntegrations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateLocations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Status != nil {
+		if err := o.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Tags); i++ {
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateIntegrations(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Integrations); i++ {
+
+		if o.Integrations[i] != nil {
+			if err := o.Integrations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("integrations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateLocations(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Locations); i++ {
+
+		if o.Locations[i] != nil {
+			if err := o.Locations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0AO0Links create real browser check o k body all of0 a o0 links
+swagger:model CreateRealBrowserCheckOKBodyAllOf0AO0Links
+*/
+type CreateRealBrowserCheckOKBodyAllOf0AO0Links struct {
+
+	// The URL for the last run of this check
+	// Example: https://monitoring.rigor.com/checks/1/runs/1
+	LastRun string `json:"last_run,omitempty"`
+
+	// The URL for the available metrics for this check
+	// Example: https://monitoring-api.rigor.com/v2/checks/1/metrics
+	Metrics string `json:"metrics,omitempty"`
+
+	// The URL for the check detail
+	// Example: https://monitoring-api.rigor.com/v2/checks/1
+	Self string `json:"self,omitempty"`
+
+	// The URL for the HTML view for this check
+	// Example: https://monitoring.rigor.com/checks/http/1
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 a o0 links
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 a o0 links based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Links) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0AO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0AO0Status create real browser check o k body all of0 a o0 status
+swagger:model CreateRealBrowserCheckOKBodyAllOf0AO0Status
+*/
+type CreateRealBrowserCheckOKBodyAllOf0AO0Status struct {
+
+	// True if the fail limit has been reached
+	// Example: false
+	HasFailure bool `json:"has_failure,omitempty"`
+
+	// True if the fail limit has been reached for at least one location
+	// Example: false
+	HasLocationFailure string `json:"has_location_failure,omitempty"`
+
+	// The timestamp of the last alert (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastAlertAt strfmt.DateTime `json:"last_alert_at,omitempty"`
+
+	// The response code from the last run
+	// Example: 200
+	LastCode int32 `json:"last_code,omitempty"`
+
+	// The timestamp of the last failed run (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastFailureAt strfmt.DateTime `json:"last_failure_at,omitempty"`
+
+	// The message from the last run
+	// Example: OK
+	LastMessage string `json:"last_message,omitempty"`
+
+	// The response time from the last run
+	// Example: 50
+	LastResponseTime string `json:"last_response_time,omitempty"`
+
+	// The timestamp of the last run (UTC)
+	// Example: 2021-05-25T17:49:05Z
+	// Format: date-time
+	LastRunAt strfmt.DateTime `json:"last_run_at,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 a o0 status
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLastAlertAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastFailureAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastRunAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) validateLastAlertAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastAlertAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_alert_at", "body", "date-time", o.LastAlertAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) validateLastFailureAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastFailureAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_failure_at", "body", "date-time", o.LastFailureAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) validateLastRunAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastRunAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_run_at", "body", "date-time", o.LastRunAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 a o0 status based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0AO0Status) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0AO0Status
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0 An additional notification to send if an alert is unacknowledged
+swagger:model CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 escalations items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+	if swag.IsZero(o.NotificationWindow) { // not required
+		return nil
+	}
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+	if swag.IsZero(o.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+		if swag.IsZero(o.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body all of0 escalations items0 based on the context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow create real browser check o k body all of0 escalations items0 notification window
+swagger:model CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow
+*/
+type CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 escalations items0 notification window
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 escalations items0 notification window based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0 Where to send escalations
+swagger:model CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 escalations items0 notify who items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body all of0 escalations items0 notify who items0 based on the context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links create real browser check o k body all of0 escalations items0 notify who items0 links
+swagger:model CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links
+*/
+type CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 escalations items0 notify who items0 links
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 escalations items0 notify who items0 links based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0EscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0 create real browser check o k body all of0 integrations items0
+// Example: {"id":1,"name":"Some Great Integration"}
+swagger:model CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0 struct {
+
+	// The unique ID for the integration
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the integration
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 integrations items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 integrations items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0IntegrationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0LocationsItems0 create real browser check o k body all of0 locations items0
+// Example: {"id":1,"name":"N. Virginia","region_code":"na-us-virginia","world_region":"NA"}
+swagger:model CreateRealBrowserCheckOKBodyAllOf0LocationsItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0LocationsItems0 struct {
+
+	// The unique ID for the location
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the location
+	Name string `json:"name,omitempty"`
+
+	// A readable code representing the location
+	RegionCode string `json:"region_code,omitempty"`
+
+	// The region the location is in
+	WorldRegion string `json:"world_region,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 locations items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0LocationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 locations items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0LocationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0LocationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0LocationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0LocationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0 Where to send notifications
+swagger:model CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CustomUserEmail = dataAO0.CustomUserEmail
+
+	o.ID = dataAO0.ID
+
+	o.Links = dataAO0.Links
+
+	o.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Call = dataAO1.Call
+
+	o.Email = dataAO1.Email
+
+	o.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomUserEmail = o.CustomUserEmail
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Links = o.Links
+
+	dataAO0.Type = o.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = o.Call
+
+	dataAO1.Email = o.Email
+
+	dataAO1.Sms = o.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check o k body all of0 notify who items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body all of0 notify who items0 based on the context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links create real browser check o k body all of0 notify who items0 a o0 links
+swagger:model CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links
+*/
+type CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 notify who items0 a o0 links
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 notify who items0 a o0 links based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0NotifyWhoItems0AO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyAllOf0TagsItems0 create real browser check o k body all of0 tags items0
+swagger:model CreateRealBrowserCheckOKBodyAllOf0TagsItems0
+*/
+type CreateRealBrowserCheckOKBodyAllOf0TagsItems0 struct {
+
+	// id
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// name
+	// Example: example tag
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this create real browser check o k body all of0 tags items0
+func (o *CreateRealBrowserCheckOKBodyAllOf0TagsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body all of0 tags items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyAllOf0TagsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0TagsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyAllOf0TagsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyAllOf0TagsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyCookiesItems0 create real browser check o k body cookies items0
+swagger:model CreateRealBrowserCheckOKBodyCookiesItems0
+*/
+type CreateRealBrowserCheckOKBodyCookiesItems0 struct {
+
+	// The domain of the requests to add the cookie to. When no domain is provided,
+	//               the domain and all subdomains of the starting URL are used.
+	// Example: .example.com
+	Domain string `json:"domain,omitempty"`
+
+	// The name of the cookie
+	// Example: cookie-name
+	// Required: true
+	Key *string `json:"key"`
+
+	// The path of the requests to add the cookie to. When no path is provided,
+	//               the root path ("/") is used.
+	Path *string `json:"path,omitempty"`
+
+	// The value of the cookie
+	// Example: cookie-value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// Validate validates this create real browser check o k body cookies items0
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) validateKey(formats strfmt.Registry) error {
+
+	if err := validate.Required("key", "body", o.Key); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("value", "body", o.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body cookies items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCookiesItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyCookiesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser create real browser check o k body create real browser check o k body a o1 browser
+swagger:model CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser
+*/
+type CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser struct {
+
+	// A unique code for this browser type
+	Code *string `json:"code,omitempty"`
+
+	// A short description of this browser type
+	Label *string `json:"label,omitempty"`
+}
+
+// Validate validates this create real browser check o k body create real browser check o k body a o1 browser
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body create real browser check o k body a o1 browser based on context it is used
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Browser
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection create real browser check o k body create real browser check o k body a o1 connection
+swagger:model CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection
+*/
+type CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection struct {
+
+	// The upper limit imposed on all incoming network traffic in Kbps
+	DownloadBandwidth *int64 `json:"download_bandwidth,omitempty"`
+
+	// The latency that is added to each request in milliseconds
+	Latency *int64 `json:"latency,omitempty"`
+
+	// The percentage of all incoming or outgoing packets that are intentionally dropped
+	PacketLoss float64 `json:"packet_loss,omitempty"`
+
+	// The upper limit imposed on all outgoing network traffic in Kbps
+	UploadBandwidth *int64 `json:"upload_bandwidth,omitempty"`
+}
+
+// Validate validates this create real browser check o k body create real browser check o k body a o1 connection
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body create real browser check o k body a o1 connection based on context it is used
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Connection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport create real browser check o k body create real browser check o k body a o1 viewport
+swagger:model CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport
+*/
+type CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport struct {
+
+	// The height of the viewport window, in pixels
+	Height *int32 `json:"height,omitempty"`
+
+	// The width of the viewport window, in pixels
+	Width *int32 `json:"width,omitempty"`
+}
+
+// Validate validates this create real browser check o k body create real browser check o k body a o1 viewport
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body create real browser check o k body a o1 viewport based on context it is used
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyCreateRealBrowserCheckOKBodyAO1Viewport
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyExcludedFilesItems0 create real browser check o k body excluded files items0
+swagger:model CreateRealBrowserCheckOKBodyExcludedFilesItems0
+*/
+type CreateRealBrowserCheckOKBodyExcludedFilesItems0 struct {
+
+	// The type of exclusion.
+	//               "preset": exclude a preset URL (default).
+	//               "custom": exclude a custom URL.
+	//               "all_except": whitelist a custom URL. Whitelisted URLs override all others.
+	// Enum: [preset custom all_except]
+	ExclusionType *string `json:"exclusion_type,omitempty"`
+
+	// The name of the excluded preset URL. Null if the `exclusion_type` is not "preset".
+	// Enum: [chartbeat clicktale comscore coremetrics crazy-egg eloqua gomez google-analytics hubspot liveperson mixpanel omniture optimizely pardot quantcast spectate tealium white-ops]
+	PresetName string `json:"preset_name,omitempty"`
+
+	// When the excluded file was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// When the excluded file was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+	// A regular expression to match against all URLs visited during the check run
+	URL string `json:"url,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.ExclusionType = dataAO0.ExclusionType
+
+	o.PresetName = dataAO0.PresetName
+
+	// AO1
+	var dataAO1 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+		URL string `json:"url,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.CreatedAt = dataAO1.CreatedAt
+
+	o.UpdatedAt = dataAO1.UpdatedAt
+
+	o.URL = dataAO1.URL
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckOKBodyExcludedFilesItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
+	}
+
+	dataAO0.ExclusionType = o.ExclusionType
+
+	dataAO0.PresetName = o.PresetName
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+		URL string `json:"url,omitempty"`
+	}
+
+	dataAO1.CreatedAt = o.CreatedAt
+
+	dataAO1.UpdatedAt = o.UpdatedAt
+
+	dataAO1.URL = o.URL
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check o k body excluded files items0
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateExclusionType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePresetName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createRealBrowserCheckOKBodyExcludedFilesItems0TypeExclusionTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["preset","custom","all_except"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyExcludedFilesItems0TypeExclusionTypePropEnum = append(createRealBrowserCheckOKBodyExcludedFilesItems0TypeExclusionTypePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validateExclusionTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyExcludedFilesItems0TypeExclusionTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validateExclusionType(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ExclusionType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateExclusionTypeEnum("exclusion_type", "body", *o.ExclusionType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckOKBodyExcludedFilesItems0TypePresetNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["chartbeat","clicktale","comscore","coremetrics","crazy-egg","eloqua","gomez","google-analytics","hubspot","liveperson","mixpanel","omniture","optimizely","pardot","quantcast","spectate","tealium","white-ops"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyExcludedFilesItems0TypePresetNamePropEnum = append(createRealBrowserCheckOKBodyExcludedFilesItems0TypePresetNamePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validatePresetNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyExcludedFilesItems0TypePresetNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validatePresetName(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.PresetName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validatePresetNameEnum("preset_name", "body", o.PresetName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body excluded files items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyExcludedFilesItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyExcludedFilesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyJavascriptFilesItems0 A custom JavaScript file containing code that can be referenced when a check runs
+swagger:model CreateRealBrowserCheckOKBodyJavascriptFilesItems0
+*/
+type CreateRealBrowserCheckOKBodyJavascriptFilesItems0 struct {
+
+	// When the JavaScript file was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// The unique ID for the JavaScript file
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links `json:"links,omitempty"`
+
+	// The name of the JavaScript file
+	// Example: My custom JS file
+	Name string `json:"name,omitempty"`
+
+	// When the JavaScript file was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+}
+
+// Validate validates this create real browser check o k body javascript files items0
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check o k body javascript files items0 based on the context it is used
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyJavascriptFilesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links create real browser check o k body javascript files items0 links
+swagger:model CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links
+*/
+type CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links struct {
+
+	// A link to the JavaScript file
+	// Example: https://javascript-files.s3.amazonaws.com/account-1/my_custom_script.js
+	Self string `json:"self,omitempty"`
+}
+
+// Validate validates this create real browser check o k body javascript files items0 links
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body javascript files items0 links based on context it is used
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyJavascriptFilesItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyStepsItems0 create real browser check o k body steps items0
+swagger:model CreateRealBrowserCheckOKBodyStepsItems0
+*/
+type CreateRealBrowserCheckOKBodyStepsItems0 struct {
+
+	// When the step was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// How to select the value
+	// Example: id
+	// Enum: [id name xpath css link jspath]
+	How string `json:"how,omitempty"`
+
+	// The action to take
+	// Example: enter_value
+	// Enum: [accept_alert clear_element click_element dismiss_alert enter_value enter_password_value go_to_url run_javascript select_option store_variable_from_element store_variable_from_javascript switch_to_iframe switch_to_main wait_for_text_present wait_for_text_not_present wait_for_element_present wait_for_element_not_present wait_for_element_visible wait_for_element_not_visible]
+	ItemMethod string `json:"item_method,omitempty"`
+
+	// A short summary of what this step does
+	// Example: Fill in email
+	Name string `json:"name,omitempty"`
+
+	// The ordered position of the step (starting with 0)
+	// Example: 0
+	// Minimum: 0
+	Position *int32 `json:"position,omitempty"`
+
+	// When the step was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+	// The value to input
+	// Example: my_email@example.com
+	Value string `json:"value,omitempty"`
+
+	// The variable name to use when saving the return value from a JavaScript step
+	VariableName string `json:"variable_name,omitempty"`
+
+	// What to select
+	// Example: email-input
+	What string `json:"what,omitempty"`
+}
+
+// Validate validates this create real browser check o k body steps items0
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateHow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateItemMethod(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePosition(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckOKBodyStepsItems0TypeHowPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["id","name","xpath","css","link","jspath"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyStepsItems0TypeHowPropEnum = append(createRealBrowserCheckOKBodyStepsItems0TypeHowPropEnum, v)
+	}
+}
+
+const (
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowID captures enum value "id"
+	CreateRealBrowserCheckOKBodyStepsItems0HowID string = "id"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowName captures enum value "name"
+	CreateRealBrowserCheckOKBodyStepsItems0HowName string = "name"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowXpath captures enum value "xpath"
+	CreateRealBrowserCheckOKBodyStepsItems0HowXpath string = "xpath"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowCSS captures enum value "css"
+	CreateRealBrowserCheckOKBodyStepsItems0HowCSS string = "css"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowLink captures enum value "link"
+	CreateRealBrowserCheckOKBodyStepsItems0HowLink string = "link"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0HowJspath captures enum value "jspath"
+	CreateRealBrowserCheckOKBodyStepsItems0HowJspath string = "jspath"
+)
+
+// prop value enum
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateHowEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyStepsItems0TypeHowPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateHow(formats strfmt.Registry) error {
+	if swag.IsZero(o.How) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateHowEnum("how", "body", o.How); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckOKBodyStepsItems0TypeItemMethodPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["accept_alert","clear_element","click_element","dismiss_alert","enter_value","enter_password_value","go_to_url","run_javascript","select_option","store_variable_from_element","store_variable_from_javascript","switch_to_iframe","switch_to_main","wait_for_text_present","wait_for_text_not_present","wait_for_element_present","wait_for_element_not_present","wait_for_element_visible","wait_for_element_not_visible"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyStepsItems0TypeItemMethodPropEnum = append(createRealBrowserCheckOKBodyStepsItems0TypeItemMethodPropEnum, v)
+	}
+}
+
+const (
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodAcceptAlert captures enum value "accept_alert"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodAcceptAlert string = "accept_alert"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodClearElement captures enum value "clear_element"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodClearElement string = "clear_element"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodClickElement captures enum value "click_element"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodClickElement string = "click_element"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodDismissAlert captures enum value "dismiss_alert"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodDismissAlert string = "dismiss_alert"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodEnterValue captures enum value "enter_value"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodEnterValue string = "enter_value"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodEnterPasswordValue captures enum value "enter_password_value"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodEnterPasswordValue string = "enter_password_value"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodGoToURL captures enum value "go_to_url"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodGoToURL string = "go_to_url"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodRunJavascript captures enum value "run_javascript"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodRunJavascript string = "run_javascript"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSelectOption captures enum value "select_option"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSelectOption string = "select_option"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodStoreVariableFromElement captures enum value "store_variable_from_element"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodStoreVariableFromElement string = "store_variable_from_element"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodStoreVariableFromJavascript captures enum value "store_variable_from_javascript"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodStoreVariableFromJavascript string = "store_variable_from_javascript"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSwitchToIframe captures enum value "switch_to_iframe"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSwitchToIframe string = "switch_to_iframe"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSwitchToMain captures enum value "switch_to_main"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodSwitchToMain string = "switch_to_main"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForTextPresent captures enum value "wait_for_text_present"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForTextPresent string = "wait_for_text_present"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForTextNotPresent captures enum value "wait_for_text_not_present"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForTextNotPresent string = "wait_for_text_not_present"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementPresent captures enum value "wait_for_element_present"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementPresent string = "wait_for_element_present"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementNotPresent captures enum value "wait_for_element_not_present"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementNotPresent string = "wait_for_element_not_present"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementVisible captures enum value "wait_for_element_visible"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementVisible string = "wait_for_element_visible"
+
+	// CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementNotVisible captures enum value "wait_for_element_not_visible"
+	CreateRealBrowserCheckOKBodyStepsItems0ItemMethodWaitForElementNotVisible string = "wait_for_element_not_visible"
+)
+
+// prop value enum
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateItemMethodEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyStepsItems0TypeItemMethodPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateItemMethod(formats strfmt.Registry) error {
+	if swag.IsZero(o.ItemMethod) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateItemMethodEnum("item_method", "body", o.ItemMethod); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validatePosition(formats strfmt.Registry) error {
+	if swag.IsZero(o.Position) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("position", "body", int64(*o.Position), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body steps items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyStepsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyStepsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckOKBodyThresholdMonitorsItems0 create real browser check o k body threshold monitors items0
+swagger:model CreateRealBrowserCheckOKBodyThresholdMonitorsItems0
+*/
+type CreateRealBrowserCheckOKBodyThresholdMonitorsItems0 struct {
+
+	// How to compare the result to the threshold value
+	// Example: less_than
+	// Enum: [less_than equals greater_than]
+	ComparisonType string `json:"comparison_type,omitempty"`
+
+	// Trigger threshold on pages matching this string
+	//               e.g."*.rigor.com" (this would not match the top-level domain "rigor.com"), "rigor.com/app.js"
+	// Example: rigor.com/example
+	Matcher string `json:"matcher,omitempty"`
+
+	// The name of the metric to monitor
+	// Example: dom_load_time
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	MetricName string `json:"metric_name,omitempty"`
+
+	// The threshold value needed to trigger a failure.
+	//               Format should be in milliseconds, bytes, or count depending on `metric_name`.
+	// Example: 3000
+	Value int64 `json:"value,omitempty"`
+
+	// When the Threshold Monitor was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// When the Threshold Monitor was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		ComparisonType string `json:"comparison_type,omitempty"`
+
+		Matcher string `json:"matcher,omitempty"`
+
+		MetricName string `json:"metric_name,omitempty"`
+
+		Value int64 `json:"value,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.ComparisonType = dataAO0.ComparisonType
+
+	o.Matcher = dataAO0.Matcher
+
+	o.MetricName = dataAO0.MetricName
+
+	o.Value = dataAO0.Value
+
+	// AO1
+	var dataAO1 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.CreatedAt = dataAO1.CreatedAt
+
+	o.UpdatedAt = dataAO1.UpdatedAt
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		ComparisonType string `json:"comparison_type,omitempty"`
+
+		Matcher string `json:"matcher,omitempty"`
+
+		MetricName string `json:"metric_name,omitempty"`
+
+		Value int64 `json:"value,omitempty"`
+	}
+
+	dataAO0.ComparisonType = o.ComparisonType
+
+	dataAO0.Matcher = o.Matcher
+
+	dataAO0.MetricName = o.MetricName
+
+	dataAO0.Value = o.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+
+	dataAO1.CreatedAt = o.CreatedAt
+
+	dataAO1.UpdatedAt = o.UpdatedAt
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check o k body threshold monitors items0
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateComparisonType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateMetricName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeComparisonTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["less_than","equals","greater_than"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeComparisonTypePropEnum = append(createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeComparisonTypePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateComparisonTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeComparisonTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateComparisonType(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ComparisonType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateComparisonTypeEnum("comparison_type", "body", o.ComparisonType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeMetricNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["first_byte_time_ms","dom_interactive_time_ms","dom_load_time_ms","dom_complete_time_ms","start_render_ms","onload_time_ms","visually_complete_ms","fully_loaded_time_ms","first_paint_time_ms","first_contentful_paint_time_ms","first_meaningful_paint_time_ms","first_interactive_time_ms","first_cpu_idle_time_ms","first_request_dns_time_ms","first_request_connect_time_ms","first_request_ssl_time_ms","first_request_send_time_ms","first_request_wait_time_ms","first_request_receive_time_ms","speed_index","requests","content_bytes","html_files","html_bytes","image_files","image_bytes","javascript_files","javascript_bytes","css_files","css_bytes","video_files","video_bytes","font_files","font_bytes","other_files","other_bytes","client_errors","connection_errors","server_errors","errors","run_count","success_count","failure_count","lighthouse_performance_score","availability","downtime","total_blocking_time_ms","largest_contentful_paint_time_ms","cumulative_layout_shift"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeMetricNamePropEnum = append(createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeMetricNamePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateMetricNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckOKBodyThresholdMonitorsItems0TypeMetricNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateMetricName(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.MetricName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateMetricNameEnum("metric_name", "body", o.MetricName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check o k body threshold monitors items0 based on context it is used
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckOKBodyThresholdMonitorsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckOKBodyThresholdMonitorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0 A monitoring check
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0 struct {
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	// Required: true
+	Frequency *int64 `json:"frequency"`
+
+	// The unique name for the check
+	// Required: true
+	Name *string `json:"name"`
+
+	// An array of tag names to apply to the check
+	Tags []string `json:"tags"`
+
+	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
+	AutoRetry *bool `json:"auto_retry,omitempty"`
+
+	// True if the check is not paused
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// http request headers
+	HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+	// The integrations to send metrics to
+	Integrations []int32 `json:"integrations"`
+
+	// The locations to run the check from
+	Locations []int32 `json:"locations"`
+
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Unique: true
+		NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
+
+	// Mark a run as a failure if the total response time
+	//                                    is above this threshold (in milliseconds)
+	// Maximum: 60000
+	// Minimum: 0
+	ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+	// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
+	RoundRobin *bool `json:"round_robin,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.Frequency = dataAO0.Frequency
+
+	o.Name = dataAO0.Name
+
+	o.Tags = dataAO0.Tags
+
+	// AO1
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []int32 `json:"integrations"`
+
+		Locations []int32 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin *bool `json:"round_robin,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.AutoRetry = dataAO1.AutoRetry
+
+	o.Enabled = dataAO1.Enabled
+
+	o.HTTPRequestHeaders = dataAO1.HTTPRequestHeaders
+
+	o.Integrations = dataAO1.Integrations
+
+	o.Locations = dataAO1.Locations
+
+	o.Notifications = dataAO1.Notifications
+
+	o.ResponseTimeMonitorMilliseconds = dataAO1.ResponseTimeMonitorMilliseconds
+
+	o.RoundRobin = dataAO1.RoundRobin
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckParamsBodyAllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
+	}
+
+	dataAO0.Frequency = o.Frequency
+
+	dataAO0.Name = o.Name
+
+	dataAO0.Tags = o.Tags
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []int32 `json:"integrations"`
+
+		Locations []int32 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin *bool `json:"round_robin,omitempty"`
+	}
+
+	dataAO1.AutoRetry = o.AutoRetry
+
+	dataAO1.Enabled = o.Enabled
+
+	dataAO1.HTTPRequestHeaders = o.HTTPRequestHeaders
+
+	dataAO1.Integrations = o.Integrations
+
+	dataAO1.Locations = o.Locations
+
+	dataAO1.Notifications = o.Notifications
+
+	dataAO1.ResponseTimeMonitorMilliseconds = o.ResponseTimeMonitorMilliseconds
+
+	dataAO1.RoundRobin = o.RoundRobin
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check params body all of0
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrequency(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifications(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResponseTimeMonitorMilliseconds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) validateFrequency(formats strfmt.Registry) error {
+
+	if err := validate.Required("frequency", "body", o.Frequency); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) validateNotifications(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Notifications) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+		if swag.IsZero(o.Notifications.Escalations[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", o.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+		if swag.IsZero(o.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) validateResponseTimeMonitorMilliseconds(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ResponseTimeMonitorMilliseconds) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 0, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 60000, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check params body all of0 based on the context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotifications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0 An additional notification to send if an alert is unacknowledged
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.AfterMinutes = dataAO0.AfterMinutes
+
+	o.Call = dataAO0.Call
+
+	o.Email = dataAO0.Email
+
+	o.IsRepeat = dataAO0.IsRepeat
+
+	o.NotificationWindow = dataAO0.NotificationWindow
+
+	o.NotifyWho = dataAO0.NotifyWho
+
+	o.Sms = dataAO0.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO0.AfterMinutes = o.AfterMinutes
+
+	dataAO0.Call = o.Call
+
+	dataAO0.Email = o.Email
+
+	dataAO0.IsRepeat = o.IsRepeat
+
+	dataAO0.NotificationWindow = o.NotificationWindow
+
+	dataAO0.NotifyWho = o.NotifyWho
+
+	dataAO0.Sms = o.Sms
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check params body all of0 escalations items0
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.NotificationWindow) { // not required
+		return nil
+	}
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+		if swag.IsZero(o.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check params body all of0 escalations items0 based on the context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow create real browser check params body all of0 escalations items0 a o0 notification window
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this create real browser check params body all of0 escalations items0 a o0 notification window
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body all of0 escalations items0 a o0 notification window based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0AO0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0 Where to send escalations
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this create real browser check params body all of0 escalations items0 notify who items0
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create real browser check params body all of0 escalations items0 notify who items0 based on the context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links create real browser check params body all of0 escalations items0 notify who items0 links
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create real browser check params body all of0 escalations items0 notify who items0 links
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body all of0 escalations items0 notify who items0 links based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0EscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0 Where to send notifications
+swagger:model CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0
+*/
+type CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0 struct {
+
+	// A custom email to notify. Other fields can be left blank when setting this.
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CustomEmail = dataAO0.CustomEmail
+
+	o.ID = dataAO0.ID
+
+	o.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Call = dataAO1.Call
+
+	o.Email = dataAO1.Email
+
+	o.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomEmail = o.CustomEmail
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Type = o.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = o.Call
+
+	dataAO1.Email = o.Email
+
+	dataAO1.Sms = o.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check params body all of0 notify who items0
+func (o *CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body all of0 notify who items0 based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyAllOf0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyCookiesItems0 An array of cookies to add to the check. Set to an empty array (`[]`) to clear.
+swagger:model CreateRealBrowserCheckParamsBodyCookiesItems0
+*/
+type CreateRealBrowserCheckParamsBodyCookiesItems0 struct {
+
+	// The domain of the requests to add the cookie to. When no domain is provided,
+	//               the domain and all subdomains of the starting URL are used.
+	// Example: .example.com
+	Domain string `json:"domain,omitempty"`
+
+	// The name of the cookie
+	// Example: cookie-name
+	// Required: true
+	Key *string `json:"key"`
+
+	// The path of the requests to add the cookie to. When no path is provided,
+	//               the root path ("/") is used.
+	Path *string `json:"path,omitempty"`
+
+	// The value of the cookie
+	// Example: cookie-value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Domain string `json:"domain,omitempty"`
+
+		Key *string `json:"key"`
+
+		Path *string `json:"path,omitempty"`
+
+		Value *string `json:"value"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.Domain = dataAO0.Domain
+
+	o.Key = dataAO0.Key
+
+	o.Path = dataAO0.Path
+
+	o.Value = dataAO0.Value
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckParamsBodyCookiesItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataAO0 struct {
+		Domain string `json:"domain,omitempty"`
+
+		Key *string `json:"key"`
+
+		Path *string `json:"path,omitempty"`
+
+		Value *string `json:"value"`
+	}
+
+	dataAO0.Domain = o.Domain
+
+	dataAO0.Key = o.Key
+
+	dataAO0.Path = o.Path
+
+	dataAO0.Value = o.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check params body cookies items0
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) validateKey(formats strfmt.Registry) error {
+
+	if err := validate.Required("key", "body", o.Key); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("value", "body", o.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body cookies items0 based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCookiesItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyCookiesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser create real browser check params body create real browser check params body a o1 browser
+swagger:model CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser
+*/
+type CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser struct {
+
+	// What type of browser to use for this check. Available types are firefox and chrome.
+	Type *string `json:"type,omitempty"`
+}
+
+// Validate validates this create real browser check params body create real browser check params body a o1 browser
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body create real browser check params body a o1 browser based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Browser
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection create real browser check params body create real browser check params body a o1 connection
+swagger:model CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection
+*/
+type CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection struct {
+
+	// The upper limit imposed on all incoming network traffic in Kbps
+	DownloadBandwidth *int64 `json:"download_bandwidth,omitempty"`
+
+	// The latency that is added to each request in milliseconds
+	Latency *int64 `json:"latency,omitempty"`
+
+	// The percentage of all incoming or outgoing packets that are intentionally dropped
+	PacketLoss float64 `json:"packet_loss,omitempty"`
+
+	// The upper limit imposed on all outgoing network traffic in Kbps
+	UploadBandwidth *int64 `json:"upload_bandwidth,omitempty"`
+}
+
+// Validate validates this create real browser check params body create real browser check params body a o1 connection
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body create real browser check params body a o1 connection based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Connection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport create real browser check params body create real browser check params body a o1 viewport
+swagger:model CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport
+*/
+type CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport struct {
+
+	// The height of the viewport window, in pixels
+	Height *int32 `json:"height,omitempty"`
+
+	// The width of the viewport window, in pixels
+	Width *int32 `json:"width,omitempty"`
+}
+
+// Validate validates this create real browser check params body create real browser check params body a o1 viewport
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body create real browser check params body a o1 viewport based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyCreateRealBrowserCheckParamsBodyAO1Viewport
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyExcludedFilesItems0 create real browser check params body excluded files items0
+swagger:model CreateRealBrowserCheckParamsBodyExcludedFilesItems0
+*/
+type CreateRealBrowserCheckParamsBodyExcludedFilesItems0 struct {
+
+	// The type of exclusion.
+	//               "preset": exclude a preset URL (default).
+	//               "custom": exclude a custom URL.
+	//               "all_except": whitelist a custom URL. Whitelisted URLs override all others.
+	// Enum: [preset custom all_except]
+	ExclusionType *string `json:"exclusion_type,omitempty"`
+
+	// The name of the excluded preset URL. Null if the `exclusion_type` is not "preset".
+	// Enum: [chartbeat clicktale comscore coremetrics crazy-egg eloqua gomez google-analytics hubspot liveperson mixpanel omniture optimizely pardot quantcast spectate tealium white-ops]
+	PresetName string `json:"preset_name,omitempty"`
+
+	// A regular expression to match against all URLs visited during the check run
+	// Example: static\\.chartbeat\\.com
+	Pattern string `json:"pattern,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.ExclusionType = dataAO0.ExclusionType
+
+	o.PresetName = dataAO0.PresetName
+
+	// AO1
+	var dataAO1 struct {
+		Pattern string `json:"pattern,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Pattern = dataAO1.Pattern
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateRealBrowserCheckParamsBodyExcludedFilesItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		ExclusionType *string `json:"exclusion_type,omitempty"`
+
+		PresetName string `json:"preset_name,omitempty"`
+	}
+
+	dataAO0.ExclusionType = o.ExclusionType
+
+	dataAO0.PresetName = o.PresetName
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Pattern string `json:"pattern,omitempty"`
+	}
+
+	dataAO1.Pattern = o.Pattern
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create real browser check params body excluded files items0
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateExclusionType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePresetName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createRealBrowserCheckParamsBodyExcludedFilesItems0TypeExclusionTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["preset","custom","all_except"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckParamsBodyExcludedFilesItems0TypeExclusionTypePropEnum = append(createRealBrowserCheckParamsBodyExcludedFilesItems0TypeExclusionTypePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) validateExclusionTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckParamsBodyExcludedFilesItems0TypeExclusionTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) validateExclusionType(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ExclusionType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateExclusionTypeEnum("exclusion_type", "body", *o.ExclusionType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckParamsBodyExcludedFilesItems0TypePresetNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["chartbeat","clicktale","comscore","coremetrics","crazy-egg","eloqua","gomez","google-analytics","hubspot","liveperson","mixpanel","omniture","optimizely","pardot","quantcast","spectate","tealium","white-ops"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckParamsBodyExcludedFilesItems0TypePresetNamePropEnum = append(createRealBrowserCheckParamsBodyExcludedFilesItems0TypePresetNamePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) validatePresetNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckParamsBodyExcludedFilesItems0TypePresetNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) validatePresetName(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.PresetName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validatePresetNameEnum("preset_name", "body", o.PresetName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body excluded files items0 based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyExcludedFilesItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyExcludedFilesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0 create real browser check params body threshold monitors items0
+swagger:model CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0
+*/
+type CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0 struct {
+
+	// How to compare the result to the threshold value
+	// Example: less_than
+	// Enum: [less_than equals greater_than]
+	ComparisonType string `json:"comparison_type,omitempty"`
+
+	// Trigger threshold on pages matching this string
+	//               e.g."*.rigor.com" (this would not match the top-level domain "rigor.com"), "rigor.com/app.js"
+	// Example: rigor.com/example
+	Matcher string `json:"matcher,omitempty"`
+
+	// The name of the metric to monitor
+	// Example: dom_load_time
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	MetricName string `json:"metric_name,omitempty"`
+
+	// The threshold value needed to trigger a failure.
+	//               Format should be in milliseconds, bytes, or count depending on `metric_name`.
+	// Example: 3000
+	Value int64 `json:"value,omitempty"`
+}
+
+// Validate validates this create real browser check params body threshold monitors items0
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateComparisonType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateMetricName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeComparisonTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["less_than","equals","greater_than"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeComparisonTypePropEnum = append(createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeComparisonTypePropEnum, v)
+	}
+}
+
+const (
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeLessThan captures enum value "less_than"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeLessThan string = "less_than"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeEquals captures enum value "equals"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeEquals string = "equals"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeGreaterThan captures enum value "greater_than"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0ComparisonTypeGreaterThan string = "greater_than"
+)
+
+// prop value enum
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) validateComparisonTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeComparisonTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) validateComparisonType(formats strfmt.Registry) error {
+	if swag.IsZero(o.ComparisonType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateComparisonTypeEnum("comparison_type", "body", o.ComparisonType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeMetricNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["first_byte_time_ms","dom_interactive_time_ms","dom_load_time_ms","dom_complete_time_ms","start_render_ms","onload_time_ms","visually_complete_ms","fully_loaded_time_ms","first_paint_time_ms","first_contentful_paint_time_ms","first_meaningful_paint_time_ms","first_interactive_time_ms","first_cpu_idle_time_ms","first_request_dns_time_ms","first_request_connect_time_ms","first_request_ssl_time_ms","first_request_send_time_ms","first_request_wait_time_ms","first_request_receive_time_ms","speed_index","requests","content_bytes","html_files","html_bytes","image_files","image_bytes","javascript_files","javascript_bytes","css_files","css_bytes","video_files","video_bytes","font_files","font_bytes","other_files","other_bytes","client_errors","connection_errors","server_errors","errors","run_count","success_count","failure_count","lighthouse_performance_score","availability","downtime","total_blocking_time_ms","largest_contentful_paint_time_ms","cumulative_layout_shift"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeMetricNamePropEnum = append(createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeMetricNamePropEnum, v)
+	}
+}
+
+const (
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstByteTimeMs captures enum value "first_byte_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstByteTimeMs string = "first_byte_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomInteractiveTimeMs captures enum value "dom_interactive_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomInteractiveTimeMs string = "dom_interactive_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomLoadTimeMs captures enum value "dom_load_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomLoadTimeMs string = "dom_load_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomCompleteTimeMs captures enum value "dom_complete_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDomCompleteTimeMs string = "dom_complete_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameStartRenderMs captures enum value "start_render_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameStartRenderMs string = "start_render_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOnloadTimeMs captures enum value "onload_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOnloadTimeMs string = "onload_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVisuallyCompleteMs captures enum value "visually_complete_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVisuallyCompleteMs string = "visually_complete_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFullyLoadedTimeMs captures enum value "fully_loaded_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFullyLoadedTimeMs string = "fully_loaded_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstPaintTimeMs captures enum value "first_paint_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstPaintTimeMs string = "first_paint_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstContentfulPaintTimeMs captures enum value "first_contentful_paint_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstContentfulPaintTimeMs string = "first_contentful_paint_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstMeaningfulPaintTimeMs captures enum value "first_meaningful_paint_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstMeaningfulPaintTimeMs string = "first_meaningful_paint_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstInteractiveTimeMs captures enum value "first_interactive_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstInteractiveTimeMs string = "first_interactive_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstCPUIdleTimeMs captures enum value "first_cpu_idle_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstCPUIdleTimeMs string = "first_cpu_idle_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestDNSTimeMs captures enum value "first_request_dns_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestDNSTimeMs string = "first_request_dns_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestConnectTimeMs captures enum value "first_request_connect_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestConnectTimeMs string = "first_request_connect_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestSslTimeMs captures enum value "first_request_ssl_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestSslTimeMs string = "first_request_ssl_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestSendTimeMs captures enum value "first_request_send_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestSendTimeMs string = "first_request_send_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestWaitTimeMs captures enum value "first_request_wait_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestWaitTimeMs string = "first_request_wait_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestReceiveTimeMs captures enum value "first_request_receive_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFirstRequestReceiveTimeMs string = "first_request_receive_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameSpeedIndex captures enum value "speed_index"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameSpeedIndex string = "speed_index"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameRequests captures enum value "requests"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameRequests string = "requests"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameContentBytes captures enum value "content_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameContentBytes string = "content_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameHTMLFiles captures enum value "html_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameHTMLFiles string = "html_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameHTMLBytes captures enum value "html_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameHTMLBytes string = "html_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameImageFiles captures enum value "image_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameImageFiles string = "image_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameImageBytes captures enum value "image_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameImageBytes string = "image_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameJavascriptFiles captures enum value "javascript_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameJavascriptFiles string = "javascript_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameJavascriptBytes captures enum value "javascript_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameJavascriptBytes string = "javascript_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCSSFiles captures enum value "css_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCSSFiles string = "css_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCSSBytes captures enum value "css_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCSSBytes string = "css_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVideoFiles captures enum value "video_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVideoFiles string = "video_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVideoBytes captures enum value "video_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameVideoBytes string = "video_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFontFiles captures enum value "font_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFontFiles string = "font_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFontBytes captures enum value "font_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFontBytes string = "font_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOtherFiles captures enum value "other_files"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOtherFiles string = "other_files"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOtherBytes captures enum value "other_bytes"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameOtherBytes string = "other_bytes"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameClientErrors captures enum value "client_errors"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameClientErrors string = "client_errors"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameConnectionErrors captures enum value "connection_errors"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameConnectionErrors string = "connection_errors"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameServerErrors captures enum value "server_errors"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameServerErrors string = "server_errors"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameErrors captures enum value "errors"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameErrors string = "errors"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameRunCount captures enum value "run_count"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameRunCount string = "run_count"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameSuccessCount captures enum value "success_count"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameSuccessCount string = "success_count"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFailureCount captures enum value "failure_count"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameFailureCount string = "failure_count"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameLighthousePerformanceScore captures enum value "lighthouse_performance_score"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameLighthousePerformanceScore string = "lighthouse_performance_score"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameAvailability captures enum value "availability"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameAvailability string = "availability"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDowntime captures enum value "downtime"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameDowntime string = "downtime"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameTotalBlockingTimeMs captures enum value "total_blocking_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameTotalBlockingTimeMs string = "total_blocking_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameLargestContentfulPaintTimeMs captures enum value "largest_contentful_paint_time_ms"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameLargestContentfulPaintTimeMs string = "largest_contentful_paint_time_ms"
+
+	// CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCumulativeLayoutShift captures enum value "cumulative_layout_shift"
+	CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0MetricNameCumulativeLayoutShift string = "cumulative_layout_shift"
+)
+
+// prop value enum
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) validateMetricNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRealBrowserCheckParamsBodyThresholdMonitorsItems0TypeMetricNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) validateMetricName(formats strfmt.Registry) error {
+	if swag.IsZero(o.MetricName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateMetricNameEnum("metric_name", "body", o.MetricName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create real browser check params body threshold monitors items0 based on context it is used
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateRealBrowserCheckParamsBodyThresholdMonitorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

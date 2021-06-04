@@ -24,10 +24,10 @@ type SeleniumSideScript struct {
 	Name string `json:"name,omitempty"`
 
 	// suites
-	Suites []*SeleniumSideSuite `json:"suites"`
+	Suites []*SeleniumSideScriptSuitesItems0 `json:"suites"`
 
 	// tests
-	Tests []*SeleniumSideTest `json:"tests"`
+	Tests []*SeleniumSideScriptTestsItems0 `json:"tests"`
 
 	// url
 	// Example: https://example.com
@@ -172,6 +172,205 @@ func (m *SeleniumSideScript) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *SeleniumSideScript) UnmarshalBinary(b []byte) error {
 	var res SeleniumSideScript
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SeleniumSideScriptSuitesItems0 selenium side script suites items0
+//
+// swagger:model SeleniumSideScriptSuitesItems0
+type SeleniumSideScriptSuitesItems0 struct {
+
+	// name
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// An array of test IDs
+	Tests []string `json:"tests"`
+}
+
+// Validate validates this selenium side script suites items0
+func (m *SeleniumSideScriptSuitesItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this selenium side script suites items0 based on context it is used
+func (m *SeleniumSideScriptSuitesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SeleniumSideScriptSuitesItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SeleniumSideScriptSuitesItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideScriptSuitesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SeleniumSideScriptTestsItems0 A Selenium SIDE test representing a single check.
+//
+// swagger:model SeleniumSideScriptTestsItems0
+type SeleniumSideScriptTestsItems0 struct {
+
+	// commands
+	Commands []*SeleniumSideScriptTestsItems0CommandsItems0 `json:"commands"`
+
+	// The check ID
+	// Example: 1
+	ID string `json:"id,omitempty"`
+
+	// The check name
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// The starting URL
+	// Example: https://example.com
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this selenium side script tests items0
+func (m *SeleniumSideScriptTestsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCommands(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SeleniumSideScriptTestsItems0) validateCommands(formats strfmt.Registry) error {
+	if swag.IsZero(m.Commands) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Commands); i++ {
+		if swag.IsZero(m.Commands[i]) { // not required
+			continue
+		}
+
+		if m.Commands[i] != nil {
+			if err := m.Commands[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("commands" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this selenium side script tests items0 based on the context it is used
+func (m *SeleniumSideScriptTestsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCommands(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SeleniumSideScriptTestsItems0) contextValidateCommands(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Commands); i++ {
+
+		if m.Commands[i] != nil {
+			if err := m.Commands[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("commands" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SeleniumSideScriptTestsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SeleniumSideScriptTestsItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideScriptTestsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SeleniumSideScriptTestsItems0CommandsItems0 selenium side script tests items0 commands items0
+//
+// swagger:model SeleniumSideScriptTestsItems0CommandsItems0
+type SeleniumSideScriptTestsItems0CommandsItems0 struct {
+
+	// command
+	// Example: open
+	Command string `json:"command,omitempty"`
+
+	// The step name
+	// Example: Open the first page
+	Comment string `json:"comment,omitempty"`
+
+	// target
+	// Example: /path/to/follow
+	Target string `json:"target,omitempty"`
+
+	// value
+	Value string `json:"value,omitempty"`
+}
+
+// Validate validates this selenium side script tests items0 commands items0
+func (m *SeleniumSideScriptTestsItems0CommandsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this selenium side script tests items0 commands items0 based on context it is used
+func (m *SeleniumSideScriptTestsItems0CommandsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SeleniumSideScriptTestsItems0CommandsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SeleniumSideScriptTestsItems0CommandsItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideScriptTestsItems0CommandsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -6,15 +6,17 @@ package http_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // CreateHTTPCheckReader is a Reader for the CreateHTTPCheck structure.
@@ -60,7 +62,7 @@ type CreateHTTPCheckOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +72,17 @@ type CreateHTTPCheckOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.HTTPCheck
+	Payload *CreateHTTPCheckOKBody
 }
 
 func (o *CreateHTTPCheckOK) Error() string {
 	return fmt.Sprintf("[POST /v2/checks/http][%d] createHttpCheckOK  %+v", 200, o.Payload)
 }
-func (o *CreateHTTPCheckOK) GetPayload() *models.HTTPCheck {
+func (o *CreateHTTPCheckOK) GetPayload() *CreateHTTPCheckOKBody {
 	return o.Payload
 }
 
@@ -119,12 +121,3846 @@ func (o *CreateHTTPCheckOK) readResponse(response runtime.ClientResponse, consum
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.HTTPCheck)
+	o.Payload = new(CreateHTTPCheckOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*CreateHTTPCheckBody The parameters for an HTTP check
+swagger:model CreateHTTPCheckBody
+*/
+type CreateHTTPCheckBody struct {
+	CreateHTTPCheckParamsBodyAllOf0
+
+	// connection
+	Connection *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+	// http method
+	// Enum: [GET HEAD POST POST/XML PUT DELETE]
+	HTTPMethod *string `json:"http_method,omitempty"`
+
+	// Request body to send (e.g. post data).
+	HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+	// success criteria
+	SuccessCriteria []*CreateHTTPCheckParamsBodySuccessCriteriaItems0 `json:"success_criteria"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckBody) UnmarshalJSON(raw []byte) error {
+	// CreateHTTPCheckParamsBodyAO0
+	var createHTTPCheckParamsBodyAO0 CreateHTTPCheckParamsBodyAllOf0
+	if err := swag.ReadJSON(raw, &createHTTPCheckParamsBodyAO0); err != nil {
+		return err
+	}
+	o.CreateHTTPCheckParamsBodyAllOf0 = createHTTPCheckParamsBodyAO0
+
+	// CreateHTTPCheckParamsBodyAO1
+	var dataCreateHTTPCheckParamsBodyAO1 struct {
+		Connection *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+		HTTPMethod *string `json:"http_method,omitempty"`
+
+		HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+		SuccessCriteria []*CreateHTTPCheckParamsBodySuccessCriteriaItems0 `json:"success_criteria"`
+	}
+	if err := swag.ReadJSON(raw, &dataCreateHTTPCheckParamsBodyAO1); err != nil {
+		return err
+	}
+
+	o.Connection = dataCreateHTTPCheckParamsBodyAO1.Connection
+
+	o.HTTPMethod = dataCreateHTTPCheckParamsBodyAO1.HTTPMethod
+
+	o.HTTPRequestBody = dataCreateHTTPCheckParamsBodyAO1.HTTPRequestBody
+
+	o.SuccessCriteria = dataCreateHTTPCheckParamsBodyAO1.SuccessCriteria
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	createHTTPCheckParamsBodyAO0, err := swag.WriteJSON(o.CreateHTTPCheckParamsBodyAllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, createHTTPCheckParamsBodyAO0)
+	var dataCreateHTTPCheckParamsBodyAO1 struct {
+		Connection *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection `json:"connection,omitempty"`
+
+		HTTPMethod *string `json:"http_method,omitempty"`
+
+		HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+		SuccessCriteria []*CreateHTTPCheckParamsBodySuccessCriteriaItems0 `json:"success_criteria"`
+	}
+
+	dataCreateHTTPCheckParamsBodyAO1.Connection = o.Connection
+
+	dataCreateHTTPCheckParamsBodyAO1.HTTPMethod = o.HTTPMethod
+
+	dataCreateHTTPCheckParamsBodyAO1.HTTPRequestBody = o.HTTPRequestBody
+
+	dataCreateHTTPCheckParamsBodyAO1.SuccessCriteria = o.SuccessCriteria
+
+	jsonDataCreateHTTPCheckParamsBodyAO1, errCreateHTTPCheckParamsBodyAO1 := swag.WriteJSON(dataCreateHTTPCheckParamsBodyAO1)
+	if errCreateHTTPCheckParamsBodyAO1 != nil {
+		return nil, errCreateHTTPCheckParamsBodyAO1
+	}
+	_parts = append(_parts, jsonDataCreateHTTPCheckParamsBodyAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check body
+func (o *CreateHTTPCheckBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckParamsBodyAllOf0
+	if err := o.CreateHTTPCheckParamsBodyAllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateConnection(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateHTTPMethod(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSuccessCriteria(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckBody) validateConnection(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Connection) { // not required
+		return nil
+	}
+
+	if o.Connection != nil {
+		if err := o.Connection.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+var createHttpCheckBodyTypeHTTPMethodPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["GET","HEAD","POST","POST/XML","PUT","DELETE"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createHttpCheckBodyTypeHTTPMethodPropEnum = append(createHttpCheckBodyTypeHTTPMethodPropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateHTTPCheckBody) validateHTTPMethodEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createHttpCheckBodyTypeHTTPMethodPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckBody) validateHTTPMethod(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.HTTPMethod) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateHTTPMethodEnum("check_detail"+"."+"http_method", "body", *o.HTTPMethod); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckBody) validateSuccessCriteria(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.SuccessCriteria) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.SuccessCriteria); i++ {
+		if swag.IsZero(o.SuccessCriteria[i]) { // not required
+			continue
+		}
+
+		if o.SuccessCriteria[i] != nil {
+			if err := o.SuccessCriteria[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "success_criteria" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check body based on the context it is used
+func (o *CreateHTTPCheckBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckParamsBodyAllOf0
+	if err := o.CreateHTTPCheckParamsBodyAllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateConnection(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateSuccessCriteria(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckBody) contextValidateConnection(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Connection != nil {
+		if err := o.Connection.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("check_detail" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckBody) contextValidateSuccessCriteria(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.SuccessCriteria); i++ {
+
+		if o.SuccessCriteria[i] != nil {
+			if err := o.SuccessCriteria[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("check_detail" + "." + "success_criteria" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckBody) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBody An HTTP check
+swagger:model CreateHTTPCheckOKBody
+*/
+type CreateHTTPCheckOKBody struct {
+	CreateHTTPCheckOKBodyAllOf0
+
+	// connection
+	Connection *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+	// http method
+	// Enum: [GET HEAD POST POST/XML PUT DELETE]
+	HTTPMethod *string `json:"http_method,omitempty"`
+
+	// Request body to send (e.g. post data).
+	HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+	// success criteria
+	SuccessCriteria []*CreateHTTPCheckOKBodySuccessCriteriaItems0 `json:"success_criteria"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckOKBody) UnmarshalJSON(raw []byte) error {
+	// CreateHTTPCheckOKBodyAO0
+	var createHTTPCheckOKBodyAO0 CreateHTTPCheckOKBodyAllOf0
+	if err := swag.ReadJSON(raw, &createHTTPCheckOKBodyAO0); err != nil {
+		return err
+	}
+	o.CreateHTTPCheckOKBodyAllOf0 = createHTTPCheckOKBodyAO0
+
+	// CreateHTTPCheckOKBodyAO1
+	var dataCreateHTTPCheckOKBodyAO1 struct {
+		Connection *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+		HTTPMethod *string `json:"http_method,omitempty"`
+
+		HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+		SuccessCriteria []*CreateHTTPCheckOKBodySuccessCriteriaItems0 `json:"success_criteria"`
+	}
+	if err := swag.ReadJSON(raw, &dataCreateHTTPCheckOKBodyAO1); err != nil {
+		return err
+	}
+
+	o.Connection = dataCreateHTTPCheckOKBodyAO1.Connection
+
+	o.HTTPMethod = dataCreateHTTPCheckOKBodyAO1.HTTPMethod
+
+	o.HTTPRequestBody = dataCreateHTTPCheckOKBodyAO1.HTTPRequestBody
+
+	o.SuccessCriteria = dataCreateHTTPCheckOKBodyAO1.SuccessCriteria
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	createHTTPCheckOKBodyAO0, err := swag.WriteJSON(o.CreateHTTPCheckOKBodyAllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, createHTTPCheckOKBodyAO0)
+	var dataCreateHTTPCheckOKBodyAO1 struct {
+		Connection *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection `json:"connection,omitempty"`
+
+		HTTPMethod *string `json:"http_method,omitempty"`
+
+		HTTPRequestBody string `json:"http_request_body,omitempty"`
+
+		SuccessCriteria []*CreateHTTPCheckOKBodySuccessCriteriaItems0 `json:"success_criteria"`
+	}
+
+	dataCreateHTTPCheckOKBodyAO1.Connection = o.Connection
+
+	dataCreateHTTPCheckOKBodyAO1.HTTPMethod = o.HTTPMethod
+
+	dataCreateHTTPCheckOKBodyAO1.HTTPRequestBody = o.HTTPRequestBody
+
+	dataCreateHTTPCheckOKBodyAO1.SuccessCriteria = o.SuccessCriteria
+
+	jsonDataCreateHTTPCheckOKBodyAO1, errCreateHTTPCheckOKBodyAO1 := swag.WriteJSON(dataCreateHTTPCheckOKBodyAO1)
+	if errCreateHTTPCheckOKBodyAO1 != nil {
+		return nil, errCreateHTTPCheckOKBodyAO1
+	}
+	_parts = append(_parts, jsonDataCreateHTTPCheckOKBodyAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check o k body
+func (o *CreateHTTPCheckOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckOKBodyAllOf0
+	if err := o.CreateHTTPCheckOKBodyAllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateConnection(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateHTTPMethod(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSuccessCriteria(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBody) validateConnection(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Connection) { // not required
+		return nil
+	}
+
+	if o.Connection != nil {
+		if err := o.Connection.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createHttpCheckOK" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+var createHttpCheckOKBodyTypeHTTPMethodPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["GET","HEAD","POST","POST/XML","PUT","DELETE"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createHttpCheckOKBodyTypeHTTPMethodPropEnum = append(createHttpCheckOKBodyTypeHTTPMethodPropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateHTTPCheckOKBody) validateHTTPMethodEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createHttpCheckOKBodyTypeHTTPMethodPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBody) validateHTTPMethod(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.HTTPMethod) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateHTTPMethodEnum("createHttpCheckOK"+"."+"http_method", "body", *o.HTTPMethod); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBody) validateSuccessCriteria(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.SuccessCriteria) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.SuccessCriteria); i++ {
+		if swag.IsZero(o.SuccessCriteria[i]) { // not required
+			continue
+		}
+
+		if o.SuccessCriteria[i] != nil {
+			if err := o.SuccessCriteria[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createHttpCheckOK" + "." + "success_criteria" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body based on the context it is used
+func (o *CreateHTTPCheckOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckOKBodyAllOf0
+	if err := o.CreateHTTPCheckOKBodyAllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateConnection(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateSuccessCriteria(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBody) contextValidateConnection(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Connection != nil {
+		if err := o.Connection.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createHttpCheckOK" + "." + "connection")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBody) contextValidateSuccessCriteria(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.SuccessCriteria); i++ {
+
+		if o.SuccessCriteria[i] != nil {
+			if err := o.SuccessCriteria[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("createHttpCheckOK" + "." + "success_criteria" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBody) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0 An uptime check
+swagger:model CreateHTTPCheckOKBodyAllOf0
+*/
+type CreateHTTPCheckOKBodyAllOf0 struct {
+	CreateHTTPCheckOKBodyAllOf0AllOf0
+
+	// url
+	URL string `json:"url,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckOKBodyAllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var aO0 CreateHTTPCheckOKBodyAllOf0AllOf0
+	if err := swag.ReadJSON(raw, &aO0); err != nil {
+		return err
+	}
+	o.CreateHTTPCheckOKBodyAllOf0AllOf0 = aO0
+
+	// AO1
+	var dataAO1 struct {
+		URL string `json:"url,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.URL = dataAO1.URL
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckOKBodyAllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	aO0, err := swag.WriteJSON(o.CreateHTTPCheckOKBodyAllOf0AllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, aO0)
+	var dataAO1 struct {
+		URL string `json:"url,omitempty"`
+	}
+
+	dataAO1.URL = o.URL
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check o k body all of0
+func (o *CreateHTTPCheckOKBodyAllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckOKBodyAllOf0AllOf0
+	if err := o.CreateHTTPCheckOKBodyAllOf0AllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body all of0 based on the context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckOKBodyAllOf0AllOf0
+	if err := o.CreateHTTPCheckOKBodyAllOf0AllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0 A monitoring check
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0 struct {
+
+	// When the check was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	Frequency int64 `json:"frequency,omitempty"`
+
+	// The unique ID for the check
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// links
+	Links *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links `json:"links,omitempty"`
+
+	// If notifications for this check are muted or not
+	// Example: false
+	Muted bool `json:"muted,omitempty"`
+
+	// The unique name for the check
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// If the check is paused or not
+	// Example: false
+	Paused bool `json:"paused,omitempty"`
+
+	// status
+	Status *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status `json:"status,omitempty"`
+
+	// An array of tags applied to the check
+	Tags []*CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0 `json:"tags"`
+
+	// The check type
+	// Required: true
+	// Enum: [http http_multi_step port real_browser benchmark content uptime monitoring api]
+	Type string `json:"type"`
+
+	// When the check was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+
+	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
+	AutoRetry *bool `json:"auto_retry,omitempty"`
+
+	// blackout periods
+	BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+	// True if the check is not paused
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// http request headers
+	HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+	// The integrations to send metrics to
+	Integrations []*CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0 `json:"integrations"`
+
+	// The locations to run the check from
+	Locations []*CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0 `json:"locations"`
+
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Only allow notifications during these timeframes
+		NotificationWindows []interface{} `json:"notification_windows"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Min Items: 1
+		// Unique: true
+		NotifyWho []*CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
+
+	// Mark a run as a failure if the total response time
+	//                                    is above this threshold (in milliseconds)
+	// Maximum: 60000
+	// Minimum: 0
+	ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+	// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
+	RoundRobin bool `json:"round_robin,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		Frequency int64 `json:"frequency,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Links *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links `json:"links,omitempty"`
+
+		Muted bool `json:"muted,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		Paused bool `json:"paused,omitempty"`
+
+		Status *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status `json:"status,omitempty"`
+
+		Tags []*CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0 `json:"tags"`
+
+		Type string `json:"type"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CreatedAt = dataAO0.CreatedAt
+
+	o.Frequency = dataAO0.Frequency
+
+	o.ID = dataAO0.ID
+
+	o.Links = dataAO0.Links
+
+	o.Muted = dataAO0.Muted
+
+	o.Name = dataAO0.Name
+
+	o.Paused = dataAO0.Paused
+
+	o.Status = dataAO0.Status
+
+	o.Tags = dataAO0.Tags
+
+	o.Type = dataAO0.Type
+
+	o.UpdatedAt = dataAO0.UpdatedAt
+
+	// AO1
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0 `json:"integrations"`
+
+		Locations []*CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.AutoRetry = dataAO1.AutoRetry
+
+	o.BlackoutPeriods = dataAO1.BlackoutPeriods
+
+	o.Enabled = dataAO1.Enabled
+
+	o.HTTPRequestHeaders = dataAO1.HTTPRequestHeaders
+
+	o.Integrations = dataAO1.Integrations
+
+	o.Locations = dataAO1.Locations
+
+	o.Notifications = dataAO1.Notifications
+
+	o.ResponseTimeMonitorMilliseconds = dataAO1.ResponseTimeMonitorMilliseconds
+
+	o.RoundRobin = dataAO1.RoundRobin
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckOKBodyAllOf0AllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+		Frequency int64 `json:"frequency,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Links *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links `json:"links,omitempty"`
+
+		Muted bool `json:"muted,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		Paused bool `json:"paused,omitempty"`
+
+		Status *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status `json:"status,omitempty"`
+
+		Tags []*CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0 `json:"tags"`
+
+		Type string `json:"type"`
+
+		UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+	}
+
+	dataAO0.CreatedAt = o.CreatedAt
+
+	dataAO0.Frequency = o.Frequency
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Links = o.Links
+
+	dataAO0.Muted = o.Muted
+
+	dataAO0.Name = o.Name
+
+	dataAO0.Paused = o.Paused
+
+	dataAO0.Status = o.Status
+
+	dataAO0.Tags = o.Tags
+
+	dataAO0.Type = o.Type
+
+	dataAO0.UpdatedAt = o.UpdatedAt
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		BlackoutPeriods []interface{} `json:"blackout_periods"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []*CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0 `json:"integrations"`
+
+		Locations []*CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Only allow notifications during these timeframes
+			NotificationWindows []interface{} `json:"notification_windows"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Min Items: 1
+			// Unique: true
+			NotifyWho []*CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin bool `json:"round_robin,omitempty"`
+	}
+
+	dataAO1.AutoRetry = o.AutoRetry
+
+	dataAO1.BlackoutPeriods = o.BlackoutPeriods
+
+	dataAO1.Enabled = o.Enabled
+
+	dataAO1.HTTPRequestHeaders = o.HTTPRequestHeaders
+
+	dataAO1.Integrations = o.Integrations
+
+	dataAO1.Locations = o.Locations
+
+	dataAO1.Notifications = o.Notifications
+
+	dataAO1.ResponseTimeMonitorMilliseconds = o.ResponseTimeMonitorMilliseconds
+
+	dataAO1.RoundRobin = o.RoundRobin
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateIntegrations(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLocations(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifications(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResponseTimeMonitorMilliseconds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Status) { // not required
+		return nil
+	}
+
+	if o.Status != nil {
+		if err := o.Status.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateTags(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Tags); i++ {
+		if swag.IsZero(o.Tags[i]) { // not required
+			continue
+		}
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var createHttpCheckOKBodyAllOf0AllOf0TypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","api"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createHttpCheckOKBodyAllOf0AllOf0TypeTypePropEnum = append(createHttpCheckOKBodyAllOf0AllOf0TypeTypePropEnum, v)
+	}
+}
+
+// property enum
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createHttpCheckOKBodyAllOf0AllOf0TypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateType(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := o.validateTypeEnum("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateIntegrations(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Integrations) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Integrations); i++ {
+		if swag.IsZero(o.Integrations[i]) { // not required
+			continue
+		}
+
+		if o.Integrations[i] != nil {
+			if err := o.Integrations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("integrations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateLocations(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Locations) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Locations); i++ {
+		if swag.IsZero(o.Locations[i]) { // not required
+			continue
+		}
+
+		if o.Locations[i] != nil {
+			if err := o.Locations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateNotifications(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Notifications) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+		if swag.IsZero(o.Notifications.Escalations[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	iNotifyWhoSize := int64(len(o.Notifications.NotifyWho))
+
+	if err := validate.MinItems("notifications"+"."+"notify_who", "body", iNotifyWhoSize, 1); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", o.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+		if swag.IsZero(o.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) validateResponseTimeMonitorMilliseconds(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ResponseTimeMonitorMilliseconds) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 0, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 60000, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body all of0 all of0 based on the context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateIntegrations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateLocations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Status != nil {
+		if err := o.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Tags); i++ {
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateIntegrations(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Integrations); i++ {
+
+		if o.Integrations[i] != nil {
+			if err := o.Integrations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("integrations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateLocations(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Locations); i++ {
+
+		if o.Locations[i] != nil {
+			if err := o.Locations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links create HTTP check o k body all of0 all of0 a o0 links
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links struct {
+
+	// The URL for the last run of this check
+	// Example: https://monitoring.rigor.com/checks/1/runs/1
+	LastRun string `json:"last_run,omitempty"`
+
+	// The URL for the available metrics for this check
+	// Example: https://monitoring-api.rigor.com/v2/checks/1/metrics
+	Metrics string `json:"metrics,omitempty"`
+
+	// The URL for the check detail
+	// Example: https://monitoring-api.rigor.com/v2/checks/1
+	Self string `json:"self,omitempty"`
+
+	// The URL for the HTML view for this check
+	// Example: https://monitoring.rigor.com/checks/http/1
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 a o0 links
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 a o0 links based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0AO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status create HTTP check o k body all of0 all of0 a o0 status
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status struct {
+
+	// True if the fail limit has been reached
+	// Example: false
+	HasFailure bool `json:"has_failure,omitempty"`
+
+	// True if the fail limit has been reached for at least one location
+	// Example: false
+	HasLocationFailure string `json:"has_location_failure,omitempty"`
+
+	// The timestamp of the last alert (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastAlertAt strfmt.DateTime `json:"last_alert_at,omitempty"`
+
+	// The response code from the last run
+	// Example: 200
+	LastCode int32 `json:"last_code,omitempty"`
+
+	// The timestamp of the last failed run (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastFailureAt strfmt.DateTime `json:"last_failure_at,omitempty"`
+
+	// The message from the last run
+	// Example: OK
+	LastMessage string `json:"last_message,omitempty"`
+
+	// The response time from the last run
+	// Example: 50
+	LastResponseTime string `json:"last_response_time,omitempty"`
+
+	// The timestamp of the last run (UTC)
+	// Example: 2021-05-25T17:49:05Z
+	// Format: date-time
+	LastRunAt strfmt.DateTime `json:"last_run_at,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 a o0 status
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLastAlertAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastFailureAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastRunAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) validateLastAlertAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastAlertAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_alert_at", "body", "date-time", o.LastAlertAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) validateLastFailureAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastFailureAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_failure_at", "body", "date-time", o.LastFailureAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) validateLastRunAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastRunAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_run_at", "body", "date-time", o.LastRunAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 a o0 status based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0AO0Status
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0 An additional notification to send if an alert is unacknowledged
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 escalations items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+	if swag.IsZero(o.NotificationWindow) { // not required
+		return nil
+	}
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+	if swag.IsZero(o.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+		if swag.IsZero(o.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body all of0 all of0 escalations items0 based on the context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow create HTTP check o k body all of0 all of0 escalations items0 notification window
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 escalations items0 notification window
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 escalations items0 notification window based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 Where to send escalations
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 escalations items0 notify who items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body all of0 all of0 escalations items0 notify who items0 based on the context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links create HTTP check o k body all of0 all of0 escalations items0 notify who items0 links
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 escalations items0 notify who items0 links
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 escalations items0 notify who items0 links based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0 create HTTP check o k body all of0 all of0 integrations items0
+// Example: {"id":1,"name":"Some Great Integration"}
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0 struct {
+
+	// The unique ID for the integration
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the integration
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 integrations items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 integrations items0 based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0IntegrationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0 create HTTP check o k body all of0 all of0 locations items0
+// Example: {"id":1,"name":"N. Virginia","region_code":"na-us-virginia","world_region":"NA"}
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0 struct {
+
+	// The unique ID for the location
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the location
+	Name string `json:"name,omitempty"`
+
+	// A readable code representing the location
+	RegionCode string `json:"region_code,omitempty"`
+
+	// The region the location is in
+	WorldRegion string `json:"world_region,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 locations items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 locations items0 based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0LocationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0 Where to send notifications
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CustomUserEmail = dataAO0.CustomUserEmail
+
+	o.ID = dataAO0.ID
+
+	o.Links = dataAO0.Links
+
+	o.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Call = dataAO1.Call
+
+	o.Email = dataAO1.Email
+
+	o.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomUserEmail string `json:"custom_user_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Links *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links `json:"links,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomUserEmail = o.CustomUserEmail
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Links = o.Links
+
+	dataAO0.Type = o.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = o.Call
+
+	dataAO1.Email = o.Email
+
+	dataAO1.Sms = o.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 notify who items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check o k body all of0 all of0 notify who items0 based on the context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links create HTTP check o k body all of0 all of0 notify who items0 a o0 links
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 notify who items0 a o0 links
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 notify who items0 a o0 links based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0NotifyWhoItems0AO0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0 create HTTP check o k body all of0 all of0 tags items0
+swagger:model CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0
+*/
+type CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0 struct {
+
+	// id
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// name
+	// Example: example tag
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body all of0 all of0 tags items0
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body all of0 all of0 tags items0 based on context it is used
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyAllOf0AllOf0TagsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection create HTTP check o k body create HTTP check o k body a o1 connection
+swagger:model CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection
+*/
+type CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection struct {
+
+	// The upper limit imposed on all incoming network traffic in Kbps
+	DownloadBandwidth *int64 `json:"download_bandwidth,omitempty"`
+
+	// The latency that is added to each request in milliseconds
+	Latency *int64 `json:"latency,omitempty"`
+
+	// The percentage of all incoming or outgoing packets that are intentionally dropped
+	PacketLoss float64 `json:"packet_loss,omitempty"`
+
+	// The upper limit imposed on all outgoing network traffic in Kbps
+	UploadBandwidth *int64 `json:"upload_bandwidth,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body create HTTP check o k body a o1 connection
+func (o *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body create HTTP check o k body a o1 connection based on context it is used
+func (o *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodyCreateHTTPCheckOKBodyAO1Connection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckOKBodySuccessCriteriaItems0 A criterion for the check to pass
+swagger:model CreateHTTPCheckOKBodySuccessCriteriaItems0
+*/
+type CreateHTTPCheckOKBodySuccessCriteriaItems0 struct {
+
+	// action type
+	// Required: true
+	// Enum: [presence_of_text absence_of_text matches_regular_expression does_not_contain_regular_expression response_code goes_to_url]
+	ActionType *string `json:"action_type"`
+
+	// comparison string
+	// Required: true
+	ComparisonString *string `json:"comparison_string"`
+
+	// created at
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// updated at
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+}
+
+// Validate validates this create HTTP check o k body success criteria items0
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateActionType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateComparisonString(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createHttpCheckOKBodySuccessCriteriaItems0TypeActionTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["presence_of_text","absence_of_text","matches_regular_expression","does_not_contain_regular_expression","response_code","goes_to_url"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createHttpCheckOKBodySuccessCriteriaItems0TypeActionTypePropEnum = append(createHttpCheckOKBodySuccessCriteriaItems0TypeActionTypePropEnum, v)
+	}
+}
+
+const (
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypePresenceOfText captures enum value "presence_of_text"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypePresenceOfText string = "presence_of_text"
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeAbsenceOfText captures enum value "absence_of_text"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeAbsenceOfText string = "absence_of_text"
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeMatchesRegularExpression captures enum value "matches_regular_expression"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeMatchesRegularExpression string = "matches_regular_expression"
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeDoesNotContainRegularExpression captures enum value "does_not_contain_regular_expression"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeDoesNotContainRegularExpression string = "does_not_contain_regular_expression"
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeResponseCode captures enum value "response_code"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeResponseCode string = "response_code"
+
+	// CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeGoesToURL captures enum value "goes_to_url"
+	CreateHTTPCheckOKBodySuccessCriteriaItems0ActionTypeGoesToURL string = "goes_to_url"
+)
+
+// prop value enum
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) validateActionTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createHttpCheckOKBodySuccessCriteriaItems0TypeActionTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) validateActionType(formats strfmt.Registry) error {
+
+	if err := validate.Required("action_type", "body", o.ActionType); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := o.validateActionTypeEnum("action_type", "body", *o.ActionType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) validateComparisonString(formats strfmt.Registry) error {
+
+	if err := validate.Required("comparison_string", "body", o.ComparisonString); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create HTTP check o k body success criteria items0 based on context it is used
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckOKBodySuccessCriteriaItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckOKBodySuccessCriteriaItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0 An uptime check
+swagger:model CreateHTTPCheckParamsBodyAllOf0
+*/
+type CreateHTTPCheckParamsBodyAllOf0 struct {
+	CreateHTTPCheckParamsBodyAllOf0AllOf0
+
+	// url
+	URL string `json:"url,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckParamsBodyAllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var aO0 CreateHTTPCheckParamsBodyAllOf0AllOf0
+	if err := swag.ReadJSON(raw, &aO0); err != nil {
+		return err
+	}
+	o.CreateHTTPCheckParamsBodyAllOf0AllOf0 = aO0
+
+	// AO1
+	var dataAO1 struct {
+		URL string `json:"url,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.URL = dataAO1.URL
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckParamsBodyAllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	aO0, err := swag.WriteJSON(o.CreateHTTPCheckParamsBodyAllOf0AllOf0)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, aO0)
+	var dataAO1 struct {
+		URL string `json:"url,omitempty"`
+	}
+
+	dataAO1.URL = o.URL
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check params body all of0
+func (o *CreateHTTPCheckParamsBodyAllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckParamsBodyAllOf0AllOf0
+	if err := o.CreateHTTPCheckParamsBodyAllOf0AllOf0.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this create HTTP check params body all of0 based on the context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with CreateHTTPCheckParamsBodyAllOf0AllOf0
+	if err := o.CreateHTTPCheckParamsBodyAllOf0AllOf0.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0 A monitoring check
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0 struct {
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	// Required: true
+	Frequency *int64 `json:"frequency"`
+
+	// The unique name for the check
+	// Required: true
+	Name *string `json:"name"`
+
+	// An array of tag names to apply to the check
+	Tags []string `json:"tags"`
+
+	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
+	AutoRetry *bool `json:"auto_retry,omitempty"`
+
+	// True if the check is not paused
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// http request headers
+	HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+	// The integrations to send metrics to
+	Integrations []int32 `json:"integrations"`
+
+	// The locations to run the check from
+	Locations []int32 `json:"locations"`
+
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Unique: true
+		NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
+
+	// Mark a run as a failure if the total response time
+	//                                    is above this threshold (in milliseconds)
+	// Maximum: 60000
+	// Minimum: 0
+	ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+	// When enabled, the check cycles through locations round-robin style with each run.Ensure your account plan supports concurrent checks before disabling.
+	RoundRobin *bool `json:"round_robin,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.Frequency = dataAO0.Frequency
+
+	o.Name = dataAO0.Name
+
+	o.Tags = dataAO0.Tags
+
+	// AO1
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []int32 `json:"integrations"`
+
+		Locations []int32 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin *bool `json:"round_robin,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.AutoRetry = dataAO1.AutoRetry
+
+	o.Enabled = dataAO1.Enabled
+
+	o.HTTPRequestHeaders = dataAO1.HTTPRequestHeaders
+
+	o.Integrations = dataAO1.Integrations
+
+	o.Locations = dataAO1.Locations
+
+	o.Notifications = dataAO1.Notifications
+
+	o.ResponseTimeMonitorMilliseconds = dataAO1.ResponseTimeMonitorMilliseconds
+
+	o.RoundRobin = dataAO1.RoundRobin
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckParamsBodyAllOf0AllOf0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
+	}
+
+	dataAO0.Frequency = o.Frequency
+
+	dataAO0.Name = o.Name
+
+	dataAO0.Tags = o.Tags
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		AutoRetry *bool `json:"auto_retry,omitempty"`
+
+		Enabled *bool `json:"enabled,omitempty"`
+
+		HTTPRequestHeaders interface{} `json:"http_request_headers,omitempty"`
+
+		Integrations []int32 `json:"integrations"`
+
+		Locations []int32 `json:"locations"`
+
+		Notifications struct {
+
+			// escalations
+			Escalations []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
+
+		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
+
+		RoundRobin *bool `json:"round_robin,omitempty"`
+	}
+
+	dataAO1.AutoRetry = o.AutoRetry
+
+	dataAO1.Enabled = o.Enabled
+
+	dataAO1.HTTPRequestHeaders = o.HTTPRequestHeaders
+
+	dataAO1.Integrations = o.Integrations
+
+	dataAO1.Locations = o.Locations
+
+	dataAO1.Notifications = o.Notifications
+
+	dataAO1.ResponseTimeMonitorMilliseconds = o.ResponseTimeMonitorMilliseconds
+
+	dataAO1.RoundRobin = o.RoundRobin
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check params body all of0 all of0
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrequency(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifications(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResponseTimeMonitorMilliseconds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) validateFrequency(formats strfmt.Registry) error {
+
+	if err := validate.Required("frequency", "body", o.Frequency); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) validateNotifications(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Notifications) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+		if swag.IsZero(o.Notifications.Escalations[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(o.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", o.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+		if swag.IsZero(o.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) validateResponseTimeMonitorMilliseconds(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.ResponseTimeMonitorMilliseconds) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 0, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("response_time_monitor_milliseconds", "body", int64(*o.ResponseTimeMonitorMilliseconds), 60000, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check params body all of0 all of0 based on the context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotifications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Notifications.Escalations); i++ {
+
+		if o.Notifications.Escalations[i] != nil {
+			if err := o.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	for i := 0; i < len(o.Notifications.NotifyWho); i++ {
+
+		if o.Notifications.NotifyWho[i] != nil {
+			if err := o.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0 An additional notification to send if an alert is unacknowledged
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.AfterMinutes = dataAO0.AfterMinutes
+
+	o.Call = dataAO0.Call
+
+	o.Email = dataAO0.Email
+
+	o.IsRepeat = dataAO0.IsRepeat
+
+	o.NotificationWindow = dataAO0.NotificationWindow
+
+	o.NotifyWho = dataAO0.NotifyWho
+
+	o.Sms = dataAO0.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO0.AfterMinutes = o.AfterMinutes
+
+	dataAO0.Call = o.Call
+
+	dataAO0.Email = o.Email
+
+	dataAO0.IsRepeat = o.IsRepeat
+
+	dataAO0.NotificationWindow = o.NotificationWindow
+
+	dataAO0.NotifyWho = o.NotifyWho
+
+	dataAO0.Sms = o.Sms
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check params body all of0 all of0 escalations items0
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.NotificationWindow) { // not required
+		return nil
+	}
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+		if swag.IsZero(o.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check params body all of0 all of0 escalations items0 based on the context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.NotificationWindow != nil {
+		if err := o.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.NotifyWho); i++ {
+
+		if o.NotifyWho[i] != nil {
+			if err := o.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow create HTTP check params body all of0 all of0 escalations items0 a o0 notification window
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this create HTTP check params body all of0 all of0 escalations items0 a o0 notification window
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check params body all of0 all of0 escalations items0 a o0 notification window based on context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0AO0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 Where to send escalations
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this create HTTP check params body all of0 all of0 escalations items0 notify who items0
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create HTTP check params body all of0 all of0 escalations items0 notify who items0 based on the context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links create HTTP check params body all of0 all of0 escalations items0 notify who items0 links
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this create HTTP check params body all of0 all of0 escalations items0 notify who items0 links
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check params body all of0 all of0 escalations items0 notify who items0 links based on context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0EscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0 Where to send notifications
+swagger:model CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0
+*/
+type CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0 struct {
+
+	// A custom email to notify. Other fields can be left blank when setting this.
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.CustomEmail = dataAO0.CustomEmail
+
+	o.ID = dataAO0.ID
+
+	o.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Call = dataAO1.Call
+
+	o.Email = dataAO1.Email
+
+	o.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomEmail = o.CustomEmail
+
+	dataAO0.ID = o.ID
+
+	dataAO0.Type = o.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = o.Call
+
+	dataAO1.Email = o.Email
+
+	dataAO1.Sms = o.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this create HTTP check params body all of0 all of0 notify who items0
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validates this create HTTP check params body all of0 all of0 notify who items0 based on context it is used
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyAllOf0AllOf0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection create HTTP check params body create HTTP check params body a o1 connection
+swagger:model CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection
+*/
+type CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection struct {
+
+	// The upper limit imposed on all incoming network traffic in Kbps
+	DownloadBandwidth *int64 `json:"download_bandwidth,omitempty"`
+
+	// The latency that is added to each request in milliseconds
+	Latency *int64 `json:"latency,omitempty"`
+
+	// The percentage of all incoming or outgoing packets that are intentionally dropped
+	PacketLoss float64 `json:"packet_loss,omitempty"`
+
+	// The upper limit imposed on all outgoing network traffic in Kbps
+	UploadBandwidth *int64 `json:"upload_bandwidth,omitempty"`
+}
+
+// Validate validates this create HTTP check params body create HTTP check params body a o1 connection
+func (o *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this create HTTP check params body create HTTP check params body a o1 connection based on context it is used
+func (o *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodyCreateHTTPCheckParamsBodyAO1Connection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*CreateHTTPCheckParamsBodySuccessCriteriaItems0 A criterion for the check to pass
+swagger:model CreateHTTPCheckParamsBodySuccessCriteriaItems0
+*/
+type CreateHTTPCheckParamsBodySuccessCriteriaItems0 struct {
+
+	// action type
+	// Required: true
+	// Enum: [presence_of_text absence_of_text matches_regular_expression does_not_contain_regular_expression response_code goes_to_url]
+	ActionType *string `json:"action_type"`
+
+	// comparison string
+	// Required: true
+	ComparisonString *string `json:"comparison_string"`
+}
+
+// Validate validates this create HTTP check params body success criteria items0
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateActionType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateComparisonString(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var createHttpCheckParamsBodySuccessCriteriaItems0TypeActionTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["presence_of_text","absence_of_text","matches_regular_expression","does_not_contain_regular_expression","response_code","goes_to_url"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createHttpCheckParamsBodySuccessCriteriaItems0TypeActionTypePropEnum = append(createHttpCheckParamsBodySuccessCriteriaItems0TypeActionTypePropEnum, v)
+	}
+}
+
+const (
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypePresenceOfText captures enum value "presence_of_text"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypePresenceOfText string = "presence_of_text"
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeAbsenceOfText captures enum value "absence_of_text"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeAbsenceOfText string = "absence_of_text"
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeMatchesRegularExpression captures enum value "matches_regular_expression"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeMatchesRegularExpression string = "matches_regular_expression"
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeDoesNotContainRegularExpression captures enum value "does_not_contain_regular_expression"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeDoesNotContainRegularExpression string = "does_not_contain_regular_expression"
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeResponseCode captures enum value "response_code"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeResponseCode string = "response_code"
+
+	// CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeGoesToURL captures enum value "goes_to_url"
+	CreateHTTPCheckParamsBodySuccessCriteriaItems0ActionTypeGoesToURL string = "goes_to_url"
+)
+
+// prop value enum
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) validateActionTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createHttpCheckParamsBodySuccessCriteriaItems0TypeActionTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) validateActionType(formats strfmt.Registry) error {
+
+	if err := validate.Required("action_type", "body", o.ActionType); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := o.validateActionTypeEnum("action_type", "body", *o.ActionType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) validateComparisonString(formats strfmt.Registry) error {
+
+	if err := validate.Required("comparison_string", "body", o.ComparisonString); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this create HTTP check params body success criteria items0 based on context it is used
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *CreateHTTPCheckParamsBodySuccessCriteriaItems0) UnmarshalBinary(b []byte) error {
+	var res CreateHTTPCheckParamsBodySuccessCriteriaItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

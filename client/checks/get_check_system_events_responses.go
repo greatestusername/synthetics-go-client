@@ -6,13 +6,17 @@ package checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // GetCheckSystemEventsReader is a Reader for the GetCheckSystemEvents structure.
@@ -44,24 +48,545 @@ func NewGetCheckSystemEventsOK() *GetCheckSystemEventsOK {
 OK
 */
 type GetCheckSystemEventsOK struct {
-	Payload *models.SystemEventCollection
+	Payload *GetCheckSystemEventsOKBody
 }
 
 func (o *GetCheckSystemEventsOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/{check_id}/system_events][%d] getCheckSystemEventsOK  %+v", 200, o.Payload)
 }
-func (o *GetCheckSystemEventsOK) GetPayload() *models.SystemEventCollection {
+func (o *GetCheckSystemEventsOK) GetPayload() *GetCheckSystemEventsOKBody {
 	return o.Payload
 }
 
 func (o *GetCheckSystemEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.SystemEventCollection)
+	o.Payload = new(GetCheckSystemEventsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetCheckSystemEventsOKBody A list of system events
+swagger:model GetCheckSystemEventsOKBody
+*/
+type GetCheckSystemEventsOKBody struct {
+
+	// The start time for the timeframe (UTC)
+	// Required: true
+	// Format: date-time
+	From *strfmt.DateTime `json:"from"`
+
+	// The predefined timeframe, if provided
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month month_to_date last_month last_3_months last_6_months last_12_months]
+	Range string `json:"range,omitempty"`
+
+	// system events
+	// Required: true
+	SystemEvents []*GetCheckSystemEventsOKBodySystemEventsItems0 `json:"system_events"`
+
+	// The end time for the timeframe (UTC)
+	// Required: true
+	// Format: date-time
+	To *strfmt.DateTime `json:"to"`
+}
+
+// Validate validates this get check system events o k body
+func (o *GetCheckSystemEventsOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateRange(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSystemEvents(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBody) validateFrom(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckSystemEventsOK"+"."+"from", "body", o.From); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("getCheckSystemEventsOK"+"."+"from", "body", "date-time", o.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckSystemEventsOKBodyTypeRangePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["last_hour","last_4_hours","last_8_hours","last_12_hours","last_24_hours","yesterday","today","last_7_days","last_30_days","this_week","last_week","this_month","month_to_date","last_month","last_3_months","last_6_months","last_12_months"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckSystemEventsOKBodyTypeRangePropEnum = append(getCheckSystemEventsOKBodyTypeRangePropEnum, v)
+	}
+}
+
+const (
+
+	// GetCheckSystemEventsOKBodyRangeLastHour captures enum value "last_hour"
+	GetCheckSystemEventsOKBodyRangeLastHour string = "last_hour"
+
+	// GetCheckSystemEventsOKBodyRangeLast4Hours captures enum value "last_4_hours"
+	GetCheckSystemEventsOKBodyRangeLast4Hours string = "last_4_hours"
+
+	// GetCheckSystemEventsOKBodyRangeLast8Hours captures enum value "last_8_hours"
+	GetCheckSystemEventsOKBodyRangeLast8Hours string = "last_8_hours"
+
+	// GetCheckSystemEventsOKBodyRangeLast12Hours captures enum value "last_12_hours"
+	GetCheckSystemEventsOKBodyRangeLast12Hours string = "last_12_hours"
+
+	// GetCheckSystemEventsOKBodyRangeLast24Hours captures enum value "last_24_hours"
+	GetCheckSystemEventsOKBodyRangeLast24Hours string = "last_24_hours"
+
+	// GetCheckSystemEventsOKBodyRangeYesterday captures enum value "yesterday"
+	GetCheckSystemEventsOKBodyRangeYesterday string = "yesterday"
+
+	// GetCheckSystemEventsOKBodyRangeToday captures enum value "today"
+	GetCheckSystemEventsOKBodyRangeToday string = "today"
+
+	// GetCheckSystemEventsOKBodyRangeLast7Days captures enum value "last_7_days"
+	GetCheckSystemEventsOKBodyRangeLast7Days string = "last_7_days"
+
+	// GetCheckSystemEventsOKBodyRangeLast30Days captures enum value "last_30_days"
+	GetCheckSystemEventsOKBodyRangeLast30Days string = "last_30_days"
+
+	// GetCheckSystemEventsOKBodyRangeThisWeek captures enum value "this_week"
+	GetCheckSystemEventsOKBodyRangeThisWeek string = "this_week"
+
+	// GetCheckSystemEventsOKBodyRangeLastWeek captures enum value "last_week"
+	GetCheckSystemEventsOKBodyRangeLastWeek string = "last_week"
+
+	// GetCheckSystemEventsOKBodyRangeThisMonth captures enum value "this_month"
+	GetCheckSystemEventsOKBodyRangeThisMonth string = "this_month"
+
+	// GetCheckSystemEventsOKBodyRangeMonthToDate captures enum value "month_to_date"
+	GetCheckSystemEventsOKBodyRangeMonthToDate string = "month_to_date"
+
+	// GetCheckSystemEventsOKBodyRangeLastMonth captures enum value "last_month"
+	GetCheckSystemEventsOKBodyRangeLastMonth string = "last_month"
+
+	// GetCheckSystemEventsOKBodyRangeLast3Months captures enum value "last_3_months"
+	GetCheckSystemEventsOKBodyRangeLast3Months string = "last_3_months"
+
+	// GetCheckSystemEventsOKBodyRangeLast6Months captures enum value "last_6_months"
+	GetCheckSystemEventsOKBodyRangeLast6Months string = "last_6_months"
+
+	// GetCheckSystemEventsOKBodyRangeLast12Months captures enum value "last_12_months"
+	GetCheckSystemEventsOKBodyRangeLast12Months string = "last_12_months"
+)
+
+// prop value enum
+func (o *GetCheckSystemEventsOKBody) validateRangeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckSystemEventsOKBodyTypeRangePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBody) validateRange(formats strfmt.Registry) error {
+	if swag.IsZero(o.Range) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateRangeEnum("getCheckSystemEventsOK"+"."+"range", "body", o.Range); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBody) validateSystemEvents(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckSystemEventsOK"+"."+"system_events", "body", o.SystemEvents); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.SystemEvents); i++ {
+		if swag.IsZero(o.SystemEvents[i]) { // not required
+			continue
+		}
+
+		if o.SystemEvents[i] != nil {
+			if err := o.SystemEvents[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckSystemEventsOK" + "." + "system_events" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBody) validateTo(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckSystemEventsOK"+"."+"to", "body", o.To); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("getCheckSystemEventsOK"+"."+"to", "body", "date-time", o.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check system events o k body based on the context it is used
+func (o *GetCheckSystemEventsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateSystemEvents(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBody) contextValidateSystemEvents(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.SystemEvents); i++ {
+
+		if o.SystemEvents[i] != nil {
+			if err := o.SystemEvents[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckSystemEventsOK" + "." + "system_events" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetCheckSystemEventsOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckSystemEventsOKBodySystemEventsItems0 A system event logs changes made to a check
+swagger:model GetCheckSystemEventsOKBodySystemEventsItems0
+*/
+type GetCheckSystemEventsOKBodySystemEventsItems0 struct {
+
+	// creator
+	// Required: true
+	Creator *GetCheckSystemEventsOKBodySystemEventsItems0Creator `json:"creator"`
+
+	// description
+	// Required: true
+	Description *GetCheckSystemEventsOKBodySystemEventsItems0Description `json:"description"`
+
+	// Duration of the system event in seconds
+	Duration float64 `json:"duration,omitempty"`
+
+	// The unique id for the system event
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// When the event took place (UTC)
+	// Required: true
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp"`
+
+	// The title for the system event
+	// Example: Check Edited
+	// Required: true
+	Title *string `json:"title"`
+}
+
+// Validate validates this get check system events o k body system events items0
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreator(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTitle(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) validateCreator(formats strfmt.Registry) error {
+
+	if err := validate.Required("creator", "body", o.Creator); err != nil {
+		return err
+	}
+
+	if o.Creator != nil {
+		if err := o.Creator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) validateDescription(formats strfmt.Registry) error {
+
+	if err := validate.Required("description", "body", o.Description); err != nil {
+		return err
+	}
+
+	if o.Description != nil {
+		if err := o.Description.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("timestamp", "body", o.Timestamp); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) validateTitle(formats strfmt.Registry) error {
+
+	if err := validate.Required("title", "body", o.Title); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check system events o k body system events items0 based on the context it is used
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCreator(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateDescription(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) contextValidateCreator(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Creator != nil {
+		if err := o.Creator.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) contextValidateDescription(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Description != nil {
+		if err := o.Description.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0) UnmarshalBinary(b []byte) error {
+	var res GetCheckSystemEventsOKBodySystemEventsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckSystemEventsOKBodySystemEventsItems0Creator get check system events o k body system events items0 creator
+swagger:model GetCheckSystemEventsOKBodySystemEventsItems0Creator
+*/
+type GetCheckSystemEventsOKBodySystemEventsItems0Creator struct {
+
+	// The unique id for the creator
+	ID int32 `json:"id,omitempty"`
+
+	// A URL to the user's gravatar image, if available
+	// Example: https://secure.gravatar.com/avatar/0.jpg?r=g\u0026d=mm\u0026s=60
+	ImageURL string `json:"image_url,omitempty"`
+
+	// The name of the creator
+	// Example: Jane Doe
+	Name string `json:"name,omitempty"`
+
+	// The type of the creator
+	// Example: User
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this get check system events o k body system events items0 creator
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Creator) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get check system events o k body system events items0 creator based on context it is used
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Creator) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Creator) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Creator) UnmarshalBinary(b []byte) error {
+	var res GetCheckSystemEventsOKBodySystemEventsItems0Creator
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckSystemEventsOKBodySystemEventsItems0Description get check system events o k body system events items0 description
+swagger:model GetCheckSystemEventsOKBodySystemEventsItems0Description
+*/
+type GetCheckSystemEventsOKBodySystemEventsItems0Description struct {
+
+	// A detailed list describing the event
+	// Example: ["Name changed","Steps changed"]
+	Detail []string `json:"detail"`
+
+	// A summary of the event
+	// Example: Jane Doe made the following changes:
+	Summary string `json:"summary,omitempty"`
+}
+
+// Validate validates this get check system events o k body system events items0 description
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Description) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get check system events o k body system events items0 description based on context it is used
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Description) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Description) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckSystemEventsOKBodySystemEventsItems0Description) UnmarshalBinary(b []byte) error {
+	var res GetCheckSystemEventsOKBodySystemEventsItems0Description
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

@@ -64,12 +64,12 @@ type Check interface {
 	SetPaused(bool)
 
 	// status
-	Status() *Status
-	SetStatus(*Status)
+	Status() *CheckStatus
+	SetStatus(*CheckStatus)
 
 	// An array of tags applied to the check
-	Tags() []*Tag
-	SetTags([]*Tag)
+	Tags() []*CheckTagsItems0
+	SetTags([]*CheckTagsItems0)
 
 	// The check type
 	// Required: true
@@ -102,9 +102,9 @@ type check struct {
 
 	pausedField bool
 
-	statusField *Status
+	statusField *CheckStatus
 
-	tagsField []*Tag
+	tagsField []*CheckTagsItems0
 
 	typeField string
 
@@ -182,22 +182,22 @@ func (m *check) SetPaused(val bool) {
 }
 
 // Status gets the status of this polymorphic type
-func (m *check) Status() *Status {
+func (m *check) Status() *CheckStatus {
 	return m.statusField
 }
 
 // SetStatus sets the status of this polymorphic type
-func (m *check) SetStatus(val *Status) {
+func (m *check) SetStatus(val *CheckStatus) {
 	m.statusField = val
 }
 
 // Tags gets the tags of this polymorphic type
-func (m *check) Tags() []*Tag {
+func (m *check) Tags() []*CheckTagsItems0 {
 	return m.tagsField
 }
 
 // SetTags sets the tags of this polymorphic type
-func (m *check) SetTags(val []*Tag) {
+func (m *check) SetTags(val []*CheckTagsItems0) {
 	m.tagsField = val
 }
 
@@ -268,12 +268,6 @@ func unmarshalCheck(data []byte, consumer runtime.Consumer) (Check, error) {
 	switch getType.Type {
 	case "check":
 		var result check
-		if err := consumer.Consume(buf2, &result); err != nil {
-			return nil, err
-		}
-		return &result, nil
-	case "monitoring_check":
-		var result MonitoringCheck
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
@@ -399,7 +393,7 @@ var checkTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","all","api"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","api"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -432,9 +426,6 @@ const (
 
 	// CheckTypeMonitoring captures enum value "monitoring"
 	CheckTypeMonitoring string = "monitoring"
-
-	// CheckTypeAPI captures enum value "all"
-	CheckTypeAll string = "all"
 
 	// CheckTypeAPI captures enum value "api"
 	CheckTypeAPI string = "api"
@@ -571,6 +562,170 @@ func (m *CheckLinks) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *CheckLinks) UnmarshalBinary(b []byte) error {
 	var res CheckLinks
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckStatus check status
+//
+// swagger:model CheckStatus
+type CheckStatus struct {
+
+	// True if the fail limit has been reached
+	// Example: false
+	HasFailure bool `json:"has_failure,omitempty"`
+
+	// True if the fail limit has been reached for at least one location
+	// Example: false
+	HasLocationFailure string `json:"has_location_failure,omitempty"`
+
+	// The timestamp of the last alert (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastAlertAt strfmt.DateTime `json:"last_alert_at,omitempty"`
+
+	// The response code from the last run
+	// Example: 200
+	LastCode int32 `json:"last_code,omitempty"`
+
+	// The timestamp of the last failed run (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastFailureAt strfmt.DateTime `json:"last_failure_at,omitempty"`
+
+	// The message from the last run
+	// Example: OK
+	LastMessage string `json:"last_message,omitempty"`
+
+	// The response time from the last run
+	// Example: 50
+	LastResponseTime string `json:"last_response_time,omitempty"`
+
+	// The timestamp of the last run (UTC)
+	// Example: 2021-05-25T17:49:05Z
+	// Format: date-time
+	LastRunAt strfmt.DateTime `json:"last_run_at,omitempty"`
+}
+
+// Validate validates this check status
+func (m *CheckStatus) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLastAlertAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLastFailureAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLastRunAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CheckStatus) validateLastAlertAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastAlertAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_alert_at", "body", "date-time", m.LastAlertAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CheckStatus) validateLastFailureAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastFailureAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_failure_at", "body", "date-time", m.LastFailureAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CheckStatus) validateLastRunAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastRunAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_run_at", "body", "date-time", m.LastRunAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this check status based on context it is used
+func (m *CheckStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckStatus) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckStatus) UnmarshalBinary(b []byte) error {
+	var res CheckStatus
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckTagsItems0 check tags items0
+//
+// swagger:model CheckTagsItems0
+type CheckTagsItems0 struct {
+
+	// id
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// name
+	// Example: example tag
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this check tags items0
+func (m *CheckTagsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this check tags items0 based on context it is used
+func (m *CheckTagsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckTagsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckTagsItems0) UnmarshalBinary(b []byte) error {
+	var res CheckTagsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -6,15 +6,15 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // SeleniumSideExportReader is a Reader for the SeleniumSideExport structure.
@@ -40,9 +40,9 @@ func (o *SeleniumSideExportReader) ReadResponse(response runtime.ClientResponse,
 func NewSeleniumSideExportOK() *SeleniumSideExportOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &SeleniumSideExportOK{
@@ -60,7 +60,7 @@ type SeleniumSideExportOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +70,17 @@ type SeleniumSideExportOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.SeleniumSideScript
+	Payload *SeleniumSideExportOKBody
 }
 
 func (o *SeleniumSideExportOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/real_browsers/{id}/export.side][%d] seleniumSideExportOK  %+v", 200, o.Payload)
 }
-func (o *SeleniumSideExportOK) GetPayload() *models.SeleniumSideScript {
+func (o *SeleniumSideExportOK) GetPayload() *SeleniumSideExportOKBody {
 	return o.Payload
 }
 
@@ -119,12 +119,376 @@ func (o *SeleniumSideExportOK) readResponse(response runtime.ClientResponse, con
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.SeleniumSideScript)
+	o.Payload = new(SeleniumSideExportOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*SeleniumSideExportOKBody A Selenium SIDE script. This can be run using the Selenium IDE.
+swagger:model SeleniumSideExportOKBody
+*/
+type SeleniumSideExportOKBody struct {
+
+	// name
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// suites
+	Suites []*SeleniumSideExportOKBodySuitesItems0 `json:"suites"`
+
+	// tests
+	Tests []*SeleniumSideExportOKBodyTestsItems0 `json:"tests"`
+
+	// url
+	// Example: https://example.com
+	URL string `json:"url,omitempty"`
+
+	// urls
+	Urls []string `json:"urls"`
+
+	// version
+	// Example: 1.1
+	Version string `json:"version,omitempty"`
+}
+
+// Validate validates this selenium side export o k body
+func (o *SeleniumSideExportOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateSuites(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTests(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SeleniumSideExportOKBody) validateSuites(formats strfmt.Registry) error {
+	if swag.IsZero(o.Suites) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Suites); i++ {
+		if swag.IsZero(o.Suites[i]) { // not required
+			continue
+		}
+
+		if o.Suites[i] != nil {
+			if err := o.Suites[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("seleniumSideExportOK" + "." + "suites" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *SeleniumSideExportOKBody) validateTests(formats strfmt.Registry) error {
+	if swag.IsZero(o.Tests) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Tests); i++ {
+		if swag.IsZero(o.Tests[i]) { // not required
+			continue
+		}
+
+		if o.Tests[i] != nil {
+			if err := o.Tests[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("seleniumSideExportOK" + "." + "tests" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this selenium side export o k body based on the context it is used
+func (o *SeleniumSideExportOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateSuites(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateTests(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SeleniumSideExportOKBody) contextValidateSuites(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Suites); i++ {
+
+		if o.Suites[i] != nil {
+			if err := o.Suites[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("seleniumSideExportOK" + "." + "suites" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *SeleniumSideExportOKBody) contextValidateTests(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Tests); i++ {
+
+		if o.Tests[i] != nil {
+			if err := o.Tests[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("seleniumSideExportOK" + "." + "tests" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SeleniumSideExportOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SeleniumSideExportOKBody) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideExportOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*SeleniumSideExportOKBodySuitesItems0 selenium side export o k body suites items0
+swagger:model SeleniumSideExportOKBodySuitesItems0
+*/
+type SeleniumSideExportOKBodySuitesItems0 struct {
+
+	// name
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// An array of test IDs
+	Tests []string `json:"tests"`
+}
+
+// Validate validates this selenium side export o k body suites items0
+func (o *SeleniumSideExportOKBodySuitesItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this selenium side export o k body suites items0 based on context it is used
+func (o *SeleniumSideExportOKBodySuitesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodySuitesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodySuitesItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideExportOKBodySuitesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*SeleniumSideExportOKBodyTestsItems0 A Selenium SIDE test representing a single check.
+swagger:model SeleniumSideExportOKBodyTestsItems0
+*/
+type SeleniumSideExportOKBodyTestsItems0 struct {
+
+	// commands
+	Commands []*SeleniumSideExportOKBodyTestsItems0CommandsItems0 `json:"commands"`
+
+	// The check ID
+	// Example: 1
+	ID string `json:"id,omitempty"`
+
+	// The check name
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+
+	// The starting URL
+	// Example: https://example.com
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this selenium side export o k body tests items0
+func (o *SeleniumSideExportOKBodyTestsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCommands(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SeleniumSideExportOKBodyTestsItems0) validateCommands(formats strfmt.Registry) error {
+	if swag.IsZero(o.Commands) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Commands); i++ {
+		if swag.IsZero(o.Commands[i]) { // not required
+			continue
+		}
+
+		if o.Commands[i] != nil {
+			if err := o.Commands[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("commands" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this selenium side export o k body tests items0 based on the context it is used
+func (o *SeleniumSideExportOKBodyTestsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCommands(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SeleniumSideExportOKBodyTestsItems0) contextValidateCommands(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Commands); i++ {
+
+		if o.Commands[i] != nil {
+			if err := o.Commands[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("commands" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodyTestsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodyTestsItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideExportOKBodyTestsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*SeleniumSideExportOKBodyTestsItems0CommandsItems0 selenium side export o k body tests items0 commands items0
+swagger:model SeleniumSideExportOKBodyTestsItems0CommandsItems0
+*/
+type SeleniumSideExportOKBodyTestsItems0CommandsItems0 struct {
+
+	// command
+	// Example: open
+	Command string `json:"command,omitempty"`
+
+	// The step name
+	// Example: Open the first page
+	Comment string `json:"comment,omitempty"`
+
+	// target
+	// Example: /path/to/follow
+	Target string `json:"target,omitempty"`
+
+	// value
+	Value string `json:"value,omitempty"`
+}
+
+// Validate validates this selenium side export o k body tests items0 commands items0
+func (o *SeleniumSideExportOKBodyTestsItems0CommandsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this selenium side export o k body tests items0 commands items0 based on context it is used
+func (o *SeleniumSideExportOKBodyTestsItems0CommandsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodyTestsItems0CommandsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SeleniumSideExportOKBodyTestsItems0CommandsItems0) UnmarshalBinary(b []byte) error {
+	var res SeleniumSideExportOKBodyTestsItems0CommandsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

@@ -6,15 +6,19 @@ package checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // GetChecksReader is a Reader for the GetChecks structure.
@@ -40,9 +44,9 @@ func (o *GetChecksReader) ReadResponse(response runtime.ClientResponse, consumer
 func NewGetChecksOK() *GetChecksOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &GetChecksOK{
@@ -60,7 +64,7 @@ type GetChecksOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +74,17 @@ type GetChecksOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.CheckCollection
+	Payload *GetChecksOKBody
 }
 
 func (o *GetChecksOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks][%d] getChecksOK  %+v", 200, o.Payload)
 }
-func (o *GetChecksOK) GetPayload() *models.CheckCollection {
+func (o *GetChecksOK) GetPayload() *GetChecksOKBody {
 	return o.Payload
 }
 
@@ -119,12 +123,971 @@ func (o *GetChecksOK) readResponse(response runtime.ClientResponse, consumer run
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.CheckCollection)
+	o.Payload = new(GetChecksOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetChecksOKBody A page of Checks
+swagger:model GetChecksOKBody
+*/
+type GetChecksOKBody struct {
+	Checks []GetChecksOKBodyChecksItems0 `json:"checks"`
+
+	// Current page number
+	// Example: 2
+	CurrentPage int32 `json:"current_page,omitempty"`
+
+	// Next page number (null if none)
+	// Example: 3
+	NextPage int32 `json:"next_page,omitempty"`
+
+	// Number of results for each page
+	// Example: 50
+	PerPage int32 `json:"per_page,omitempty"`
+
+	// Previous page number (null if none)
+	// Example: 1
+	PreviousPage int32 `json:"previous_page,omitempty"`
+
+	// Total number of results across all pages
+	// Example: 105
+	TotalCount int32 `json:"total_count,omitempty"`
+
+	// Total number of pages
+	// Example: 3
+	TotalPages int32 `json:"total_pages,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
+func (o *GetChecksOKBody) UnmarshalJSON(raw []byte) error {
+	var data struct {
+		Checks json.RawMessage `json:"checks"`
+
+		// Current page number
+		// Example: 2
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		// Next page number (null if none)
+		// Example: 3
+		NextPage int32 `json:"next_page,omitempty"`
+
+		// Number of results for each page
+		// Example: 50
+		PerPage int32 `json:"per_page,omitempty"`
+
+		// Previous page number (null if none)
+		// Example: 1
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		// Total number of results across all pages
+		// Example: 105
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		// Total number of pages
+		// Example: 3
+		TotalPages int32 `json:"total_pages,omitempty"`
+	}
+	buf := bytes.NewBuffer(raw)
+	dec := json.NewDecoder(buf)
+	dec.UseNumber()
+
+	if err := dec.Decode(&data); err != nil {
+		return err
+	}
+
+	var allOfChecks []GetChecksOKBodyChecksItems0
+	if string(data.Checks) != "null" {
+		checks, err := UnmarshalGetChecksOKBodyChecksItems0Slice(bytes.NewBuffer(data.Checks), runtime.JSONConsumer())
+		if err != nil && err != io.EOF {
+			return err
+		}
+		allOfChecks = checks
+	}
+
+	var result GetChecksOKBody
+
+	result.checksField = allOfChecks
+
+	result.CurrentPage = data.CurrentPage
+	result.NextPage = data.NextPage
+	result.PerPage = data.PerPage
+	result.PreviousPage = data.PreviousPage
+	result.TotalCount = data.TotalCount
+	result.TotalPages = data.TotalPages
+
+	*o = result
+
+	return nil
+}
+
+// MarshalJSON marshals this object with a polymorphic type to a JSON structure
+func (o GetChecksOKBody) MarshalJSON() ([]byte, error) {
+	var b1, b2, b3 []byte
+	var err error
+	b1, err = json.Marshal(struct {
+
+		// Current page number
+		// Example: 2
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		// Next page number (null if none)
+		// Example: 3
+		NextPage int32 `json:"next_page,omitempty"`
+
+		// Number of results for each page
+		// Example: 50
+		PerPage int32 `json:"per_page,omitempty"`
+
+		// Previous page number (null if none)
+		// Example: 1
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		// Total number of results across all pages
+		// Example: 105
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		// Total number of pages
+		// Example: 3
+		TotalPages int32 `json:"total_pages,omitempty"`
+	}{
+
+		CurrentPage: o.CurrentPage,
+
+		NextPage: o.NextPage,
+
+		PerPage: o.PerPage,
+
+		PreviousPage: o.PreviousPage,
+
+		TotalCount: o.TotalCount,
+
+		TotalPages: o.TotalPages,
+	})
+	if err != nil {
+		return nil, err
+	}
+	b2, err = json.Marshal(struct {
+		Checks []GetChecksOKBodyChecksItems0 `json:"checks"`
+	}{
+
+		Checks: o.Checks(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return swag.ConcatJSON(b1, b2, b3), nil
+}
+
+// Validate validates this get checks o k body
+func (o *GetChecksOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateChecks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetChecksOKBody) validateChecks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Checks()) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Checks()); i++ {
+
+		if err := o.Checks[i].Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getChecksOK" + "." + "checks" + "." + strconv.Itoa(i))
+			}
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get checks o k body based on the context it is used
+func (o *GetChecksOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateChecks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetChecksOKBody) contextValidateChecks(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Checks()); i++ {
+
+		if err := o.Checks[i].ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getChecksOK" + "." + "checks" + "." + strconv.Itoa(i))
+			}
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetChecksOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetChecksOKBody) UnmarshalBinary(b []byte) error {
+	var res GetChecksOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetChecksOKBodyChecksItems0 A single check
+swagger:model GetChecksOKBodyChecksItems0
+*/
+type GetChecksOKBodyChecksItems0 interface {
+	runtime.Validatable
+	runtime.ContextValidatable
+
+	// When the check was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt() strfmt.DateTime
+	SetCreatedAt(strfmt.DateTime)
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	Frequency() int64
+	SetFrequency(int64)
+
+	// The unique ID for the check
+	// Example: 1
+	// Required: true
+	ID() *int32
+	SetID(*int32)
+
+	// links
+	Links() *GetChecksOKBodyChecksItems0Links
+	SetLinks(*GetChecksOKBodyChecksItems0Links)
+
+	// If notifications for this check are muted or not
+	// Example: false
+	Muted() bool
+	SetMuted(bool)
+
+	// The unique name for the check
+	// Example: Example Check
+	Name() string
+	SetName(string)
+
+	// If the check is paused or not
+	// Example: false
+	Paused() bool
+	SetPaused(bool)
+
+	// status
+	Status() *GetChecksOKBodyChecksItems0Status
+	SetStatus(*GetChecksOKBodyChecksItems0Status)
+
+	// An array of tags applied to the check
+	Tags() []*GetChecksOKBodyChecksItems0TagsItems0
+	SetTags([]*GetChecksOKBodyChecksItems0TagsItems0)
+
+	// The check type
+	// Required: true
+	// Enum: [http http_multi_step port real_browser benchmark content uptime monitoring api]
+	Type() string
+	SetType(string)
+
+	// When the check was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt() strfmt.DateTime
+	SetUpdatedAt(strfmt.DateTime)
+
+	// AdditionalProperties in base type shoud be handled just like regular properties
+	// At this moment, the base type property is pushed down to the subtype
+}
+
+type getChecksOKBodyChecksItems0 struct {
+	createdAtField strfmt.DateTime
+
+	frequencyField int64
+
+	idField *int32
+
+	linksField *GetChecksOKBodyChecksItems0Links
+
+	mutedField bool
+
+	nameField string
+
+	pausedField bool
+
+	statusField *GetChecksOKBodyChecksItems0Status
+
+	tagsField []*GetChecksOKBodyChecksItems0TagsItems0
+
+	typeField string
+
+	updatedAtField strfmt.DateTime
+}
+
+// CreatedAt gets the created at of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) CreatedAt() strfmt.DateTime {
+	return o.createdAtField
+}
+
+// SetCreatedAt sets the created at of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetCreatedAt(val strfmt.DateTime) {
+	o.createdAtField = val
+}
+
+// Frequency gets the frequency of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Frequency() int64 {
+	return o.frequencyField
+}
+
+// SetFrequency sets the frequency of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetFrequency(val int64) {
+	o.frequencyField = val
+}
+
+// ID gets the id of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) ID() *int32 {
+	return o.idField
+}
+
+// SetID sets the id of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetID(val *int32) {
+	o.idField = val
+}
+
+// Links gets the links of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Links() *GetChecksOKBodyChecksItems0Links {
+	return o.linksField
+}
+
+// SetLinks sets the links of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetLinks(val *GetChecksOKBodyChecksItems0Links) {
+	o.linksField = val
+}
+
+// Muted gets the muted of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Muted() bool {
+	return o.mutedField
+}
+
+// SetMuted sets the muted of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetMuted(val bool) {
+	o.mutedField = val
+}
+
+// Name gets the name of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Name() string {
+	return o.nameField
+}
+
+// SetName sets the name of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetName(val string) {
+	o.nameField = val
+}
+
+// Paused gets the paused of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Paused() bool {
+	return o.pausedField
+}
+
+// SetPaused sets the paused of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetPaused(val bool) {
+	o.pausedField = val
+}
+
+// Status gets the status of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Status() *GetChecksOKBodyChecksItems0Status {
+	return o.statusField
+}
+
+// SetStatus sets the status of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetStatus(val *GetChecksOKBodyChecksItems0Status) {
+	o.statusField = val
+}
+
+// Tags gets the tags of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Tags() []*GetChecksOKBodyChecksItems0TagsItems0 {
+	return o.tagsField
+}
+
+// SetTags sets the tags of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetTags(val []*GetChecksOKBodyChecksItems0TagsItems0) {
+	o.tagsField = val
+}
+
+// Type gets the type of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) Type() string {
+	return o.typeField
+}
+
+// SetType sets the type of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetType(val string) {
+	o.typeField = val
+}
+
+// UpdatedAt gets the updated at of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) UpdatedAt() strfmt.DateTime {
+	return o.updatedAtField
+}
+
+// SetUpdatedAt sets the updated at of this polymorphic type
+func (o *getChecksOKBodyChecksItems0) SetUpdatedAt(val strfmt.DateTime) {
+	o.updatedAtField = val
+}
+
+// UnmarshalGetChecksOKBodyChecksItems0Slice unmarshals polymorphic slices of GetChecksOKBodyChecksItems0
+func UnmarshalGetChecksOKBodyChecksItems0Slice(reader io.Reader, consumer runtime.Consumer) ([]GetChecksOKBodyChecksItems0, error) {
+	var elements []json.RawMessage
+	if err := consumer.Consume(reader, &elements); err != nil {
+		return nil, err
+	}
+
+	var result []GetChecksOKBodyChecksItems0
+	for _, element := range elements {
+		obj, err := unmarshalGetChecksOKBodyChecksItems0(element, consumer)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, obj)
+	}
+	return result, nil
+}
+
+// UnmarshalGetChecksOKBodyChecksItems0 unmarshals polymorphic GetChecksOKBodyChecksItems0
+func UnmarshalGetChecksOKBodyChecksItems0(reader io.Reader, consumer runtime.Consumer) (GetChecksOKBodyChecksItems0, error) {
+	// we need to read this twice, so first into a buffer
+	data, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+	return unmarshalGetChecksOKBodyChecksItems0(data, consumer)
+}
+
+func unmarshalGetChecksOKBodyChecksItems0(data []byte, consumer runtime.Consumer) (GetChecksOKBodyChecksItems0, error) {
+	buf := bytes.NewBuffer(data)
+
+	// the first time this is read is to fetch the value of the  property.
+	var getType struct {
+		Empty string `json:""`
+	}
+	if err := consumer.Consume(buf, &getType); err != nil {
+		return nil, err
+	}
+
+	if err := validate.RequiredString("", "body", getType.Empty); err != nil {
+		return nil, err
+	}
+
+	// The value of  is used to determine which type to create and unmarshal the data into
+	switch getType.Empty {
+	}
+	return nil, errors.New(422, "invalid  value: %q", getType.Empty)
+}
+
+// Validate validates this get checks o k body checks items0
+func (o *GetChecksOKBodyChecksItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", o.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(o.Status) { // not required
+		return nil
+	}
+
+	if o.Status != nil {
+		if err := o.Status.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateTags(formats strfmt.Registry) error {
+	if swag.IsZero(o.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Tags); i++ {
+		if swag.IsZero(o.Tags[i]) { // not required
+			continue
+		}
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var getChecksOKBodyChecksItems0TypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["http","http_multi_step","port","real_browser","benchmark","content","uptime","monitoring","api"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getChecksOKBodyChecksItems0TypeTypePropEnum = append(getChecksOKBodyChecksItems0TypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// GetChecksOKBodyChecksItems0TypeHTTP captures enum value "http"
+	GetChecksOKBodyChecksItems0TypeHTTP string = "http"
+
+	// GetChecksOKBodyChecksItems0TypeHTTPMultiStep captures enum value "http_multi_step"
+	GetChecksOKBodyChecksItems0TypeHTTPMultiStep string = "http_multi_step"
+
+	// GetChecksOKBodyChecksItems0TypePort captures enum value "port"
+	GetChecksOKBodyChecksItems0TypePort string = "port"
+
+	// GetChecksOKBodyChecksItems0TypeRealBrowser captures enum value "real_browser"
+	GetChecksOKBodyChecksItems0TypeRealBrowser string = "real_browser"
+
+	// GetChecksOKBodyChecksItems0TypeBenchmark captures enum value "benchmark"
+	GetChecksOKBodyChecksItems0TypeBenchmark string = "benchmark"
+
+	// GetChecksOKBodyChecksItems0TypeContent captures enum value "content"
+	GetChecksOKBodyChecksItems0TypeContent string = "content"
+
+	// GetChecksOKBodyChecksItems0TypeUptime captures enum value "uptime"
+	GetChecksOKBodyChecksItems0TypeUptime string = "uptime"
+
+	// GetChecksOKBodyChecksItems0TypeMonitoring captures enum value "monitoring"
+	GetChecksOKBodyChecksItems0TypeMonitoring string = "monitoring"
+
+	// GetChecksOKBodyChecksItems0TypeAPI captures enum value "api"
+	GetChecksOKBodyChecksItems0TypeAPI string = "api"
+)
+
+// prop value enum
+func (o *GetChecksOKBodyChecksItems0) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getChecksOKBodyChecksItems0TypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateType(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := o.validateTypeEnum("type", "body", o.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", o.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get checks o k body checks items0 based on the context it is used
+func (o *GetChecksOKBodyChecksItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Status != nil {
+		if err := o.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Tags); i++ {
+
+		if o.Tags[i] != nil {
+			if err := o.Tags[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+/*GetChecksOKBodyChecksItems0Links get checks o k body checks items0 links
+swagger:model GetChecksOKBodyChecksItems0Links
+*/
+type GetChecksOKBodyChecksItems0Links struct {
+
+	// The URL for the last run of this check
+	// Example: https://monitoring.rigor.com/checks/1/runs/1
+	LastRun string `json:"last_run,omitempty"`
+
+	// The URL for the available metrics for this check
+	// Example: https://monitoring-api.rigor.com/v2/checks/1/metrics
+	Metrics string `json:"metrics,omitempty"`
+
+	// The URL for the check detail
+	// Example: https://monitoring-api.rigor.com/v2/checks/1
+	Self string `json:"self,omitempty"`
+
+	// The URL for the HTML view for this check
+	// Example: https://monitoring.rigor.com/checks/http/1
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this get checks o k body checks items0 links
+func (o *GetChecksOKBodyChecksItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get checks o k body checks items0 links based on context it is used
+func (o *GetChecksOKBodyChecksItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0Links) UnmarshalBinary(b []byte) error {
+	var res GetChecksOKBodyChecksItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetChecksOKBodyChecksItems0Status get checks o k body checks items0 status
+swagger:model GetChecksOKBodyChecksItems0Status
+*/
+type GetChecksOKBodyChecksItems0Status struct {
+
+	// True if the fail limit has been reached
+	// Example: false
+	HasFailure bool `json:"has_failure,omitempty"`
+
+	// True if the fail limit has been reached for at least one location
+	// Example: false
+	HasLocationFailure string `json:"has_location_failure,omitempty"`
+
+	// The timestamp of the last alert (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastAlertAt strfmt.DateTime `json:"last_alert_at,omitempty"`
+
+	// The response code from the last run
+	// Example: 200
+	LastCode int32 `json:"last_code,omitempty"`
+
+	// The timestamp of the last failed run (UTC)
+	// Example: 2021-05-24T17:54:05Z
+	// Format: date-time
+	LastFailureAt strfmt.DateTime `json:"last_failure_at,omitempty"`
+
+	// The message from the last run
+	// Example: OK
+	LastMessage string `json:"last_message,omitempty"`
+
+	// The response time from the last run
+	// Example: 50
+	LastResponseTime string `json:"last_response_time,omitempty"`
+
+	// The timestamp of the last run (UTC)
+	// Example: 2021-05-25T17:49:05Z
+	// Format: date-time
+	LastRunAt strfmt.DateTime `json:"last_run_at,omitempty"`
+}
+
+// Validate validates this get checks o k body checks items0 status
+func (o *GetChecksOKBodyChecksItems0Status) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLastAlertAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastFailureAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLastRunAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0Status) validateLastAlertAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastAlertAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_alert_at", "body", "date-time", o.LastAlertAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0Status) validateLastFailureAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastFailureAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_failure_at", "body", "date-time", o.LastFailureAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetChecksOKBodyChecksItems0Status) validateLastRunAt(formats strfmt.Registry) error {
+	if swag.IsZero(o.LastRunAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status"+"."+"last_run_at", "body", "date-time", o.LastRunAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get checks o k body checks items0 status based on context it is used
+func (o *GetChecksOKBodyChecksItems0Status) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0Status) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0Status) UnmarshalBinary(b []byte) error {
+	var res GetChecksOKBodyChecksItems0Status
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetChecksOKBodyChecksItems0TagsItems0 get checks o k body checks items0 tags items0
+swagger:model GetChecksOKBodyChecksItems0TagsItems0
+*/
+type GetChecksOKBodyChecksItems0TagsItems0 struct {
+
+	// id
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// name
+	// Example: example tag
+	Name string `json:"name,omitempty"`
+}
+
+// Validate validates this get checks o k body checks items0 tags items0
+func (o *GetChecksOKBodyChecksItems0TagsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get checks o k body checks items0 tags items0 based on context it is used
+func (o *GetChecksOKBodyChecksItems0TagsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0TagsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetChecksOKBodyChecksItems0TagsItems0) UnmarshalBinary(b []byte) error {
+	var res GetChecksOKBodyChecksItems0TagsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

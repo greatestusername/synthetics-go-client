@@ -15,8 +15,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewUpdateHTTPCheckParams creates a new UpdateHTTPCheckParams object,
@@ -63,7 +61,7 @@ func NewUpdateHTTPCheckParamsWithHTTPClient(client *http.Client) *UpdateHTTPChec
 type UpdateHTTPCheckParams struct {
 
 	// CheckDetail.
-	CheckDetail *models.HTTPCheckInput
+	CheckDetail UpdateHTTPCheckBody
 
 	/* ID.
 
@@ -127,13 +125,13 @@ func (o *UpdateHTTPCheckParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithCheckDetail adds the checkDetail to the update Http check params
-func (o *UpdateHTTPCheckParams) WithCheckDetail(checkDetail *models.HTTPCheckInput) *UpdateHTTPCheckParams {
+func (o *UpdateHTTPCheckParams) WithCheckDetail(checkDetail UpdateHTTPCheckBody) *UpdateHTTPCheckParams {
 	o.SetCheckDetail(checkDetail)
 	return o
 }
 
 // SetCheckDetail adds the checkDetail to the update Http check params
-func (o *UpdateHTTPCheckParams) SetCheckDetail(checkDetail *models.HTTPCheckInput) {
+func (o *UpdateHTTPCheckParams) SetCheckDetail(checkDetail UpdateHTTPCheckBody) {
 	o.CheckDetail = checkDetail
 }
 
@@ -155,10 +153,8 @@ func (o *UpdateHTTPCheckParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 	var res []error
-	if o.CheckDetail != nil {
-		if err := r.SetBodyParam(o.CheckDetail); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.CheckDetail); err != nil {
+		return err
 	}
 
 	// path param id

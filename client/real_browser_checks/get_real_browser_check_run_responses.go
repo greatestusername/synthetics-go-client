@@ -6,13 +6,17 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // GetRealBrowserCheckRunReader is a Reader for the GetRealBrowserCheckRun structure.
@@ -44,24 +48,708 @@ func NewGetRealBrowserCheckRunOK() *GetRealBrowserCheckRunOK {
 Real Browser check run response
 */
 type GetRealBrowserCheckRunOK struct {
-	Payload *models.RealBrowserCheckRun
+	Payload *GetRealBrowserCheckRunOKBody
 }
 
 func (o *GetRealBrowserCheckRunOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/real_browsers/{check_id}/runs/{id}][%d] getRealBrowserCheckRunOK  %+v", 200, o.Payload)
 }
-func (o *GetRealBrowserCheckRunOK) GetPayload() *models.RealBrowserCheckRun {
+func (o *GetRealBrowserCheckRunOK) GetPayload() *GetRealBrowserCheckRunOKBody {
 	return o.Payload
 }
 
 func (o *GetRealBrowserCheckRunOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.RealBrowserCheckRun)
+	o.Payload = new(GetRealBrowserCheckRunOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetRealBrowserCheckRunOKBody get real browser check run o k body
+swagger:model GetRealBrowserCheckRunOKBody
+*/
+type GetRealBrowserCheckRunOKBody struct {
+
+	// The unique ID for the check
+	// Example: 1
+	CheckID int32 `json:"check_id,omitempty"`
+
+	// The unique ID for the check run
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// The IP address from which the check was run
+	// Example: 123.456.789.123
+	IPAddress string `json:"ip_address,omitempty"`
+
+	// location
+	Location *GetRealBrowserCheckRunOKBodyLocation `json:"location,omitempty"`
+
+	// A message summarizing the run result
+	// Example: OK
+	Message string `json:"message,omitempty"`
+
+	// An array of pages visited during this run
+	Pages []*GetRealBrowserCheckRunOKBodyPagesItems0 `json:"pages"`
+
+	// URL to download the archive of all screenshots for a run
+	// Example: https://rbc-data.s3.amazonaws.com/example/screenshots
+	ScreenshotArchiveURL string `json:"screenshot_archive_url,omitempty"`
+
+	// A sharable link that can be viewed by anyone
+	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
+	ShareLink string `json:"share_link,omitempty"`
+
+	// The status of the run (whether it succeeded or failed)
+	// Example: success
+	// Enum: [success failure]
+	Status string `json:"status,omitempty"`
+
+	// Time when the check run started (UTC)
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp,omitempty"`
+}
+
+// Validate validates this get real browser check run o k body
+func (o *GetRealBrowserCheckRunOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateLocation(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePages(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) validateLocation(formats strfmt.Registry) error {
+	if swag.IsZero(o.Location) { // not required
+		return nil
+	}
+
+	if o.Location != nil {
+		if err := o.Location.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getRealBrowserCheckRunOK" + "." + "location")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) validatePages(formats strfmt.Registry) error {
+	if swag.IsZero(o.Pages) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Pages); i++ {
+		if swag.IsZero(o.Pages[i]) { // not required
+			continue
+		}
+
+		if o.Pages[i] != nil {
+			if err := o.Pages[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserCheckRunOK" + "." + "pages" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var getRealBrowserCheckRunOKBodyTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["success","failure"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getRealBrowserCheckRunOKBodyTypeStatusPropEnum = append(getRealBrowserCheckRunOKBodyTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// GetRealBrowserCheckRunOKBodyStatusSuccess captures enum value "success"
+	GetRealBrowserCheckRunOKBodyStatusSuccess string = "success"
+
+	// GetRealBrowserCheckRunOKBodyStatusFailure captures enum value "failure"
+	GetRealBrowserCheckRunOKBodyStatusFailure string = "failure"
+)
+
+// prop value enum
+func (o *GetRealBrowserCheckRunOKBody) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getRealBrowserCheckRunOKBodyTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(o.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateStatusEnum("getRealBrowserCheckRunOK"+"."+"status", "body", o.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) validateTimestamp(formats strfmt.Registry) error {
+	if swag.IsZero(o.Timestamp) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("getRealBrowserCheckRunOK"+"."+"timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser check run o k body based on the context it is used
+func (o *GetRealBrowserCheckRunOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLocation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidatePages(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) contextValidateLocation(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Location != nil {
+		if err := o.Location.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getRealBrowserCheckRunOK" + "." + "location")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBody) contextValidatePages(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Pages); i++ {
+
+		if o.Pages[i] != nil {
+			if err := o.Pages[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserCheckRunOK" + "." + "pages" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBody) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserCheckRunOKBodyLocation get real browser check run o k body location
+// Example: {"id":1,"name":"N. Virginia","region_code":"na-us-virginia","world_region":"NA"}
+swagger:model GetRealBrowserCheckRunOKBodyLocation
+*/
+type GetRealBrowserCheckRunOKBodyLocation struct {
+
+	// The unique ID for the location
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the location
+	Name string `json:"name,omitempty"`
+
+	// A readable code representing the location
+	RegionCode string `json:"region_code,omitempty"`
+
+	// The region the location is in
+	WorldRegion string `json:"world_region,omitempty"`
+}
+
+// Validate validates this get real browser check run o k body location
+func (o *GetRealBrowserCheckRunOKBodyLocation) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get real browser check run o k body location based on context it is used
+func (o *GetRealBrowserCheckRunOKBodyLocation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyLocation) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyLocation) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunOKBodyLocation
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserCheckRunOKBodyPagesItems0 get real browser check run o k body pages items0
+swagger:model GetRealBrowserCheckRunOKBodyPagesItems0
+*/
+type GetRealBrowserCheckRunOKBodyPagesItems0 struct {
+
+	// Uptime: Percentage of successful runs
+	// Example: 45
+	Availability float64 `json:"availability,omitempty"`
+
+	// Client Error Count: Number of responses with a status code between 400 and 499
+	// Example: 37
+	ClientErrors float64 `json:"client_errors,omitempty"`
+
+	// Connection Error Count: Number of requests where we failed to make an HTTP/HTTPS connection or we received a 504 status code
+	// Example: 38
+	ConnectionErrors float64 `json:"connection_errors,omitempty"`
+
+	// Total Content Size: Total size of all content loaded in bytes
+	// Example: 22
+	ContentBytes float64 `json:"content_bytes,omitempty"`
+
+	// Total CSS Size: Total size of all CSS files loaded, in bytes
+	// Example: 30
+	CSSBytes float64 `json:"css_bytes,omitempty"`
+
+	// CSS Count: Number of requests for CSS files
+	// Example: 29
+	CSSFiles float64 `json:"css_files,omitempty"`
+
+	// Cumulative Layout Shift: The sum total of all individual layout shift scores for every unexpected layout shift that occurs during the initial page load
+	// Example: 49
+	CumulativeLayoutShift float64 `json:"cumulative_layout_shift,omitempty"`
+
+	// custom timings
+	CustomTimings []*GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0 `json:"custom_timings"`
+
+	// DOM Complete Time: Time until the page and all of its subresources are ready
+	// Example: 4
+	DomCompleteTimeMs float64 `json:"dom_complete_time_ms,omitempty"`
+
+	// DOM Interactive Time: Time until the DOM is fully loaded and processed
+	// Example: 2
+	DomInteractiveTimeMs float64 `json:"dom_interactive_time_ms,omitempty"`
+
+	// DOM Load Time: Time until the DOM and CSSOM are fully loaded and processed
+	// Example: 3
+	DomLoadTimeMs float64 `json:"dom_load_time_ms,omitempty"`
+
+	// Downtime: Percentage of failed runs
+	// Example: 46
+	Downtime float64 `json:"downtime,omitempty"`
+
+	// Error Count: Sum of client, connection, and server error counts
+	// Example: 40
+	Errors float64 `json:"errors,omitempty"`
+
+	// Failed Run Count: The number of times this check has been run and failed
+	// Example: 43
+	FailureCount float64 `json:"failure_count,omitempty"`
+
+	// First Byte Time: Time until we receive the first byte of the base HTML document
+	// Example: 1
+	FirstByteTimeMs float64 `json:"first_byte_time_ms,omitempty"`
+
+	// First Contentful Paint Time: Time until the browser first renders any content
+	// Example: 10
+	FirstContentfulPaintTimeMs float64 `json:"first_contentful_paint_time_ms,omitempty"`
+
+	// First CPU Idle: Time until the page is minimally interactive and will respond to user input in a reasonable amount of time
+	// Example: 13
+	FirstCPUIdleTimeMs float64 `json:"first_cpu_idle_time_ms,omitempty"`
+
+	// Time to Interactive: Time until the page is first expected to be usable and will respond to user input quickly
+	// Example: 12
+	FirstInteractiveTimeMs float64 `json:"first_interactive_time_ms,omitempty"`
+
+	// First Meaningful Paint Time: Time until the biggest above-the-fold layout change has happened, and web fonts have loaded
+	// Example: 11
+	FirstMeaningfulPaintTimeMs float64 `json:"first_meaningful_paint_time_ms,omitempty"`
+
+	// First Paint Time: Time until the browser renders anything other than the default background
+	// Example: 9
+	FirstPaintTimeMs float64 `json:"first_paint_time_ms,omitempty"`
+
+	// TCP Connect Time: Time required to create TCP connection for the first request
+	// Example: 15
+	FirstRequestConnectTimeMs float64 `json:"first_request_connect_time_ms,omitempty"`
+
+	// DNS Time: The time required to resolve a host name for the first request
+	// Example: 14
+	FirstRequestDNSTimeMs float64 `json:"first_request_dns_time_ms,omitempty"`
+
+	// Receive Time: Time required to read the entire response from the server for the first request
+	// Example: 19
+	FirstRequestReceiveTimeMs float64 `json:"first_request_receive_time_ms,omitempty"`
+
+	// Send Time: Time required to send HTTP data to the server for the first request
+	// Example: 17
+	FirstRequestSendTimeMs float64 `json:"first_request_send_time_ms,omitempty"`
+
+	// SSL Time: Time required for SSL/TLS negotiation for the first request
+	// Example: 16
+	FirstRequestSslTimeMs float64 `json:"first_request_ssl_time_ms,omitempty"`
+
+	// Wait Time: Time waiting for a response from the server for the first request
+	// Example: 18
+	FirstRequestWaitTimeMs float64 `json:"first_request_wait_time_ms,omitempty"`
+
+	// Total Font Size: Total size of all fonts loaded, in bytes
+	// Example: 34
+	FontBytes float64 `json:"font_bytes,omitempty"`
+
+	// Font Count: Number of requests for fonts
+	// Example: 33
+	FontFiles float64 `json:"font_files,omitempty"`
+
+	// Fully Loaded Time: Time until there is 1.5s of network inactivity after onload, waiting up to a maximum of 5s
+	// Example: 8
+	FullyLoadedTimeMs float64 `json:"fully_loaded_time_ms,omitempty"`
+
+	// A link to the HAR file for this page. Expires in 24 hours.
+	// Example: https://rbc-data.s3.amazonaws.com/example/hars/0
+	HarURL string `json:"har_url,omitempty"`
+
+	// Total HTML Size: Total size of all HTML content loaded, in bytes
+	// Example: 24
+	HTMLBytes float64 `json:"html_bytes,omitempty"`
+
+	// HTML Count: Number of requests for HTML documents
+	// Example: 23
+	HTMLFiles float64 `json:"html_files,omitempty"`
+
+	// Total Image Size: Total size of all images loaded, in bytes
+	// Example: 26
+	ImageBytes float64 `json:"image_bytes,omitempty"`
+
+	// Image Count: Number of requests for images
+	// Example: 25
+	ImageFiles float64 `json:"image_files,omitempty"`
+
+	// Total JavaScript Size: Total size of all JavaScript files loaded, in bytes
+	// Example: 28
+	JavascriptBytes float64 `json:"javascript_bytes,omitempty"`
+
+	// JavaScript Count: Number of requests for JavaScript files
+	// Example: 27
+	JavascriptFiles float64 `json:"javascript_files,omitempty"`
+
+	// Largest Contentful Paint: The render time of the largest image or text block visible within the viewport
+	// Example: 48
+	LargestContentfulPaintTimeMs float64 `json:"largest_contentful_paint_time_ms,omitempty"`
+
+	// Lighthouse Performance Score: The Google Lighthouse Performance Score (between 0-100). A composite score based on interactive and visual metrics representing your overall performance.
+	// Example: 44
+	LighthousePerformanceScore float64 `json:"lighthouse_performance_score,omitempty"`
+
+	// Onload Time: Time until page has loaded
+	// Example: 6
+	OnloadTimeMs float64 `json:"onload_time_ms,omitempty"`
+
+	// Total Other Size: Total size of all other resources loaded, in bytes
+	// Example: 36
+	OtherBytes float64 `json:"other_bytes,omitempty"`
+
+	// Other Count: Number of requests for all other resources
+	// Example: 35
+	OtherFiles float64 `json:"other_files,omitempty"`
+
+	// A position index indicating the order in which the pages were visited. The position of the first page visited is 0.
+	// Example: 0
+	Position int64 `json:"position,omitempty"`
+
+	// Request Count: Number of requests made
+	// Example: 21
+	Requests float64 `json:"requests,omitempty"`
+
+	// Run Count: The total number of times this check has been run
+	// Example: 41
+	RunCount float64 `json:"run_count,omitempty"`
+
+	// Server Error Count: Number of responses where the status code is 500 or higher (excluding 504)
+	// Example: 39
+	ServerErrors float64 `json:"server_errors,omitempty"`
+
+	// Speed Index: A calculated metric that represents how quickly the page renders above-the-fold content
+	// Example: 20
+	SpeedIndex float64 `json:"speed_index,omitempty"`
+
+	// Start Render Time: Time until the first pixel of content is drawn on the user's display
+	// Example: 5
+	StartRenderMs float64 `json:"start_render_ms,omitempty"`
+
+	// Successful Run Count: The number of times this check has been run and succeeded
+	// Example: 42
+	SuccessCount float64 `json:"success_count,omitempty"`
+
+	// Total Blocking Time: The total amount of time between First Contentful Paint and Time to Interactive where the main thread was blocked for long enough to prevent input responsiveness; Total Blocking Time correlates with First Input Delay
+	// Example: 47
+	TotalBlockingTimeMs float64 `json:"total_blocking_time_ms,omitempty"`
+
+	// The URL of this page
+	// Example: https://example.com
+	URL string `json:"url,omitempty"`
+
+	// Total Video Size: Total size of all videos loaded, in bytes
+	// Example: 32
+	VideoBytes float64 `json:"video_bytes,omitempty"`
+
+	// Video Count: Number of requests for videos
+	// Example: 31
+	VideoFiles float64 `json:"video_files,omitempty"`
+
+	// Visually Complete Time: Time until all above-the-fold content has finished rendering
+	// Example: 7
+	VisuallyCompleteMs float64 `json:"visually_complete_ms,omitempty"`
+}
+
+// Validate validates this get real browser check run o k body pages items0
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCustomTimings(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) validateCustomTimings(formats strfmt.Registry) error {
+	if swag.IsZero(o.CustomTimings) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.CustomTimings); i++ {
+		if swag.IsZero(o.CustomTimings[i]) { // not required
+			continue
+		}
+
+		if o.CustomTimings[i] != nil {
+			if err := o.CustomTimings[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser check run o k body pages items0 based on the context it is used
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCustomTimings(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) contextValidateCustomTimings(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.CustomTimings); i++ {
+
+		if o.CustomTimings[i] != nil {
+			if err := o.CustomTimings[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunOKBodyPagesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0 A custom `mark` or `measure`
+swagger:model GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0
+*/
+type GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0 struct {
+
+	// entry type
+	// Example: mark
+	// Enum: [mark measure]
+	EntryType string `json:"entry_type,omitempty"`
+
+	// The name of this `mark` or `measure`
+	// Example: myCustomMark
+	Name string `json:"name,omitempty"`
+
+	// For `mark`s, the value is the amount of time in milliseconds between the beginning of the page load and the `startTime` of the `mark`. For `measurement`s, the value is the duration of the `measurement` in milliseconds.
+	// Example: 123.4
+	Value float64 `json:"value,omitempty"`
+}
+
+// Validate validates this get real browser check run o k body pages items0 custom timings items0
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateEntryType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var getRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0TypeEntryTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mark","measure"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0TypeEntryTypePropEnum = append(getRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0TypeEntryTypePropEnum, v)
+	}
+}
+
+const (
+
+	// GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0EntryTypeMark captures enum value "mark"
+	GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0EntryTypeMark string = "mark"
+
+	// GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0EntryTypeMeasure captures enum value "measure"
+	GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0EntryTypeMeasure string = "measure"
+)
+
+// prop value enum
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) validateEntryTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0TypeEntryTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) validateEntryType(formats strfmt.Registry) error {
+	if swag.IsZero(o.EntryType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateEntryTypeEnum("entry_type", "body", o.EntryType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get real browser check run o k body pages items0 custom timings items0 based on context it is used
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunOKBodyPagesItems0CustomTimingsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

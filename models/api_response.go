@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -22,7 +23,7 @@ import (
 type APIResponse struct {
 
 	// A collection of error messages
-	Errors []*APIErrorMessage `json:"errors"`
+	Errors []*APIResponseErrorsItems0 `json:"errors"`
 
 	// A high-level status message
 	Message string `json:"message,omitempty"`
@@ -164,4 +165,55 @@ func (m *APIResponse) UnmarshalBinary(b []byte) error {
 	}
 	*m = res
 	return nil
+}
+
+// APIResponseErrorsItems0 API response errors items0
+//
+// swagger:model APIResponseErrorsItems0
+type APIResponseErrorsItems0 struct {
+
+	// Additional detail about the error, if available
+	Description string `json:"description,omitempty"`
+
+	// A summary of the error
+	Title string `json:"title,omitempty"`
+}
+
+// Validate validates this API response errors items0
+func (m *APIResponseErrorsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this API response errors items0 based on context it is used
+func (m *APIResponseErrorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *APIResponseErrorsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *APIResponseErrorsItems0) UnmarshalBinary(b []byte) error {
+	var res APIResponseErrorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+func PrettyPrint(data interface{}) {
+	var p []byte
+	//    var err := error
+	p, err := json.MarshalIndent(data, "", "\t")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%s \n", p)
 }

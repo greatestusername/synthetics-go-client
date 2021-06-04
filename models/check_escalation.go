@@ -31,11 +31,11 @@ type CheckEscalation struct {
 	// Repeat the escalation if the alert is still unacknowledged
 	IsRepeat *bool `json:"is_repeat,omitempty"`
 
-	// Only allow notifications during this timeframe
-	NotificationWindow *CheckEscalationNotifyWindow `json:"notification_window,omitempty"`
+	// notification window
+	NotificationWindow *CheckEscalationNotificationWindow `json:"notification_window,omitempty"`
 
 	// notify who
-	NotifyWho []*CheckEscalationNotifyWho `json:"notify_who"`
+	NotifyWho []*CheckEscalationNotifyWhoItems0 `json:"notify_who"`
 
 	// Notify via SMS (requires that the recipient has a valid phone number)
 	Sms *bool `json:"sms,omitempty"`
@@ -161,6 +161,188 @@ func (m *CheckEscalation) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *CheckEscalation) UnmarshalBinary(b []byte) error {
 	var res CheckEscalation
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationNotificationWindow check escalation notification window
+//
+// swagger:model CheckEscalationNotificationWindow
+type CheckEscalationNotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this check escalation notification window
+func (m *CheckEscalationNotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this check escalation notification window based on context it is used
+func (m *CheckEscalationNotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationNotificationWindow) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationNotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationNotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationNotifyWhoItems0 Where to send escalations
+//
+// swagger:model CheckEscalationNotifyWhoItems0
+type CheckEscalationNotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CheckEscalationNotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this check escalation notify who items0
+func (m *CheckEscalationNotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CheckEscalationNotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this check escalation notify who items0 based on the context it is used
+func (m *CheckEscalationNotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CheckEscalationNotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationNotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationNotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationNotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationNotifyWhoItems0Links check escalation notify who items0 links
+//
+// swagger:model CheckEscalationNotifyWhoItems0Links
+type CheckEscalationNotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this check escalation notify who items0 links
+func (m *CheckEscalationNotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this check escalation notify who items0 links based on context it is used
+func (m *CheckEscalationNotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationNotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationNotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationNotifyWhoItems0Links
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

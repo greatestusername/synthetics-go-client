@@ -10,21 +10,45 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ComparisonReportCollection A page of Comparison Reports
 //
 // swagger:model comparison_report_collection
 type ComparisonReportCollection struct {
-	ComparisonReports []ComparisonReport `json:"comparison_reports"`
+	ComparisonReports []ComparisonReportCollectionComparisonReportsItems0 `json:"comparison_reports"`
 
-	Pagination
+	// Current page number
+	// Example: 2
+	CurrentPage int32 `json:"current_page,omitempty"`
+
+	// Next page number (null if none)
+	// Example: 3
+	NextPage int32 `json:"next_page,omitempty"`
+
+	// Number of results for each page
+	// Example: 50
+	PerPage int32 `json:"per_page,omitempty"`
+
+	// Previous page number (null if none)
+	// Example: 1
+	PreviousPage int32 `json:"previous_page,omitempty"`
+
+	// Total number of results across all pages
+	// Example: 105
+	TotalCount int32 `json:"total_count,omitempty"`
+
+	// Total number of pages
+	// Example: 3
+	TotalPages int32 `json:"total_pages,omitempty"`
 }
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
@@ -32,7 +56,29 @@ func (m *ComparisonReportCollection) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		ComparisonReports json.RawMessage `json:"comparison_reports"`
 
-		Pagination
+		// Current page number
+		// Example: 2
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		// Next page number (null if none)
+		// Example: 3
+		NextPage int32 `json:"next_page,omitempty"`
+
+		// Number of results for each page
+		// Example: 50
+		PerPage int32 `json:"per_page,omitempty"`
+
+		// Previous page number (null if none)
+		// Example: 1
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		// Total number of results across all pages
+		// Example: 105
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		// Total number of pages
+		// Example: 3
+		TotalPages int32 `json:"total_pages,omitempty"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -42,9 +88,9 @@ func (m *ComparisonReportCollection) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var allOfComparisonReports []ComparisonReport
+	var allOfComparisonReports []ComparisonReportCollectionComparisonReportsItems0
 	if string(data.ComparisonReports) != "null" {
-		comparisonReports, err := UnmarshalComparisonReportSlice(bytes.NewBuffer(data.ComparisonReports), runtime.JSONConsumer())
+		comparisonReports, err := UnmarshalComparisonReportCollectionComparisonReportsItems0Slice(bytes.NewBuffer(data.ComparisonReports), runtime.JSONConsumer())
 		if err != nil && err != io.EOF {
 			return err
 		}
@@ -53,8 +99,14 @@ func (m *ComparisonReportCollection) UnmarshalJSON(raw []byte) error {
 
 	var result ComparisonReportCollection
 
-	result.ComparisonReports = allOfComparisonReports
-	result.Pagination = data.Pagination
+	result.comparisonReportsField = allOfComparisonReports
+
+	result.CurrentPage = data.CurrentPage
+	result.NextPage = data.NextPage
+	result.PerPage = data.PerPage
+	result.PreviousPage = data.PreviousPage
+	result.TotalCount = data.TotalCount
+	result.TotalPages = data.TotalPages
 
 	*m = result
 
@@ -66,19 +118,52 @@ func (m ComparisonReportCollection) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
-		Pagination
+
+		// Current page number
+		// Example: 2
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		// Next page number (null if none)
+		// Example: 3
+		NextPage int32 `json:"next_page,omitempty"`
+
+		// Number of results for each page
+		// Example: 50
+		PerPage int32 `json:"per_page,omitempty"`
+
+		// Previous page number (null if none)
+		// Example: 1
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		// Total number of results across all pages
+		// Example: 105
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		// Total number of pages
+		// Example: 3
+		TotalPages int32 `json:"total_pages,omitempty"`
 	}{
 
-		Pagination: m.Pagination,
+		CurrentPage: m.CurrentPage,
+
+		NextPage: m.NextPage,
+
+		PerPage: m.PerPage,
+
+		PreviousPage: m.PreviousPage,
+
+		TotalCount: m.TotalCount,
+
+		TotalPages: m.TotalPages,
 	})
 	if err != nil {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		ComparisonReports []ComparisonReport `json:"comparison_reports"`
+		ComparisonReports []ComparisonReportCollectionComparisonReportsItems0 `json:"comparison_reports"`
 	}{
 
-		ComparisonReports: m.ComparisonReports,
+		ComparisonReports: m.ComparisonReports(),
 	})
 	if err != nil {
 		return nil, err
@@ -95,11 +180,6 @@ func (m *ComparisonReportCollection) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	// validation for a type composition with Pagination
-	if err := m.Pagination.Validate(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -108,13 +188,13 @@ func (m *ComparisonReportCollection) Validate(formats strfmt.Registry) error {
 
 func (m *ComparisonReportCollection) validateComparisonReports(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.ComparisonReports) { // not required
+	if swag.IsZero(m.ComparisonReports()) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.ComparisonReports); i++ {
+	for i := 0; i < len(m.ComparisonReports()); i++ {
 
-		if err := m.ComparisonReports[i].Validate(formats); err != nil {
+		if err := m.comparisonReportsField[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("comparison_reports" + "." + strconv.Itoa(i))
 			}
@@ -134,11 +214,6 @@ func (m *ComparisonReportCollection) ContextValidate(ctx context.Context, format
 		res = append(res, err)
 	}
 
-	// validation for a type composition with Pagination
-	if err := m.Pagination.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -147,9 +222,9 @@ func (m *ComparisonReportCollection) ContextValidate(ctx context.Context, format
 
 func (m *ComparisonReportCollection) contextValidateComparisonReports(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.ComparisonReports); i++ {
+	for i := 0; i < len(m.ComparisonReports()); i++ {
 
-		if err := m.ComparisonReports[i].ContextValidate(ctx, formats); err != nil {
+		if err := m.comparisonReportsField[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("comparison_reports" + "." + strconv.Itoa(i))
 			}
@@ -172,6 +247,855 @@ func (m *ComparisonReportCollection) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ComparisonReportCollection) UnmarshalBinary(b []byte) error {
 	var res ComparisonReportCollection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ComparisonReportCollectionComparisonReportsItems0 A single Comparison Report
+//
+// swagger:discriminator ComparisonReportCollectionComparisonReportsItems0
+type ComparisonReportCollectionComparisonReportsItems0 interface {
+	runtime.Validatable
+	runtime.ContextValidatable
+
+	// The function used to aggregate data for the Comparison Report
+	// Example: mean
+	// Enum: [mean median max min sum stddev percentile_90 percentile_95 percentile_99]
+	Aggregate() string
+	SetAggregate(string)
+
+	// Used to aggregate and display data at this interval. It must be shorter
+	//                               than the duration of the report timeframe.
+	// Example: 1m
+	// Enum: [1m 5m 10m 15m 30m 1h 3h 6h 12h 24h 2d 3d 1w 2w 30d]
+	DataPointInterval() string
+	SetDataPointInterval(string)
+
+	// When set to `true`, excludes failed runs from the Comparison Report results
+	// Example: false
+	ExcludeFailures() bool
+	SetExcludeFailures(bool)
+
+	// The beginning of the report timeframe (if range is "custom")
+	// Example: 2021-05-24T17:54:05Z
+	From() string
+	SetFrom(string)
+
+	// The metric to compare on the Comparison Report
+	// Example: first_byte_time_ms
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	Metric() string
+	SetMetric(string)
+
+	// The unique name for the Comparison Report
+	// Example: Example Comparison Report
+	Name() string
+	SetName(string)
+
+	// The time range that the Comparison Report spans over. Set to `custom`
+	//                               when the report is set to a static timeframe.
+	// Example: custom
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month last_month last_3_months last_6_months custom]
+	Range() string
+	SetRange(string)
+
+	// The end of the report timeframe (if range is "custom")
+	// Example: 2021-05-25T17:54:05Z
+	To() string
+	SetTo(string)
+
+	// account
+	Account() *ComparisonReportCollectionComparisonReportsItems0AO1Account
+	SetAccount(*ComparisonReportCollectionComparisonReportsItems0AO1Account)
+
+	// An array of Real Browser checks selected for the Comparison Report. Needs to have
+	//                                   at least two checks per comparison report
+	Checks() []*ComparisonReportCollectionComparisonReportsItems0ChecksItems0
+	SetChecks([]*ComparisonReportCollectionComparisonReportsItems0ChecksItems0)
+
+	// When the Comparison Report was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt() strfmt.DateTime
+	SetCreatedAt(strfmt.DateTime)
+
+	// The unique ID of the Comparison Report
+	// Example: 1
+	ID() int32
+	SetID(int32)
+
+	// An array of location IDs selected for the Comparison Report. If this array is empty,
+	//                                   the report will include data from all locations.
+	Locations() []*ComparisonReportCollectionComparisonReportsItems0LocationsItems0
+	SetLocations([]*ComparisonReportCollectionComparisonReportsItems0LocationsItems0)
+
+	// A shareable link that can be viewed by anyone
+	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
+	ShareLink() string
+	SetShareLink(string)
+
+	// When the Comparison Report was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt() strfmt.DateTime
+	SetUpdatedAt(strfmt.DateTime)
+
+	// AdditionalProperties in base type shoud be handled just like regular properties
+	// At this moment, the base type property is pushed down to the subtype
+}
+
+type comparisonReportCollectionComparisonReportsItems0 struct {
+
+	// The function used to aggregate data for the Comparison Report
+	// Example: mean
+	// Enum: [mean median max min sum stddev percentile_90 percentile_95 percentile_99]
+	Aggregate string `json:"aggregate,omitempty"`
+
+	// Used to aggregate and display data at this interval. It must be shorter
+	//                               than the duration of the report timeframe.
+	// Example: 1m
+	// Enum: [1m 5m 10m 15m 30m 1h 3h 6h 12h 24h 2d 3d 1w 2w 30d]
+	DataPointInterval string `json:"data_point_interval,omitempty"`
+
+	// When set to `true`, excludes failed runs from the Comparison Report results
+	// Example: false
+	ExcludeFailures bool `json:"exclude_failures,omitempty"`
+
+	// The beginning of the report timeframe (if range is "custom")
+	// Example: 2021-05-24T17:54:05Z
+	From string `json:"from,omitempty"`
+
+	// The metric to compare on the Comparison Report
+	// Example: first_byte_time_ms
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	Metric string `json:"metric,omitempty"`
+
+	// The unique name for the Comparison Report
+	// Example: Example Comparison Report
+	Name string `json:"name,omitempty"`
+
+	// The time range that the Comparison Report spans over. Set to `custom`
+	//                               when the report is set to a static timeframe.
+	// Example: custom
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month last_month last_3_months last_6_months custom]
+	Range string `json:"range,omitempty"`
+
+	// The end of the report timeframe (if range is "custom")
+	// Example: 2021-05-25T17:54:05Z
+	To string `json:"to,omitempty"`
+
+	// account
+	Account *ComparisonReportCollectionComparisonReportsItems0AO1Account `json:"account,omitempty"`
+
+	// An array of Real Browser checks selected for the Comparison Report. Needs to have
+	//                                   at least two checks per comparison report
+	Checks []*ComparisonReportCollectionComparisonReportsItems0ChecksItems0 `json:"checks"`
+
+	// When the Comparison Report was created (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
+
+	// The unique ID of the Comparison Report
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// An array of location IDs selected for the Comparison Report. If this array is empty,
+	//                                   the report will include data from all locations.
+	Locations []*ComparisonReportCollectionComparisonReportsItems0LocationsItems0 `json:"locations"`
+
+	// A shareable link that can be viewed by anyone
+	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
+	ShareLink string `json:"share_link,omitempty"`
+
+	// When the Comparison Report was last updated (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updated_at,omitempty"`
+}
+
+// UnmarshalComparisonReportCollectionComparisonReportsItems0Slice unmarshals polymorphic slices of ComparisonReportCollectionComparisonReportsItems0
+func UnmarshalComparisonReportCollectionComparisonReportsItems0Slice(reader io.Reader, consumer runtime.Consumer) ([]ComparisonReportCollectionComparisonReportsItems0, error) {
+	var elements []json.RawMessage
+	if err := consumer.Consume(reader, &elements); err != nil {
+		return nil, err
+	}
+
+	var result []ComparisonReportCollectionComparisonReportsItems0
+	for _, element := range elements {
+		obj, err := unmarshalComparisonReportCollectionComparisonReportsItems0(element, consumer)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, obj)
+	}
+	return result, nil
+}
+
+// UnmarshalComparisonReportCollectionComparisonReportsItems0 unmarshals polymorphic ComparisonReportCollectionComparisonReportsItems0
+func UnmarshalComparisonReportCollectionComparisonReportsItems0(reader io.Reader, consumer runtime.Consumer) (ComparisonReportCollectionComparisonReportsItems0, error) {
+	// we need to read this twice, so first into a buffer
+	data, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+	return unmarshalComparisonReportCollectionComparisonReportsItems0(data, consumer)
+}
+
+func unmarshalComparisonReportCollectionComparisonReportsItems0(data []byte, consumer runtime.Consumer) (ComparisonReportCollectionComparisonReportsItems0, error) {
+	buf := bytes.NewBuffer(data)
+
+	// the first time this is read is to fetch the value of the  property.
+	var getType struct {
+		Empty string `json:""`
+	}
+	if err := consumer.Consume(buf, &getType); err != nil {
+		return nil, err
+	}
+
+	if err := validate.RequiredString("", "body", getType.Empty); err != nil {
+		return nil, err
+	}
+
+	// The value of  is used to determine which type to create and unmarshal the data into
+	switch getType.Empty {
+	}
+	return nil, errors.New(422, "invalid  value: %q", getType.Empty)
+}
+
+// Validate validates this comparison report collection comparison reports items0
+func (m *ComparisonReportCollectionComparisonReportsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateAggregate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDataPointInterval(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetric(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRange(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAccount(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateChecks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLocations(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var comparisonReportCollectionComparisonReportsItems0TypeAggregatePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mean","median","max","min","sum","stddev","percentile_90","percentile_95","percentile_99"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportCollectionComparisonReportsItems0TypeAggregatePropEnum = append(comparisonReportCollectionComparisonReportsItems0TypeAggregatePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateAggregateEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportCollectionComparisonReportsItems0TypeAggregatePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateAggregate(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Aggregate) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateAggregateEnum("aggregate", "body", m.Aggregate); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportCollectionComparisonReportsItems0TypeDataPointIntervalPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["1m","5m","10m","15m","30m","1h","3h","6h","12h","24h","2d","3d","1w","2w","30d"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportCollectionComparisonReportsItems0TypeDataPointIntervalPropEnum = append(comparisonReportCollectionComparisonReportsItems0TypeDataPointIntervalPropEnum, v)
+	}
+}
+
+// property enum
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateDataPointIntervalEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportCollectionComparisonReportsItems0TypeDataPointIntervalPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateDataPointInterval(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DataPointInterval) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateDataPointIntervalEnum("data_point_interval", "body", m.DataPointInterval); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportCollectionComparisonReportsItems0TypeMetricPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["first_byte_time_ms","dom_interactive_time_ms","dom_load_time_ms","dom_complete_time_ms","start_render_ms","onload_time_ms","visually_complete_ms","fully_loaded_time_ms","first_paint_time_ms","first_contentful_paint_time_ms","first_meaningful_paint_time_ms","first_interactive_time_ms","first_cpu_idle_time_ms","first_request_dns_time_ms","first_request_connect_time_ms","first_request_ssl_time_ms","first_request_send_time_ms","first_request_wait_time_ms","first_request_receive_time_ms","speed_index","requests","content_bytes","html_files","html_bytes","image_files","image_bytes","javascript_files","javascript_bytes","css_files","css_bytes","video_files","video_bytes","font_files","font_bytes","other_files","other_bytes","client_errors","connection_errors","server_errors","errors","run_count","success_count","failure_count","lighthouse_performance_score","availability","downtime","total_blocking_time_ms","largest_contentful_paint_time_ms","cumulative_layout_shift"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportCollectionComparisonReportsItems0TypeMetricPropEnum = append(comparisonReportCollectionComparisonReportsItems0TypeMetricPropEnum, v)
+	}
+}
+
+// property enum
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateMetricEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportCollectionComparisonReportsItems0TypeMetricPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateMetric(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Metric) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateMetricEnum("metric", "body", m.Metric); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var comparisonReportCollectionComparisonReportsItems0TypeRangePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["last_hour","last_4_hours","last_8_hours","last_12_hours","last_24_hours","yesterday","today","last_7_days","last_30_days","this_week","last_week","this_month","last_month","last_3_months","last_6_months","custom"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		comparisonReportCollectionComparisonReportsItems0TypeRangePropEnum = append(comparisonReportCollectionComparisonReportsItems0TypeRangePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateRangeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, comparisonReportCollectionComparisonReportsItems0TypeRangePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateRange(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Range) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateRangeEnum("range", "body", m.Range); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateAccount(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Account) { // not required
+		return nil
+	}
+
+	if m.Account != nil {
+		if err := m.Account.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("account")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateChecks(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Checks) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Checks); i++ {
+		if swag.IsZero(m.Checks[i]) { // not required
+			continue
+		}
+
+		if m.Checks[i] != nil {
+			if err := m.Checks[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created_at", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateLocations(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Locations) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Locations); i++ {
+		if swag.IsZero(m.Locations[i]) { // not required
+			continue
+		}
+
+		if m.Locations[i] != nil {
+			if err := m.Locations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated_at", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this comparison report collection comparison reports items0 based on the context it is used
+func (m *ComparisonReportCollectionComparisonReportsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAccount(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateChecks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLocations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) contextValidateAccount(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Account != nil {
+		if err := m.Account.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("account")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) contextValidateChecks(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Checks); i++ {
+
+		if m.Checks[i] != nil {
+			if err := m.Checks[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0) contextValidateLocations(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Locations); i++ {
+
+		if m.Locations[i] != nil {
+			if err := m.Locations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("locations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ComparisonReportCollectionComparisonReportsItems0AO1Account comparison report collection comparison reports items0 a o1 account
+//
+// swagger:model ComparisonReportCollectionComparisonReportsItems0AO1Account
+type ComparisonReportCollectionComparisonReportsItems0AO1Account struct {
+
+	// The unique ID of the account
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// The name of the account
+	// Example: Example Company
+	// Required: true
+	Name *string `json:"name"`
+}
+
+// Validate validates this comparison report collection comparison reports items0 a o1 account
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("account"+"."+"id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("account"+"."+"name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report collection comparison reports items0 a o1 account based on context it is used
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0AO1Account) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportCollectionComparisonReportsItems0AO1Account
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ComparisonReportCollectionComparisonReportsItems0ChecksItems0 comparison report collection comparison reports items0 checks items0
+//
+// swagger:model ComparisonReportCollectionComparisonReportsItems0ChecksItems0
+type ComparisonReportCollectionComparisonReportsItems0ChecksItems0 struct {
+
+	// When set to `true`, the metrics from this check are used as a baseline for the other checks
+	// Example: true
+	Baseline bool `json:"baseline,omitempty"`
+
+	// The unique ID of the check attached to the Comparison Report
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// An optional alias to use in place of the check name in the Comparison Report
+	// Example: Example Nickname
+	Nickname string `json:"nickname,omitempty"`
+
+	// The name of the check attached to the Comparison Report
+	// Example: Example Check
+	Name string `json:"name,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.Baseline = dataAO0.Baseline
+
+	m.ID = dataAO0.ID
+
+	m.Nickname = dataAO0.Nickname
+
+	// AO1
+	var dataAO1 struct {
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Name = dataAO1.Name
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m ComparisonReportCollectionComparisonReportsItems0ChecksItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Baseline bool `json:"baseline,omitempty"`
+
+		ID *int32 `json:"id"`
+
+		Nickname string `json:"nickname,omitempty"`
+	}
+
+	dataAO0.Baseline = m.Baseline
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Nickname = m.Nickname
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Name string `json:"name,omitempty"`
+	}
+
+	dataAO1.Name = m.Name
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this comparison report collection comparison reports items0 checks items0
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report collection comparison reports items0 checks items0 based on context it is used
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0ChecksItems0) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportCollectionComparisonReportsItems0ChecksItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ComparisonReportCollectionComparisonReportsItems0LocationsItems0 comparison report collection comparison reports items0 locations items0
+//
+// swagger:model ComparisonReportCollectionComparisonReportsItems0LocationsItems0
+type ComparisonReportCollectionComparisonReportsItems0LocationsItems0 struct {
+
+	// The unique ID of the location
+	// Example: 1
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// The name of the location
+	// Example: Example Location
+	// Required: true
+	Name *string `json:"name"`
+}
+
+// Validate validates this comparison report collection comparison reports items0 locations items0
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this comparison report collection comparison reports items0 locations items0 based on context it is used
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ComparisonReportCollectionComparisonReportsItems0LocationsItems0) UnmarshalBinary(b []byte) error {
+	var res ComparisonReportCollectionComparisonReportsItems0LocationsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -7,11 +7,13 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // RealBrowserCheckRunPage real browser check run page
@@ -48,7 +50,7 @@ type RealBrowserCheckRunPage struct {
 	CumulativeLayoutShift float64 `json:"cumulative_layout_shift,omitempty"`
 
 	// custom timings
-	CustomTimings []*CustomTiming `json:"custom_timings"`
+	CustomTimings []*RealBrowserCheckRunPageCustomTimingsItems0 `json:"custom_timings"`
 
 	// DOM Complete Time: Time until the page and all of its subresources are ready
 	// Example: 4
@@ -312,6 +314,104 @@ func (m *RealBrowserCheckRunPage) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *RealBrowserCheckRunPage) UnmarshalBinary(b []byte) error {
 	var res RealBrowserCheckRunPage
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// RealBrowserCheckRunPageCustomTimingsItems0 A custom `mark` or `measure`
+//
+// swagger:model RealBrowserCheckRunPageCustomTimingsItems0
+type RealBrowserCheckRunPageCustomTimingsItems0 struct {
+
+	// entry type
+	// Example: mark
+	// Enum: [mark measure]
+	EntryType string `json:"entry_type,omitempty"`
+
+	// The name of this `mark` or `measure`
+	// Example: myCustomMark
+	Name string `json:"name,omitempty"`
+
+	// For `mark`s, the value is the amount of time in milliseconds between the beginning of the page load and the `startTime` of the `mark`. For `measurement`s, the value is the duration of the `measurement` in milliseconds.
+	// Example: 123.4
+	Value float64 `json:"value,omitempty"`
+}
+
+// Validate validates this real browser check run page custom timings items0
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEntryType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var realBrowserCheckRunPageCustomTimingsItems0TypeEntryTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mark","measure"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		realBrowserCheckRunPageCustomTimingsItems0TypeEntryTypePropEnum = append(realBrowserCheckRunPageCustomTimingsItems0TypeEntryTypePropEnum, v)
+	}
+}
+
+const (
+
+	// RealBrowserCheckRunPageCustomTimingsItems0EntryTypeMark captures enum value "mark"
+	RealBrowserCheckRunPageCustomTimingsItems0EntryTypeMark string = "mark"
+
+	// RealBrowserCheckRunPageCustomTimingsItems0EntryTypeMeasure captures enum value "measure"
+	RealBrowserCheckRunPageCustomTimingsItems0EntryTypeMeasure string = "measure"
+)
+
+// prop value enum
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) validateEntryTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, realBrowserCheckRunPageCustomTimingsItems0TypeEntryTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) validateEntryType(formats strfmt.Registry) error {
+	if swag.IsZero(m.EntryType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateEntryTypeEnum("entry_type", "body", m.EntryType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this real browser check run page custom timings items0 based on context it is used
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *RealBrowserCheckRunPageCustomTimingsItems0) UnmarshalBinary(b []byte) error {
+	var res RealBrowserCheckRunPageCustomTimingsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

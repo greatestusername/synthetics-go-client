@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -17,17 +18,64 @@ import (
 //
 // swagger:model check_escalation_input
 type CheckEscalationInput struct {
-	CheckEscalation
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *CheckEscalationInputAO0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*CheckEscalationInputNotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *CheckEscalationInput) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 CheckEscalation
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CheckEscalationInputAO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CheckEscalationInputNotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.CheckEscalation = aO0
+
+	m.AfterMinutes = dataAO0.AfterMinutes
+
+	m.Call = dataAO0.Call
+
+	m.Email = dataAO0.Email
+
+	m.IsRepeat = dataAO0.IsRepeat
+
+	m.NotificationWindow = dataAO0.NotificationWindow
+
+	m.NotifyWho = dataAO0.NotifyWho
+
+	m.Sms = dataAO0.Sms
 
 	return nil
 }
@@ -36,11 +84,41 @@ func (m *CheckEscalationInput) UnmarshalJSON(raw []byte) error {
 func (m CheckEscalationInput) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 1)
 
-	aO0, err := swag.WriteJSON(m.CheckEscalation)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *CheckEscalationInputAO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*CheckEscalationInputNotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.AfterMinutes = m.AfterMinutes
+
+	dataAO0.Call = m.Call
+
+	dataAO0.Email = m.Email
+
+	dataAO0.IsRepeat = m.IsRepeat
+
+	dataAO0.NotificationWindow = m.NotificationWindow
+
+	dataAO0.NotifyWho = m.NotifyWho
+
+	dataAO0.Sms = m.Sms
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	return swag.ConcatJSON(_parts...), nil
 }
 
@@ -48,8 +126,11 @@ func (m CheckEscalationInput) MarshalJSON() ([]byte, error) {
 func (m *CheckEscalationInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with CheckEscalation
-	if err := m.CheckEscalation.Validate(formats); err != nil {
+	if err := m.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNotifyWho(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -59,18 +140,96 @@ func (m *CheckEscalationInput) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *CheckEscalationInput) validateNotificationWindow(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotificationWindow) { // not required
+		return nil
+	}
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CheckEscalationInput) validateNotifyWho(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+		if swag.IsZero(m.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validate this check escalation input based on the context it is used
 func (m *CheckEscalationInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with CheckEscalation
-	if err := m.CheckEscalation.ContextValidate(ctx, formats); err != nil {
+	if err := m.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotifyWho(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *CheckEscalationInput) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CheckEscalationInput) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -85,6 +244,188 @@ func (m *CheckEscalationInput) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *CheckEscalationInput) UnmarshalBinary(b []byte) error {
 	var res CheckEscalationInput
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationInputAO0NotificationWindow check escalation input a o0 notification window
+//
+// swagger:model CheckEscalationInputAO0NotificationWindow
+type CheckEscalationInputAO0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this check escalation input a o0 notification window
+func (m *CheckEscalationInputAO0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this check escalation input a o0 notification window based on context it is used
+func (m *CheckEscalationInputAO0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationInputAO0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationInputAO0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationInputAO0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationInputNotifyWhoItems0 Where to send escalations
+//
+// swagger:model CheckEscalationInputNotifyWhoItems0
+type CheckEscalationInputNotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *CheckEscalationInputNotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this check escalation input notify who items0
+func (m *CheckEscalationInputNotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CheckEscalationInputNotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this check escalation input notify who items0 based on the context it is used
+func (m *CheckEscalationInputNotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CheckEscalationInputNotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationInputNotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationInputNotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationInputNotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// CheckEscalationInputNotifyWhoItems0Links check escalation input notify who items0 links
+//
+// swagger:model CheckEscalationInputNotifyWhoItems0Links
+type CheckEscalationInputNotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this check escalation input notify who items0 links
+func (m *CheckEscalationInputNotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this check escalation input notify who items0 links based on context it is used
+func (m *CheckEscalationInputNotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *CheckEscalationInputNotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *CheckEscalationInputNotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res CheckEscalationInputNotifyWhoItems0Links
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

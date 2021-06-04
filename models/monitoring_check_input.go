@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -18,7 +19,18 @@ import (
 //
 // swagger:model monitoring_check_input
 type MonitoringCheckInput struct {
-	CheckInput
+
+	// Run the check at this interval (in minutes)
+	// Example: 5
+	// Required: true
+	Frequency *int64 `json:"frequency"`
+
+	// The unique name for the check
+	// Required: true
+	Name *string `json:"name"`
+
+	// An array of tag names to apply to the check
+	Tags []string `json:"tags"`
 
 	// When enabled, the check will retry up to two times from the same location after a failed run. Ensure your account plan supports this feature before enabling.
 	AutoRetry *bool `json:"auto_retry,omitempty"`
@@ -35,8 +47,37 @@ type MonitoringCheckInput struct {
 	// The locations to run the check from
 	Locations []int32 `json:"locations"`
 
-	// notifications
-	Notifications *NotificationsInput `json:"notifications,omitempty"`
+	// Configure how and when alerts are sent
+	Notifications struct {
+
+		// escalations
+		Escalations []*MonitoringCheckInputEscalationsItems0 `json:"escalations"`
+
+		// Muted checks do not send any alert notifications
+		Muted *bool `json:"muted,omitempty"`
+
+		// Alert once the number of failed runs reaches this threshold.
+		//                                    Recommended threshold is 2.
+		// Maximum: 10
+		// Minimum: 1
+		NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+		// Alert if the check is failing from only one location
+		NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+		// notify who
+		// Unique: true
+		NotifyWho []*MonitoringCheckInputNotifyWhoItems0 `json:"notify_who"`
+
+		// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+		Call *bool `json:"call,omitempty"`
+
+		// Notify via email
+		Email *bool `json:"email,omitempty"`
+
+		// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+		Sms *bool `json:"sms,omitempty"`
+	} `json:"notifications,omitempty"`
 
 	// Mark a run as a failure if the total response time
 	//                                    is above this threshold (in milliseconds)
@@ -51,11 +92,22 @@ type MonitoringCheckInput struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *MonitoringCheckInput) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 CheckInput
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.CheckInput = aO0
+
+	m.Frequency = dataAO0.Frequency
+
+	m.Name = dataAO0.Name
+
+	m.Tags = dataAO0.Tags
 
 	// AO1
 	var dataAO1 struct {
@@ -69,7 +121,36 @@ func (m *MonitoringCheckInput) UnmarshalJSON(raw []byte) error {
 
 		Locations []int32 `json:"locations"`
 
-		Notifications *NotificationsInput `json:"notifications,omitempty"`
+		Notifications struct {
+
+			// escalations
+			Escalations []*MonitoringCheckInputEscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*MonitoringCheckInputNotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
 
 		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
 
@@ -102,11 +183,25 @@ func (m *MonitoringCheckInput) UnmarshalJSON(raw []byte) error {
 func (m MonitoringCheckInput) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.CheckInput)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		Frequency *int64 `json:"frequency"`
+
+		Name *string `json:"name"`
+
+		Tags []string `json:"tags"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.Frequency = m.Frequency
+
+	dataAO0.Name = m.Name
+
+	dataAO0.Tags = m.Tags
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		AutoRetry *bool `json:"auto_retry,omitempty"`
 
@@ -118,7 +213,36 @@ func (m MonitoringCheckInput) MarshalJSON() ([]byte, error) {
 
 		Locations []int32 `json:"locations"`
 
-		Notifications *NotificationsInput `json:"notifications,omitempty"`
+		Notifications struct {
+
+			// escalations
+			Escalations []*MonitoringCheckInputEscalationsItems0 `json:"escalations"`
+
+			// Muted checks do not send any alert notifications
+			Muted *bool `json:"muted,omitempty"`
+
+			// Alert once the number of failed runs reaches this threshold.
+			//                                    Recommended threshold is 2.
+			// Maximum: 10
+			// Minimum: 1
+			NotifyAfterFailureCount int32 `json:"notify_after_failure_count,omitempty"`
+
+			// Alert if the check is failing from only one location
+			NotifyOnLocationFailure *bool `json:"notify_on_location_failure,omitempty"`
+
+			// notify who
+			// Unique: true
+			NotifyWho []*MonitoringCheckInputNotifyWhoItems0 `json:"notify_who"`
+
+			// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+			Call *bool `json:"call,omitempty"`
+
+			// Notify via email
+			Email *bool `json:"email,omitempty"`
+
+			// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+			Sms *bool `json:"sms,omitempty"`
+		} `json:"notifications,omitempty"`
 
 		ResponseTimeMonitorMilliseconds *int32 `json:"response_time_monitor_milliseconds,omitempty"`
 
@@ -153,8 +277,11 @@ func (m MonitoringCheckInput) MarshalJSON() ([]byte, error) {
 func (m *MonitoringCheckInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with CheckInput
-	if err := m.CheckInput.Validate(formats); err != nil {
+	if err := m.validateFrequency(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -172,19 +299,72 @@ func (m *MonitoringCheckInput) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *MonitoringCheckInput) validateFrequency(formats strfmt.Registry) error {
+
+	if err := validate.Required("frequency", "body", m.Frequency); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckInput) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *MonitoringCheckInput) validateNotifications(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Notifications) { // not required
 		return nil
 	}
 
-	if m.Notifications != nil {
-		if err := m.Notifications.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("notifications")
-			}
-			return err
+	for i := 0; i < len(m.Notifications.Escalations); i++ {
+		if swag.IsZero(m.Notifications.Escalations[i]) { // not required
+			continue
 		}
+
+		if m.Notifications.Escalations[i] != nil {
+			if err := m.Notifications.Escalations[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	if err := validate.MinimumInt("notifications"+"."+"notify_after_failure_count", "body", int64(m.Notifications.NotifyAfterFailureCount), 1, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("notifications"+"."+"notify_after_failure_count", "body", int64(m.Notifications.NotifyAfterFailureCount), 10, false); err != nil {
+		return err
+	}
+
+	if err := validate.UniqueItems("notifications"+"."+"notify_who", "body", m.Notifications.NotifyWho); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Notifications.NotifyWho); i++ {
+		if swag.IsZero(m.Notifications.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.Notifications.NotifyWho[i] != nil {
+			if err := m.Notifications.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -211,11 +391,6 @@ func (m *MonitoringCheckInput) validateResponseTimeMonitorMilliseconds(formats s
 func (m *MonitoringCheckInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with CheckInput
-	if err := m.CheckInput.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateNotifications(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -228,13 +403,30 @@ func (m *MonitoringCheckInput) ContextValidate(ctx context.Context, formats strf
 
 func (m *MonitoringCheckInput) contextValidateNotifications(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Notifications != nil {
-		if err := m.Notifications.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("notifications")
+	for i := 0; i < len(m.Notifications.Escalations); i++ {
+
+		if m.Notifications.Escalations[i] != nil {
+			if err := m.Notifications.Escalations[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "escalations" + "." + strconv.Itoa(i))
+				}
+				return err
 			}
-			return err
 		}
+
+	}
+
+	for i := 0; i < len(m.Notifications.NotifyWho); i++ {
+
+		if m.Notifications.NotifyWho[i] != nil {
+			if err := m.Notifications.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notifications" + "." + "notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -251,6 +443,568 @@ func (m *MonitoringCheckInput) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *MonitoringCheckInput) UnmarshalBinary(b []byte) error {
 	var res MonitoringCheckInput
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckInputEscalationsItems0 An additional notification to send if an alert is unacknowledged
+//
+// swagger:model MonitoringCheckInputEscalationsItems0
+type MonitoringCheckInputEscalationsItems0 struct {
+
+	// Minutes to wait before escalating
+	AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Repeat the escalation if the alert is still unacknowledged
+	IsRepeat *bool `json:"is_repeat,omitempty"`
+
+	// notification window
+	NotificationWindow *MonitoringCheckInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+	// notify who
+	NotifyWho []*MonitoringCheckInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MonitoringCheckInputEscalationsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *MonitoringCheckInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*MonitoringCheckInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.AfterMinutes = dataAO0.AfterMinutes
+
+	m.Call = dataAO0.Call
+
+	m.Email = dataAO0.Email
+
+	m.IsRepeat = dataAO0.IsRepeat
+
+	m.NotificationWindow = dataAO0.NotificationWindow
+
+	m.NotifyWho = dataAO0.NotifyWho
+
+	m.Sms = dataAO0.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MonitoringCheckInputEscalationsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataAO0 struct {
+		AfterMinutes int32 `json:"after_minutes,omitempty"`
+
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		IsRepeat *bool `json:"is_repeat,omitempty"`
+
+		NotificationWindow *MonitoringCheckInputEscalationsItems0AO0NotificationWindow `json:"notification_window,omitempty"`
+
+		NotifyWho []*MonitoringCheckInputEscalationsItems0NotifyWhoItems0 `json:"notify_who"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO0.AfterMinutes = m.AfterMinutes
+
+	dataAO0.Call = m.Call
+
+	dataAO0.Email = m.Email
+
+	dataAO0.IsRepeat = m.IsRepeat
+
+	dataAO0.NotificationWindow = m.NotificationWindow
+
+	dataAO0.NotifyWho = m.NotifyWho
+
+	dataAO0.Sms = m.Sms
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this monitoring check input escalations items0
+func (m *MonitoringCheckInputEscalationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateNotificationWindow(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNotifyWho(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0) validateNotificationWindow(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotificationWindow) { // not required
+		return nil
+	}
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0) validateNotifyWho(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NotifyWho) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+		if swag.IsZero(m.NotifyWho[i]) { // not required
+			continue
+		}
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check input escalations items0 based on the context it is used
+func (m *MonitoringCheckInputEscalationsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNotificationWindow(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotifyWho(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0) contextValidateNotificationWindow(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NotificationWindow != nil {
+		if err := m.NotificationWindow.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification_window")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0) contextValidateNotifyWho(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NotifyWho); i++ {
+
+		if m.NotifyWho[i] != nil {
+			if err := m.NotifyWho[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notify_who" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckInputEscalationsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckInputEscalationsItems0AO0NotificationWindow monitoring check input escalations items0 a o0 notification window
+//
+// swagger:model MonitoringCheckInputEscalationsItems0AO0NotificationWindow
+type MonitoringCheckInputEscalationsItems0AO0NotificationWindow struct {
+
+	// The duration of the notification window, in minutes
+	// Example: 180
+	DurationInMinutes int32 `json:"duration_in_minutes,omitempty"`
+
+	// The end time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 15:00
+	EndTime string `json:"end_time,omitempty"`
+
+	// The start time for the notification window, formatted like 1:30pm or 13:30.
+	// Example: 12:00
+	StartTime string `json:"start_time,omitempty"`
+
+	// The time zone for the notification window (see <a href='http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html'>list of available time zones</a>)
+	// Example: Eastern Time (US \u0026 Canada)
+	TimeZone string `json:"time_zone,omitempty"`
+}
+
+// Validate validates this monitoring check input escalations items0 a o0 notification window
+func (m *MonitoringCheckInputEscalationsItems0AO0NotificationWindow) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check input escalations items0 a o0 notification window based on context it is used
+func (m *MonitoringCheckInputEscalationsItems0AO0NotificationWindow) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0AO0NotificationWindow) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0AO0NotificationWindow) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckInputEscalationsItems0AO0NotificationWindow
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckInputEscalationsItems0NotifyWhoItems0 Where to send escalations
+//
+// swagger:model MonitoringCheckInputEscalationsItems0NotifyWhoItems0
+type MonitoringCheckInputEscalationsItems0NotifyWhoItems0 struct {
+
+	// The recipient's email, if notifying a custom email address
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user or group
+	ID int32 `json:"id,omitempty"`
+
+	// links
+	Links *MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links `json:"links,omitempty"`
+
+	// The type of recipient. Can be either `user` or `group`.
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this monitoring check input escalations items0 notify who items0
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) validateLinks(formats strfmt.Registry) error {
+	if swag.IsZero(m.Links) { // not required
+		return nil
+	}
+
+	if m.Links != nil {
+		if err := m.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check input escalations items0 notify who items0 based on the context it is used
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Links != nil {
+		if err := m.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckInputEscalationsItems0NotifyWhoItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links monitoring check input escalations items0 notify who items0 links
+//
+// swagger:model MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links
+type MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links struct {
+
+	// The html view for this recipient, if available
+	SelfHTML string `json:"self_html,omitempty"`
+}
+
+// Validate validates this monitoring check input escalations items0 notify who items0 links
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this monitoring check input escalations items0 notify who items0 links based on context it is used
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckInputEscalationsItems0NotifyWhoItems0Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckInputNotifyWhoItems0 Where to send notifications
+//
+// swagger:model MonitoringCheckInputNotifyWhoItems0
+type MonitoringCheckInputNotifyWhoItems0 struct {
+
+	// A custom email to notify. Other fields can be left blank when setting this.
+	CustomEmail string `json:"custom_email,omitempty"`
+
+	// The id of the user, group, or alert webhook
+	ID int32 `json:"id,omitempty"`
+
+	// The type of recipient. Can be either `user`, `group`, or `alert_webhook`.
+	Type string `json:"type,omitempty"`
+
+	// Notify via phone call (requires that the recipient has a valid phone number and accepts phone call alerts)
+	Call *bool `json:"call,omitempty"`
+
+	// Notify via email
+	Email *bool `json:"email,omitempty"`
+
+	// Notify via SMS (requires that the recipient has a valid phone number and accepts SMS alerts)
+	Sms *bool `json:"sms,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MonitoringCheckInputNotifyWhoItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.CustomEmail = dataAO0.CustomEmail
+
+	m.ID = dataAO0.ID
+
+	m.Type = dataAO0.Type
+
+	// AO1
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Call = dataAO1.Call
+
+	m.Email = dataAO1.Email
+
+	m.Sms = dataAO1.Sms
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MonitoringCheckInputNotifyWhoItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		CustomEmail string `json:"custom_email,omitempty"`
+
+		ID int32 `json:"id,omitempty"`
+
+		Type string `json:"type,omitempty"`
+	}
+
+	dataAO0.CustomEmail = m.CustomEmail
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Type = m.Type
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Call *bool `json:"call,omitempty"`
+
+		Email *bool `json:"email,omitempty"`
+
+		Sms *bool `json:"sms,omitempty"`
+	}
+
+	dataAO1.Call = m.Call
+
+	dataAO1.Email = m.Email
+
+	dataAO1.Sms = m.Sms
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this monitoring check input notify who items0
+func (m *MonitoringCheckInputNotifyWhoItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validates this monitoring check input notify who items0 based on context it is used
+func (m *MonitoringCheckInputNotifyWhoItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckInputNotifyWhoItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckInputNotifyWhoItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckInputNotifyWhoItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -14,8 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewCreateRealBrowserCheckParams creates a new CreateRealBrowserCheckParams object,
@@ -62,7 +60,7 @@ func NewCreateRealBrowserCheckParamsWithHTTPClient(client *http.Client) *CreateR
 type CreateRealBrowserCheckParams struct {
 
 	// CheckDetail.
-	CheckDetail *models.RealBrowserCheckInput
+	CheckDetail CreateRealBrowserCheckBody
 
 	timeout    time.Duration
 	Context    context.Context
@@ -118,13 +116,13 @@ func (o *CreateRealBrowserCheckParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithCheckDetail adds the checkDetail to the create real browser check params
-func (o *CreateRealBrowserCheckParams) WithCheckDetail(checkDetail *models.RealBrowserCheckInput) *CreateRealBrowserCheckParams {
+func (o *CreateRealBrowserCheckParams) WithCheckDetail(checkDetail CreateRealBrowserCheckBody) *CreateRealBrowserCheckParams {
 	o.SetCheckDetail(checkDetail)
 	return o
 }
 
 // SetCheckDetail adds the checkDetail to the create real browser check params
-func (o *CreateRealBrowserCheckParams) SetCheckDetail(checkDetail *models.RealBrowserCheckInput) {
+func (o *CreateRealBrowserCheckParams) SetCheckDetail(checkDetail CreateRealBrowserCheckBody) {
 	o.CheckDetail = checkDetail
 }
 
@@ -135,10 +133,8 @@ func (o *CreateRealBrowserCheckParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
-	if o.CheckDetail != nil {
-		if err := r.SetBodyParam(o.CheckDetail); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.CheckDetail); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

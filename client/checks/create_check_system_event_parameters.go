@@ -15,8 +15,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewCreateCheckSystemEventParams creates a new CreateCheckSystemEventParams object,
@@ -71,7 +69,7 @@ type CreateCheckSystemEventParams struct {
 	CheckID int32
 
 	// SystemEvent.
-	SystemEvent *models.SystemEventInput
+	SystemEvent CreateCheckSystemEventBody
 
 	timeout    time.Duration
 	Context    context.Context
@@ -138,13 +136,13 @@ func (o *CreateCheckSystemEventParams) SetCheckID(checkID int32) {
 }
 
 // WithSystemEvent adds the systemEvent to the create check system event params
-func (o *CreateCheckSystemEventParams) WithSystemEvent(systemEvent *models.SystemEventInput) *CreateCheckSystemEventParams {
+func (o *CreateCheckSystemEventParams) WithSystemEvent(systemEvent CreateCheckSystemEventBody) *CreateCheckSystemEventParams {
 	o.SetSystemEvent(systemEvent)
 	return o
 }
 
 // SetSystemEvent adds the systemEvent to the create check system event params
-func (o *CreateCheckSystemEventParams) SetSystemEvent(systemEvent *models.SystemEventInput) {
+func (o *CreateCheckSystemEventParams) SetSystemEvent(systemEvent CreateCheckSystemEventBody) {
 	o.SystemEvent = systemEvent
 }
 
@@ -160,10 +158,8 @@ func (o *CreateCheckSystemEventParams) WriteToRequest(r runtime.ClientRequest, r
 	if err := r.SetPathParam("check_id", swag.FormatInt32(o.CheckID)); err != nil {
 		return err
 	}
-	if o.SystemEvent != nil {
-		if err := r.SetBodyParam(o.SystemEvent); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.SystemEvent); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

@@ -14,8 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewReimportRealBrowserCheckParams creates a new ReimportRealBrowserCheckParams object,
@@ -71,7 +69,7 @@ type ReimportRealBrowserCheckParams struct {
 
 	   A Selenium SIDE (JSON) or HTML script. If the script contains multiple `tests`, the first test in the suite will be used to update the check.
 	*/
-	Script *models.SeleniumSideScript
+	Script ReimportRealBrowserCheckBody
 
 	timeout    time.Duration
 	Context    context.Context
@@ -138,13 +136,13 @@ func (o *ReimportRealBrowserCheckParams) SetID(id string) {
 }
 
 // WithScript adds the script to the reimport real browser check params
-func (o *ReimportRealBrowserCheckParams) WithScript(script *models.SeleniumSideScript) *ReimportRealBrowserCheckParams {
+func (o *ReimportRealBrowserCheckParams) WithScript(script ReimportRealBrowserCheckBody) *ReimportRealBrowserCheckParams {
 	o.SetScript(script)
 	return o
 }
 
 // SetScript adds the script to the reimport real browser check params
-func (o *ReimportRealBrowserCheckParams) SetScript(script *models.SeleniumSideScript) {
+func (o *ReimportRealBrowserCheckParams) SetScript(script ReimportRealBrowserCheckBody) {
 	o.Script = script
 }
 
@@ -160,10 +158,8 @@ func (o *ReimportRealBrowserCheckParams) WriteToRequest(r runtime.ClientRequest,
 	if err := r.SetPathParam("id", o.ID); err != nil {
 		return err
 	}
-	if o.Script != nil {
-		if err := r.SetBodyParam(o.Script); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.Script); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

@@ -6,13 +6,16 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // GetRealBrowserCheckRunsReader is a Reader for the GetRealBrowserCheckRuns structure.
@@ -44,24 +47,456 @@ func NewGetRealBrowserCheckRunsOK() *GetRealBrowserCheckRunsOK {
 Real Browser check runs response
 */
 type GetRealBrowserCheckRunsOK struct {
-	Payload *models.RealBrowserCheckRunCollection
+	Payload *GetRealBrowserCheckRunsOKBody
 }
 
 func (o *GetRealBrowserCheckRunsOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/real_browsers/{check_id}/runs][%d] getRealBrowserCheckRunsOK  %+v", 200, o.Payload)
 }
-func (o *GetRealBrowserCheckRunsOK) GetPayload() *models.RealBrowserCheckRunCollection {
+func (o *GetRealBrowserCheckRunsOK) GetPayload() *GetRealBrowserCheckRunsOKBody {
 	return o.Payload
 }
 
 func (o *GetRealBrowserCheckRunsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.RealBrowserCheckRunCollection)
+	o.Payload = new(GetRealBrowserCheckRunsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetRealBrowserCheckRunsOKBody get real browser check runs o k body
+swagger:model GetRealBrowserCheckRunsOKBody
+*/
+type GetRealBrowserCheckRunsOKBody struct {
+
+	// Current page number
+	// Example: 2
+	CurrentPage int32 `json:"current_page,omitempty"`
+
+	// Next page number (null if none)
+	// Example: 3
+	NextPage int32 `json:"next_page,omitempty"`
+
+	// Number of results for each page
+	// Example: 50
+	PerPage int32 `json:"per_page,omitempty"`
+
+	// Previous page number (null if none)
+	// Example: 1
+	PreviousPage int32 `json:"previous_page,omitempty"`
+
+	// Total number of results across all pages
+	// Example: 105
+	TotalCount int32 `json:"total_count,omitempty"`
+
+	// Total number of pages
+	// Example: 3
+	TotalPages int32 `json:"total_pages,omitempty"`
+
+	// The unique ID for the check
+	// Example: 1
+	CheckID int32 `json:"check_id,omitempty"`
+
+	// runs
+	Runs []*GetRealBrowserCheckRunsOKBodyRunsItems0 `json:"runs"`
+
+	// timeframe
+	Timeframe *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe `json:"timeframe,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *GetRealBrowserCheckRunsOKBody) UnmarshalJSON(raw []byte) error {
+	// GetRealBrowserCheckRunsOKBodyAO0
+	var dataGetRealBrowserCheckRunsOKBodyAO0 struct {
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		NextPage int32 `json:"next_page,omitempty"`
+
+		PerPage int32 `json:"per_page,omitempty"`
+
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		TotalPages int32 `json:"total_pages,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataGetRealBrowserCheckRunsOKBodyAO0); err != nil {
+		return err
+	}
+
+	o.CurrentPage = dataGetRealBrowserCheckRunsOKBodyAO0.CurrentPage
+
+	o.NextPage = dataGetRealBrowserCheckRunsOKBodyAO0.NextPage
+
+	o.PerPage = dataGetRealBrowserCheckRunsOKBodyAO0.PerPage
+
+	o.PreviousPage = dataGetRealBrowserCheckRunsOKBodyAO0.PreviousPage
+
+	o.TotalCount = dataGetRealBrowserCheckRunsOKBodyAO0.TotalCount
+
+	o.TotalPages = dataGetRealBrowserCheckRunsOKBodyAO0.TotalPages
+
+	// GetRealBrowserCheckRunsOKBodyAO1
+	var dataGetRealBrowserCheckRunsOKBodyAO1 struct {
+		CheckID int32 `json:"check_id,omitempty"`
+
+		Runs []*GetRealBrowserCheckRunsOKBodyRunsItems0 `json:"runs"`
+
+		Timeframe *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe `json:"timeframe,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataGetRealBrowserCheckRunsOKBodyAO1); err != nil {
+		return err
+	}
+
+	o.CheckID = dataGetRealBrowserCheckRunsOKBodyAO1.CheckID
+
+	o.Runs = dataGetRealBrowserCheckRunsOKBodyAO1.Runs
+
+	o.Timeframe = dataGetRealBrowserCheckRunsOKBodyAO1.Timeframe
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o GetRealBrowserCheckRunsOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataGetRealBrowserCheckRunsOKBodyAO0 struct {
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		NextPage int32 `json:"next_page,omitempty"`
+
+		PerPage int32 `json:"per_page,omitempty"`
+
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		TotalPages int32 `json:"total_pages,omitempty"`
+	}
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.CurrentPage = o.CurrentPage
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.NextPage = o.NextPage
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.PerPage = o.PerPage
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.PreviousPage = o.PreviousPage
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.TotalCount = o.TotalCount
+
+	dataGetRealBrowserCheckRunsOKBodyAO0.TotalPages = o.TotalPages
+
+	jsonDataGetRealBrowserCheckRunsOKBodyAO0, errGetRealBrowserCheckRunsOKBodyAO0 := swag.WriteJSON(dataGetRealBrowserCheckRunsOKBodyAO0)
+	if errGetRealBrowserCheckRunsOKBodyAO0 != nil {
+		return nil, errGetRealBrowserCheckRunsOKBodyAO0
+	}
+	_parts = append(_parts, jsonDataGetRealBrowserCheckRunsOKBodyAO0)
+	var dataGetRealBrowserCheckRunsOKBodyAO1 struct {
+		CheckID int32 `json:"check_id,omitempty"`
+
+		Runs []*GetRealBrowserCheckRunsOKBodyRunsItems0 `json:"runs"`
+
+		Timeframe *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe `json:"timeframe,omitempty"`
+	}
+
+	dataGetRealBrowserCheckRunsOKBodyAO1.CheckID = o.CheckID
+
+	dataGetRealBrowserCheckRunsOKBodyAO1.Runs = o.Runs
+
+	dataGetRealBrowserCheckRunsOKBodyAO1.Timeframe = o.Timeframe
+
+	jsonDataGetRealBrowserCheckRunsOKBodyAO1, errGetRealBrowserCheckRunsOKBodyAO1 := swag.WriteJSON(dataGetRealBrowserCheckRunsOKBodyAO1)
+	if errGetRealBrowserCheckRunsOKBodyAO1 != nil {
+		return nil, errGetRealBrowserCheckRunsOKBodyAO1
+	}
+	_parts = append(_parts, jsonDataGetRealBrowserCheckRunsOKBodyAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this get real browser check runs o k body
+func (o *GetRealBrowserCheckRunsOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateRuns(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTimeframe(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBody) validateRuns(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Runs) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Runs); i++ {
+		if swag.IsZero(o.Runs[i]) { // not required
+			continue
+		}
+
+		if o.Runs[i] != nil {
+			if err := o.Runs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserCheckRunsOK" + "." + "runs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBody) validateTimeframe(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Timeframe) { // not required
+		return nil
+	}
+
+	if o.Timeframe != nil {
+		if err := o.Timeframe.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getRealBrowserCheckRunsOK" + "." + "timeframe")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser check runs o k body based on the context it is used
+func (o *GetRealBrowserCheckRunsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateRuns(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateTimeframe(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBody) contextValidateRuns(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Runs); i++ {
+
+		if o.Runs[i] != nil {
+			if err := o.Runs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserCheckRunsOK" + "." + "runs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBody) contextValidateTimeframe(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Timeframe != nil {
+		if err := o.Timeframe.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getRealBrowserCheckRunsOK" + "." + "timeframe")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunsOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe The timeframe requested (if provided)
+// Example: {"from":"2021-05-25T16:54:05Z","to":"2021-05-25T17:54:05Z"}
+swagger:model GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe
+*/
+type GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe struct {
+
+	// The start time for the timeframe (UTC)
+	// Example: 2021-05-25T16:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The end time for the timeframe (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+}
+
+// Validate validates this get real browser check runs o k body get real browser check runs o k body a o1 timeframe
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) validateFrom(formats strfmt.Registry) error {
+	if swag.IsZero(o.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("getRealBrowserCheckRunsOK"+"."+"timeframe"+"."+"from", "body", "date-time", o.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) validateTo(formats strfmt.Registry) error {
+	if swag.IsZero(o.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("getRealBrowserCheckRunsOK"+"."+"timeframe"+"."+"to", "body", "date-time", o.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get real browser check runs o k body get real browser check runs o k body a o1 timeframe based on context it is used
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunsOKBodyGetRealBrowserCheckRunsOKBodyAO1Timeframe
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserCheckRunsOKBodyRunsItems0 get real browser check runs o k body runs items0
+swagger:model GetRealBrowserCheckRunsOKBodyRunsItems0
+*/
+type GetRealBrowserCheckRunsOKBodyRunsItems0 struct {
+
+	// The unique ID for the check run
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// A short code representing the location for this run
+	// Example: na-us-virginia
+	RegionCode string `json:"region_code,omitempty"`
+
+	// A sharable link that can be viewed by anyone
+	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
+	ShareLink string `json:"share_link,omitempty"`
+
+	// Time when the check run started (UTC)
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp,omitempty"`
+}
+
+// Validate validates this get real browser check runs o k body runs items0
+func (o *GetRealBrowserCheckRunsOKBodyRunsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserCheckRunsOKBodyRunsItems0) validateTimestamp(formats strfmt.Registry) error {
+	if swag.IsZero(o.Timestamp) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get real browser check runs o k body runs items0 based on context it is used
+func (o *GetRealBrowserCheckRunsOKBodyRunsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBodyRunsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserCheckRunsOKBodyRunsItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserCheckRunsOKBodyRunsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,7 +27,7 @@ type PerformanceKpiSeries struct {
 
 	// An array of data points for this series
 	// Min Items: 1
-	Data []*PerformanceKpiSeriesData `json:"data"`
+	Data []*PerformanceKpiSeriesDataItems0 `json:"data"`
 
 	// The location for this series (if grouping by `location`).
 	// Example: N. Virginia
@@ -128,6 +129,272 @@ func (m *PerformanceKpiSeries) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PerformanceKpiSeries) UnmarshalBinary(b []byte) error {
 	var res PerformanceKpiSeries
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiSeriesDataItems0 A single data point containing key-value pairs of metric names and their values
+// Example: {"custom_timings":[{"entry_type":"mark","name":"myCustomMark","value":150.5},{"entry_type":"mark","name":"myCustomMark","value":321}],"first_request_server_ip":"104.28.17.124","requests":123,"run_count":1,"run_id":1,"start_render_ms":1000,"success_count":1,"time":"2021-05-25T17:54:05Z","url":"https://rigor.com"}
+//
+// swagger:model PerformanceKpiSeriesDataItems0
+type PerformanceKpiSeriesDataItems0 struct {
+
+	// custom timings
+	CustomTimings []*PerformanceKpiSeriesDataItems0CustomTimingsItems0 `json:"custom_timings"`
+
+	// The IP address of the first request for the page if grouping by `page` or the IP address of the first request for the first page of the run if not grouping
+	// Example: 104.28.17.124
+	FirstRequestServerIP string `json:"first_request_server_ip,omitempty"`
+
+	// The number of runs aggregated in this data point
+	// Example: 1
+	// Required: true
+	RunCount *int32 `json:"run_count"`
+
+	// The unique ID for this run (if the interval provided was blank)
+	RunID int32 `json:"run_id,omitempty"`
+
+	// The number of successful runs aggregated in this data point
+	// Example: 1
+	// Required: true
+	SuccessCount *int32 `json:"success_count"`
+
+	// The timestamp for this run (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Required: true
+	// Format: date-time
+	Time *strfmt.DateTime `json:"time"`
+
+	// The URL for the page if grouping by `page` or the URL for the first page of the run if not grouping
+	// Example: https://rigor.com/
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this performance kpi series data items0
+func (m *PerformanceKpiSeriesDataItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCustomTimings(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRunCount(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSuccessCount(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0) validateCustomTimings(formats strfmt.Registry) error {
+	if swag.IsZero(m.CustomTimings) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CustomTimings); i++ {
+		if swag.IsZero(m.CustomTimings[i]) { // not required
+			continue
+		}
+
+		if m.CustomTimings[i] != nil {
+			if err := m.CustomTimings[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0) validateRunCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("run_count", "body", m.RunCount); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0) validateSuccessCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("success_count", "body", m.SuccessCount); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0) validateTime(formats strfmt.Registry) error {
+
+	if err := validate.Required("time", "body", m.Time); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("time", "body", "date-time", m.Time.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this performance kpi series data items0 based on the context it is used
+func (m *PerformanceKpiSeriesDataItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustomTimings(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0) contextValidateCustomTimings(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CustomTimings); i++ {
+
+		if m.CustomTimings[i] != nil {
+			if err := m.CustomTimings[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiSeriesDataItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiSeriesDataItems0) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiSeriesDataItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiSeriesDataItems0CustomTimingsItems0 A custom `mark` or `measure`
+//
+// swagger:model PerformanceKpiSeriesDataItems0CustomTimingsItems0
+type PerformanceKpiSeriesDataItems0CustomTimingsItems0 struct {
+
+	// entry type
+	// Example: mark
+	// Enum: [mark measure]
+	EntryType string `json:"entry_type,omitempty"`
+
+	// The name of this `mark` or `measure`
+	// Example: myCustomMark
+	Name string `json:"name,omitempty"`
+
+	// For `mark`s, the value is the amount of time in milliseconds between the beginning of the page load and the `startTime` of the `mark`. For `measurement`s, the value is the duration of the `measurement` in milliseconds.
+	// Example: 123.4
+	Value float64 `json:"value,omitempty"`
+}
+
+// Validate validates this performance kpi series data items0 custom timings items0
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEntryType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var performanceKpiSeriesDataItems0CustomTimingsItems0TypeEntryTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mark","measure"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		performanceKpiSeriesDataItems0CustomTimingsItems0TypeEntryTypePropEnum = append(performanceKpiSeriesDataItems0CustomTimingsItems0TypeEntryTypePropEnum, v)
+	}
+}
+
+const (
+
+	// PerformanceKpiSeriesDataItems0CustomTimingsItems0EntryTypeMark captures enum value "mark"
+	PerformanceKpiSeriesDataItems0CustomTimingsItems0EntryTypeMark string = "mark"
+
+	// PerformanceKpiSeriesDataItems0CustomTimingsItems0EntryTypeMeasure captures enum value "measure"
+	PerformanceKpiSeriesDataItems0CustomTimingsItems0EntryTypeMeasure string = "measure"
+)
+
+// prop value enum
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) validateEntryTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, performanceKpiSeriesDataItems0CustomTimingsItems0TypeEntryTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) validateEntryType(formats strfmt.Registry) error {
+	if swag.IsZero(m.EntryType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateEntryTypeEnum("entry_type", "body", m.EntryType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this performance kpi series data items0 custom timings items0 based on context it is used
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiSeriesDataItems0CustomTimingsItems0) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiSeriesDataItems0CustomTimingsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

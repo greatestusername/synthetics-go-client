@@ -7,17 +7,33 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // MonitoringCheckMetric An available metric for the check
 //
 // swagger:model monitoring_check_metric
 type MonitoringCheckMetric struct {
-	MetricName
+
+	// The format of the data for this metric.
+	// Example: percent
+	// Enum: [milliseconds count percent]
+	Format string `json:"format,omitempty"`
+
+	// A readable label for the metric, in Title Case.
+	// Example: Percentage Uptime
+	// Enum: [Mean Response Time Maximum Response Time Minimum Response Time Response Time Standard Deviation Run Count Error Count Percentage Uptime Percentage Downtime SLA Percentage]
+	Label string `json:"label,omitempty"`
+
+	// The name of the metric, in snake_case.
+	// Example: percentage_uptime
+	// Enum: [average_response_time max_response_time min_response_time standard_deviation run_count error_count percentage_uptime percentage_downtime sla_percentage]
+	Name string `json:"name,omitempty"`
 
 	// links
 	Links *MonitoringCheckMetricAO1Links `json:"links,omitempty"`
@@ -26,11 +42,22 @@ type MonitoringCheckMetric struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *MonitoringCheckMetric) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 MetricName
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.MetricName = aO0
+
+	m.Format = dataAO0.Format
+
+	m.Label = dataAO0.Label
+
+	m.Name = dataAO0.Name
 
 	// AO1
 	var dataAO1 struct {
@@ -49,11 +76,25 @@ func (m *MonitoringCheckMetric) UnmarshalJSON(raw []byte) error {
 func (m MonitoringCheckMetric) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.MetricName)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.Format = m.Format
+
+	dataAO0.Label = m.Label
+
+	dataAO0.Name = m.Name
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		Links *MonitoringCheckMetricAO1Links `json:"links,omitempty"`
 	}
@@ -72,8 +113,15 @@ func (m MonitoringCheckMetric) MarshalJSON() ([]byte, error) {
 func (m *MonitoringCheckMetric) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with MetricName
-	if err := m.MetricName.Validate(formats); err != nil {
+	if err := m.validateFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,6 +132,108 @@ func (m *MonitoringCheckMetric) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var monitoringCheckMetricTypeFormatPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","percent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckMetricTypeFormatPropEnum = append(monitoringCheckMetricTypeFormatPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckMetric) validateFormatEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckMetricTypeFormatPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckMetric) validateFormat(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Format) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateFormatEnum("format", "body", m.Format); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var monitoringCheckMetricTypeLabelPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Mean Response Time","Maximum Response Time","Minimum Response Time","Response Time Standard Deviation","Run Count","Error Count","Percentage Uptime","Percentage Downtime","SLA Percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckMetricTypeLabelPropEnum = append(monitoringCheckMetricTypeLabelPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckMetric) validateLabelEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckMetricTypeLabelPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckMetric) validateLabel(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Label) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateLabelEnum("label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var monitoringCheckMetricTypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckMetricTypeNamePropEnum = append(monitoringCheckMetricTypeNamePropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckMetric) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckMetricTypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckMetric) validateName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNameEnum("name", "body", m.Name); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -108,11 +258,6 @@ func (m *MonitoringCheckMetric) validateLinks(formats strfmt.Registry) error {
 // ContextValidate validate this monitoring check metric based on the context it is used
 func (m *MonitoringCheckMetric) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
-
-	// validation for a type composition with MetricName
-	if err := m.MetricName.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.contextValidateLinks(ctx, formats); err != nil {
 		res = append(res, err)

@@ -34,7 +34,7 @@ type PerformanceKpiData struct {
 
 	// A list of the metrics included in series.
 	// Required: true
-	Metrics []*PageMetric `json:"metrics"`
+	Metrics []*PerformanceKpiDataMetricsItems0 `json:"metrics"`
 
 	// The predefined timeframe, if provided.
 	// Example: last_hour
@@ -43,7 +43,7 @@ type PerformanceKpiData struct {
 
 	// An array of data sets, one for each page and metric combination.
 	// Required: true
-	Series []*PageCollectionSeries `json:"series"`
+	Series []*PerformanceKpiDataSeriesItems0 `json:"series"`
 
 	// The end time for the timeframe (UTC).
 	// Example: 2021-05-25T17:54:05Z
@@ -323,6 +323,841 @@ func (m *PerformanceKpiData) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PerformanceKpiData) UnmarshalBinary(b []byte) error {
 	var res PerformanceKpiData
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiDataMetricsItems0 performance kpi data metrics items0
+//
+// swagger:model PerformanceKpiDataMetricsItems0
+type PerformanceKpiDataMetricsItems0 struct {
+
+	// A short description of the metric.
+	// Example: Time until document has fully loaded and parsed the HTML document
+	Description string `json:"description,omitempty"`
+
+	// A titleized label for the metric.
+	// Example: DOM Load Time
+	// Required: true
+	Label *string `json:"label"`
+
+	// The metric name. If rollup data is returned,
+	//              the metric will be prefixed by `median_`, `average_`, `max_`, or `min_`.
+	// Example: dom_load_time
+	// Required: true
+	// Enum: [server_time dom_load_time start_render onload_time visually_complete fully_loaded_time speed_index request_count content_size html_count html_size image_count image_size javascript_count javascript_size css_count css_size video_count video_size font_count font_size other_count other_size client_error_count connection_error_count server_error_count error_count]
+	Name *string `json:"name"`
+
+	// The units for the metric value.
+	// Example: milliseconds
+	// Required: true
+	// Enum: [milliseconds count bytes]
+	Unit *string `json:"unit"`
+}
+
+// Validate validates this performance kpi data metrics items0
+func (m *PerformanceKpiDataMetricsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUnit(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataMetricsItems0) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var performanceKpiDataMetricsItems0TypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["server_time","dom_load_time","start_render","onload_time","visually_complete","fully_loaded_time","speed_index","request_count","content_size","html_count","html_size","image_count","image_size","javascript_count","javascript_size","css_count","css_size","video_count","video_size","font_count","font_size","other_count","other_size","client_error_count","connection_error_count","server_error_count","error_count"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		performanceKpiDataMetricsItems0TypeNamePropEnum = append(performanceKpiDataMetricsItems0TypeNamePropEnum, v)
+	}
+}
+
+const (
+
+	// PerformanceKpiDataMetricsItems0NameServerTime captures enum value "server_time"
+	PerformanceKpiDataMetricsItems0NameServerTime string = "server_time"
+
+	// PerformanceKpiDataMetricsItems0NameDomLoadTime captures enum value "dom_load_time"
+	PerformanceKpiDataMetricsItems0NameDomLoadTime string = "dom_load_time"
+
+	// PerformanceKpiDataMetricsItems0NameStartRender captures enum value "start_render"
+	PerformanceKpiDataMetricsItems0NameStartRender string = "start_render"
+
+	// PerformanceKpiDataMetricsItems0NameOnloadTime captures enum value "onload_time"
+	PerformanceKpiDataMetricsItems0NameOnloadTime string = "onload_time"
+
+	// PerformanceKpiDataMetricsItems0NameVisuallyComplete captures enum value "visually_complete"
+	PerformanceKpiDataMetricsItems0NameVisuallyComplete string = "visually_complete"
+
+	// PerformanceKpiDataMetricsItems0NameFullyLoadedTime captures enum value "fully_loaded_time"
+	PerformanceKpiDataMetricsItems0NameFullyLoadedTime string = "fully_loaded_time"
+
+	// PerformanceKpiDataMetricsItems0NameSpeedIndex captures enum value "speed_index"
+	PerformanceKpiDataMetricsItems0NameSpeedIndex string = "speed_index"
+
+	// PerformanceKpiDataMetricsItems0NameRequestCount captures enum value "request_count"
+	PerformanceKpiDataMetricsItems0NameRequestCount string = "request_count"
+
+	// PerformanceKpiDataMetricsItems0NameContentSize captures enum value "content_size"
+	PerformanceKpiDataMetricsItems0NameContentSize string = "content_size"
+
+	// PerformanceKpiDataMetricsItems0NameHTMLCount captures enum value "html_count"
+	PerformanceKpiDataMetricsItems0NameHTMLCount string = "html_count"
+
+	// PerformanceKpiDataMetricsItems0NameHTMLSize captures enum value "html_size"
+	PerformanceKpiDataMetricsItems0NameHTMLSize string = "html_size"
+
+	// PerformanceKpiDataMetricsItems0NameImageCount captures enum value "image_count"
+	PerformanceKpiDataMetricsItems0NameImageCount string = "image_count"
+
+	// PerformanceKpiDataMetricsItems0NameImageSize captures enum value "image_size"
+	PerformanceKpiDataMetricsItems0NameImageSize string = "image_size"
+
+	// PerformanceKpiDataMetricsItems0NameJavascriptCount captures enum value "javascript_count"
+	PerformanceKpiDataMetricsItems0NameJavascriptCount string = "javascript_count"
+
+	// PerformanceKpiDataMetricsItems0NameJavascriptSize captures enum value "javascript_size"
+	PerformanceKpiDataMetricsItems0NameJavascriptSize string = "javascript_size"
+
+	// PerformanceKpiDataMetricsItems0NameCSSCount captures enum value "css_count"
+	PerformanceKpiDataMetricsItems0NameCSSCount string = "css_count"
+
+	// PerformanceKpiDataMetricsItems0NameCSSSize captures enum value "css_size"
+	PerformanceKpiDataMetricsItems0NameCSSSize string = "css_size"
+
+	// PerformanceKpiDataMetricsItems0NameVideoCount captures enum value "video_count"
+	PerformanceKpiDataMetricsItems0NameVideoCount string = "video_count"
+
+	// PerformanceKpiDataMetricsItems0NameVideoSize captures enum value "video_size"
+	PerformanceKpiDataMetricsItems0NameVideoSize string = "video_size"
+
+	// PerformanceKpiDataMetricsItems0NameFontCount captures enum value "font_count"
+	PerformanceKpiDataMetricsItems0NameFontCount string = "font_count"
+
+	// PerformanceKpiDataMetricsItems0NameFontSize captures enum value "font_size"
+	PerformanceKpiDataMetricsItems0NameFontSize string = "font_size"
+
+	// PerformanceKpiDataMetricsItems0NameOtherCount captures enum value "other_count"
+	PerformanceKpiDataMetricsItems0NameOtherCount string = "other_count"
+
+	// PerformanceKpiDataMetricsItems0NameOtherSize captures enum value "other_size"
+	PerformanceKpiDataMetricsItems0NameOtherSize string = "other_size"
+
+	// PerformanceKpiDataMetricsItems0NameClientErrorCount captures enum value "client_error_count"
+	PerformanceKpiDataMetricsItems0NameClientErrorCount string = "client_error_count"
+
+	// PerformanceKpiDataMetricsItems0NameConnectionErrorCount captures enum value "connection_error_count"
+	PerformanceKpiDataMetricsItems0NameConnectionErrorCount string = "connection_error_count"
+
+	// PerformanceKpiDataMetricsItems0NameServerErrorCount captures enum value "server_error_count"
+	PerformanceKpiDataMetricsItems0NameServerErrorCount string = "server_error_count"
+
+	// PerformanceKpiDataMetricsItems0NameErrorCount captures enum value "error_count"
+	PerformanceKpiDataMetricsItems0NameErrorCount string = "error_count"
+)
+
+// prop value enum
+func (m *PerformanceKpiDataMetricsItems0) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, performanceKpiDataMetricsItems0TypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataMetricsItems0) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateNameEnum("name", "body", *m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var performanceKpiDataMetricsItems0TypeUnitPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","bytes"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		performanceKpiDataMetricsItems0TypeUnitPropEnum = append(performanceKpiDataMetricsItems0TypeUnitPropEnum, v)
+	}
+}
+
+const (
+
+	// PerformanceKpiDataMetricsItems0UnitMilliseconds captures enum value "milliseconds"
+	PerformanceKpiDataMetricsItems0UnitMilliseconds string = "milliseconds"
+
+	// PerformanceKpiDataMetricsItems0UnitCount captures enum value "count"
+	PerformanceKpiDataMetricsItems0UnitCount string = "count"
+
+	// PerformanceKpiDataMetricsItems0UnitBytes captures enum value "bytes"
+	PerformanceKpiDataMetricsItems0UnitBytes string = "bytes"
+)
+
+// prop value enum
+func (m *PerformanceKpiDataMetricsItems0) validateUnitEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, performanceKpiDataMetricsItems0TypeUnitPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataMetricsItems0) validateUnit(formats strfmt.Registry) error {
+
+	if err := validate.Required("unit", "body", m.Unit); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateUnitEnum("unit", "body", *m.Unit); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this performance kpi data metrics items0 based on context it is used
+func (m *PerformanceKpiDataMetricsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiDataMetricsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiDataMetricsItems0) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiDataMetricsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiDataSeriesItems0 performance kpi data series items0
+//
+// swagger:model PerformanceKpiDataSeriesItems0
+type PerformanceKpiDataSeriesItems0 struct {
+
+	// An array of data points for this series.
+	// Required: true
+	Data []*PerformanceKpiDataSeriesItems0DataItems0 `json:"data"`
+
+	// metric
+	// Required: true
+	Metric *PerformanceKpiDataSeriesItems0Metric `json:"metric"`
+
+	// page
+	Page *PerformanceKpiDataSeriesItems0Page `json:"page,omitempty"`
+
+	// Indicates that this series represents all pages visited in this run.
+	//               Metrics from each page are summed. Not included in the response if `include_summary`
+	//               is set to `false`.
+	// Example: true
+	Total bool `json:"total,omitempty"`
+}
+
+// Validate validates this performance kpi data series items0
+func (m *PerformanceKpiDataSeriesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetric(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("data", "body", m.Data); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Data); i++ {
+		if swag.IsZero(m.Data[i]) { // not required
+			continue
+		}
+
+		if m.Data[i] != nil {
+			if err := m.Data[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) validateMetric(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric", "body", m.Metric); err != nil {
+		return err
+	}
+
+	if m.Metric != nil {
+		if err := m.Metric.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metric")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) validatePage(formats strfmt.Registry) error {
+	if swag.IsZero(m.Page) { // not required
+		return nil
+	}
+
+	if m.Page != nil {
+		if err := m.Page.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("page")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this performance kpi data series items0 based on the context it is used
+func (m *PerformanceKpiDataSeriesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMetric(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePage(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Data); i++ {
+
+		if m.Data[i] != nil {
+			if err := m.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) contextValidateMetric(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Metric != nil {
+		if err := m.Metric.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metric")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0) contextValidatePage(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Page != nil {
+		if err := m.Page.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("page")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiDataSeriesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiDataSeriesItems0DataItems0 performance kpi data series items0 data items0
+//
+// swagger:model PerformanceKpiDataSeriesItems0DataItems0
+type PerformanceKpiDataSeriesItems0DataItems0 struct {
+
+	// The start timestamp for the data point (UTC)
+	// Required: true
+	// Format: date-time
+	From *strfmt.DateTime `json:"from"`
+
+	// The unique id for this page and run (run-level page data only).
+	PageHistoryID int32 `json:"page_history_id,omitempty"`
+
+	// The unique id for this run (run-level data only).
+	RunID int32 `json:"run_id,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Required: true
+	// Format: date-time
+	To *strfmt.DateTime `json:"to"`
+
+	// The value of the metric.
+	// Required: true
+	Value *float64 `json:"value"`
+}
+
+// Validate validates this performance kpi data series items0 data items0
+func (m *PerformanceKpiDataSeriesItems0DataItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0DataItems0) validateFrom(formats strfmt.Registry) error {
+
+	if err := validate.Required("from", "body", m.From); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0DataItems0) validateTo(formats strfmt.Registry) error {
+
+	if err := validate.Required("to", "body", m.To); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", m.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0DataItems0) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this performance kpi data series items0 data items0 based on context it is used
+func (m *PerformanceKpiDataSeriesItems0DataItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0DataItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0DataItems0) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiDataSeriesItems0DataItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiDataSeriesItems0Metric performance kpi data series items0 metric
+//
+// swagger:model PerformanceKpiDataSeriesItems0Metric
+type PerformanceKpiDataSeriesItems0Metric struct {
+
+	// A short description of the metric.
+	// Example: Time until document has fully loaded and parsed the HTML document
+	Description string `json:"description,omitempty"`
+
+	// A titleized label for the metric.
+	// Example: DOM Load Time
+	// Required: true
+	Label *string `json:"label"`
+
+	// The metric name. If rollup data is returned,
+	//              the metric will be prefixed by `median_`, `average_`, `max_`, or `min_`.
+	// Example: dom_load_time
+	// Required: true
+	// Enum: [server_time dom_load_time start_render onload_time visually_complete fully_loaded_time speed_index request_count content_size html_count html_size image_count image_size javascript_count javascript_size css_count css_size video_count video_size font_count font_size other_count other_size client_error_count connection_error_count server_error_count error_count]
+	Name *string `json:"name"`
+
+	// The units for the metric value.
+	// Example: milliseconds
+	// Required: true
+	// Enum: [milliseconds count bytes]
+	Unit *string `json:"unit"`
+}
+
+// Validate validates this performance kpi data series items0 metric
+func (m *PerformanceKpiDataSeriesItems0Metric) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUnit(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0Metric) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var performanceKpiDataSeriesItems0MetricTypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["server_time","dom_load_time","start_render","onload_time","visually_complete","fully_loaded_time","speed_index","request_count","content_size","html_count","html_size","image_count","image_size","javascript_count","javascript_size","css_count","css_size","video_count","video_size","font_count","font_size","other_count","other_size","client_error_count","connection_error_count","server_error_count","error_count"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		performanceKpiDataSeriesItems0MetricTypeNamePropEnum = append(performanceKpiDataSeriesItems0MetricTypeNamePropEnum, v)
+	}
+}
+
+const (
+
+	// PerformanceKpiDataSeriesItems0MetricNameServerTime captures enum value "server_time"
+	PerformanceKpiDataSeriesItems0MetricNameServerTime string = "server_time"
+
+	// PerformanceKpiDataSeriesItems0MetricNameDomLoadTime captures enum value "dom_load_time"
+	PerformanceKpiDataSeriesItems0MetricNameDomLoadTime string = "dom_load_time"
+
+	// PerformanceKpiDataSeriesItems0MetricNameStartRender captures enum value "start_render"
+	PerformanceKpiDataSeriesItems0MetricNameStartRender string = "start_render"
+
+	// PerformanceKpiDataSeriesItems0MetricNameOnloadTime captures enum value "onload_time"
+	PerformanceKpiDataSeriesItems0MetricNameOnloadTime string = "onload_time"
+
+	// PerformanceKpiDataSeriesItems0MetricNameVisuallyComplete captures enum value "visually_complete"
+	PerformanceKpiDataSeriesItems0MetricNameVisuallyComplete string = "visually_complete"
+
+	// PerformanceKpiDataSeriesItems0MetricNameFullyLoadedTime captures enum value "fully_loaded_time"
+	PerformanceKpiDataSeriesItems0MetricNameFullyLoadedTime string = "fully_loaded_time"
+
+	// PerformanceKpiDataSeriesItems0MetricNameSpeedIndex captures enum value "speed_index"
+	PerformanceKpiDataSeriesItems0MetricNameSpeedIndex string = "speed_index"
+
+	// PerformanceKpiDataSeriesItems0MetricNameRequestCount captures enum value "request_count"
+	PerformanceKpiDataSeriesItems0MetricNameRequestCount string = "request_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameContentSize captures enum value "content_size"
+	PerformanceKpiDataSeriesItems0MetricNameContentSize string = "content_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameHTMLCount captures enum value "html_count"
+	PerformanceKpiDataSeriesItems0MetricNameHTMLCount string = "html_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameHTMLSize captures enum value "html_size"
+	PerformanceKpiDataSeriesItems0MetricNameHTMLSize string = "html_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameImageCount captures enum value "image_count"
+	PerformanceKpiDataSeriesItems0MetricNameImageCount string = "image_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameImageSize captures enum value "image_size"
+	PerformanceKpiDataSeriesItems0MetricNameImageSize string = "image_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameJavascriptCount captures enum value "javascript_count"
+	PerformanceKpiDataSeriesItems0MetricNameJavascriptCount string = "javascript_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameJavascriptSize captures enum value "javascript_size"
+	PerformanceKpiDataSeriesItems0MetricNameJavascriptSize string = "javascript_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameCSSCount captures enum value "css_count"
+	PerformanceKpiDataSeriesItems0MetricNameCSSCount string = "css_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameCSSSize captures enum value "css_size"
+	PerformanceKpiDataSeriesItems0MetricNameCSSSize string = "css_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameVideoCount captures enum value "video_count"
+	PerformanceKpiDataSeriesItems0MetricNameVideoCount string = "video_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameVideoSize captures enum value "video_size"
+	PerformanceKpiDataSeriesItems0MetricNameVideoSize string = "video_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameFontCount captures enum value "font_count"
+	PerformanceKpiDataSeriesItems0MetricNameFontCount string = "font_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameFontSize captures enum value "font_size"
+	PerformanceKpiDataSeriesItems0MetricNameFontSize string = "font_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameOtherCount captures enum value "other_count"
+	PerformanceKpiDataSeriesItems0MetricNameOtherCount string = "other_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameOtherSize captures enum value "other_size"
+	PerformanceKpiDataSeriesItems0MetricNameOtherSize string = "other_size"
+
+	// PerformanceKpiDataSeriesItems0MetricNameClientErrorCount captures enum value "client_error_count"
+	PerformanceKpiDataSeriesItems0MetricNameClientErrorCount string = "client_error_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameConnectionErrorCount captures enum value "connection_error_count"
+	PerformanceKpiDataSeriesItems0MetricNameConnectionErrorCount string = "connection_error_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameServerErrorCount captures enum value "server_error_count"
+	PerformanceKpiDataSeriesItems0MetricNameServerErrorCount string = "server_error_count"
+
+	// PerformanceKpiDataSeriesItems0MetricNameErrorCount captures enum value "error_count"
+	PerformanceKpiDataSeriesItems0MetricNameErrorCount string = "error_count"
+)
+
+// prop value enum
+func (m *PerformanceKpiDataSeriesItems0Metric) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, performanceKpiDataSeriesItems0MetricTypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0Metric) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"name", "body", m.Name); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateNameEnum("metric"+"."+"name", "body", *m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var performanceKpiDataSeriesItems0MetricTypeUnitPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","bytes"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		performanceKpiDataSeriesItems0MetricTypeUnitPropEnum = append(performanceKpiDataSeriesItems0MetricTypeUnitPropEnum, v)
+	}
+}
+
+const (
+
+	// PerformanceKpiDataSeriesItems0MetricUnitMilliseconds captures enum value "milliseconds"
+	PerformanceKpiDataSeriesItems0MetricUnitMilliseconds string = "milliseconds"
+
+	// PerformanceKpiDataSeriesItems0MetricUnitCount captures enum value "count"
+	PerformanceKpiDataSeriesItems0MetricUnitCount string = "count"
+
+	// PerformanceKpiDataSeriesItems0MetricUnitBytes captures enum value "bytes"
+	PerformanceKpiDataSeriesItems0MetricUnitBytes string = "bytes"
+)
+
+// prop value enum
+func (m *PerformanceKpiDataSeriesItems0Metric) validateUnitEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, performanceKpiDataSeriesItems0MetricTypeUnitPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PerformanceKpiDataSeriesItems0Metric) validateUnit(formats strfmt.Registry) error {
+
+	if err := validate.Required("metric"+"."+"unit", "body", m.Unit); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateUnitEnum("metric"+"."+"unit", "body", *m.Unit); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this performance kpi data series items0 metric based on context it is used
+func (m *PerformanceKpiDataSeriesItems0Metric) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0Metric) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0Metric) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiDataSeriesItems0Metric
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PerformanceKpiDataSeriesItems0Page performance kpi data series items0 page
+//
+// swagger:model PerformanceKpiDataSeriesItems0Page
+type PerformanceKpiDataSeriesItems0Page struct {
+
+	// The hostname of the page.
+	// Example: example.com
+	Hostname string `json:"hostname,omitempty"`
+
+	// The unique ID for the page.
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// The full URL of the page.
+	// Example: http://example.com
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this performance kpi data series items0 page
+func (m *PerformanceKpiDataSeriesItems0Page) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this performance kpi data series items0 page based on context it is used
+func (m *PerformanceKpiDataSeriesItems0Page) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0Page) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PerformanceKpiDataSeriesItems0Page) UnmarshalBinary(b []byte) error {
+	var res PerformanceKpiDataSeriesItems0Page
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

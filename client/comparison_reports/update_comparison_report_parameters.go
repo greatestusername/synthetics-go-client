@@ -15,8 +15,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // NewUpdateComparisonReportParams creates a new UpdateComparisonReportParams object,
@@ -66,7 +64,7 @@ type UpdateComparisonReportParams struct {
 
 	   The updated configuration for the Comparison Report
 	*/
-	ComparisonReportDetail *models.ComparisonReportInput
+	ComparisonReportDetail UpdateComparisonReportBody
 
 	/* ID.
 
@@ -130,13 +128,13 @@ func (o *UpdateComparisonReportParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithComparisonReportDetail adds the comparisonReportDetail to the update comparison report params
-func (o *UpdateComparisonReportParams) WithComparisonReportDetail(comparisonReportDetail *models.ComparisonReportInput) *UpdateComparisonReportParams {
+func (o *UpdateComparisonReportParams) WithComparisonReportDetail(comparisonReportDetail UpdateComparisonReportBody) *UpdateComparisonReportParams {
 	o.SetComparisonReportDetail(comparisonReportDetail)
 	return o
 }
 
 // SetComparisonReportDetail adds the comparisonReportDetail to the update comparison report params
-func (o *UpdateComparisonReportParams) SetComparisonReportDetail(comparisonReportDetail *models.ComparisonReportInput) {
+func (o *UpdateComparisonReportParams) SetComparisonReportDetail(comparisonReportDetail UpdateComparisonReportBody) {
 	o.ComparisonReportDetail = comparisonReportDetail
 }
 
@@ -158,10 +156,8 @@ func (o *UpdateComparisonReportParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
-	if o.ComparisonReportDetail != nil {
-		if err := r.SetBodyParam(o.ComparisonReportDetail); err != nil {
-			return err
-		}
+	if err := r.SetBodyParam(o.ComparisonReportDetail); err != nil {
+		return err
 	}
 
 	// path param id

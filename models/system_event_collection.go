@@ -32,7 +32,7 @@ type SystemEventCollection struct {
 
 	// system events
 	// Required: true
-	SystemEvents []*SystemEvent `json:"system_events"`
+	SystemEvents []*SystemEventCollectionSystemEventsItems0 `json:"system_events"`
 
 	// The end time for the timeframe (UTC)
 	// Required: true
@@ -247,6 +247,289 @@ func (m *SystemEventCollection) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *SystemEventCollection) UnmarshalBinary(b []byte) error {
 	var res SystemEventCollection
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SystemEventCollectionSystemEventsItems0 A system event logs changes made to a check
+//
+// swagger:model SystemEventCollectionSystemEventsItems0
+type SystemEventCollectionSystemEventsItems0 struct {
+
+	// creator
+	// Required: true
+	Creator *SystemEventCollectionSystemEventsItems0Creator `json:"creator"`
+
+	// description
+	// Required: true
+	Description *SystemEventCollectionSystemEventsItems0Description `json:"description"`
+
+	// Duration of the system event in seconds
+	Duration float64 `json:"duration,omitempty"`
+
+	// The unique id for the system event
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// When the event took place (UTC)
+	// Required: true
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp"`
+
+	// The title for the system event
+	// Example: Check Edited
+	// Required: true
+	Title *string `json:"title"`
+}
+
+// Validate validates this system event collection system events items0
+func (m *SystemEventCollectionSystemEventsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCreator(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTitle(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) validateCreator(formats strfmt.Registry) error {
+
+	if err := validate.Required("creator", "body", m.Creator); err != nil {
+		return err
+	}
+
+	if m.Creator != nil {
+		if err := m.Creator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) validateDescription(formats strfmt.Registry) error {
+
+	if err := validate.Required("description", "body", m.Description); err != nil {
+		return err
+	}
+
+	if m.Description != nil {
+		if err := m.Description.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("timestamp", "body", m.Timestamp); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("timestamp", "body", "date-time", m.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) validateTitle(formats strfmt.Registry) error {
+
+	if err := validate.Required("title", "body", m.Title); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this system event collection system events items0 based on the context it is used
+func (m *SystemEventCollectionSystemEventsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCreator(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDescription(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) contextValidateCreator(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Creator != nil {
+		if err := m.Creator.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SystemEventCollectionSystemEventsItems0) contextValidateDescription(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Description != nil {
+		if err := m.Description.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0) UnmarshalBinary(b []byte) error {
+	var res SystemEventCollectionSystemEventsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SystemEventCollectionSystemEventsItems0Creator system event collection system events items0 creator
+//
+// swagger:model SystemEventCollectionSystemEventsItems0Creator
+type SystemEventCollectionSystemEventsItems0Creator struct {
+
+	// The unique id for the creator
+	ID int32 `json:"id,omitempty"`
+
+	// A URL to the user's gravatar image, if available
+	// Example: https://secure.gravatar.com/avatar/0.jpg?r=g\u0026d=mm\u0026s=60
+	ImageURL string `json:"image_url,omitempty"`
+
+	// The name of the creator
+	// Example: Jane Doe
+	Name string `json:"name,omitempty"`
+
+	// The type of the creator
+	// Example: User
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this system event collection system events items0 creator
+func (m *SystemEventCollectionSystemEventsItems0Creator) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this system event collection system events items0 creator based on context it is used
+func (m *SystemEventCollectionSystemEventsItems0Creator) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0Creator) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0Creator) UnmarshalBinary(b []byte) error {
+	var res SystemEventCollectionSystemEventsItems0Creator
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// SystemEventCollectionSystemEventsItems0Description system event collection system events items0 description
+//
+// swagger:model SystemEventCollectionSystemEventsItems0Description
+type SystemEventCollectionSystemEventsItems0Description struct {
+
+	// A detailed list describing the event
+	// Example: ["Name changed","Steps changed"]
+	Detail []string `json:"detail"`
+
+	// A summary of the event
+	// Example: Jane Doe made the following changes:
+	Summary string `json:"summary,omitempty"`
+}
+
+// Validate validates this system event collection system events items0 description
+func (m *SystemEventCollectionSystemEventsItems0Description) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this system event collection system events items0 description based on context it is used
+func (m *SystemEventCollectionSystemEventsItems0Description) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0Description) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *SystemEventCollectionSystemEventsItems0Description) UnmarshalBinary(b []byte) error {
+	var res SystemEventCollectionSystemEventsItems0Description
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

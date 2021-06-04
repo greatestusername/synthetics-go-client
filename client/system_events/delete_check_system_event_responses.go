@@ -6,13 +6,15 @@ package system_events
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DeleteCheckSystemEventReader is a Reader for the DeleteCheckSystemEvent structure.
@@ -44,24 +46,307 @@ func NewDeleteCheckSystemEventOK() *DeleteCheckSystemEventOK {
 OK
 */
 type DeleteCheckSystemEventOK struct {
-	Payload *models.SystemEvent
+	Payload *DeleteCheckSystemEventOKBody
 }
 
 func (o *DeleteCheckSystemEventOK) Error() string {
 	return fmt.Sprintf("[DELETE /v2/checks/{check_id}/system_events/{id}][%d] deleteCheckSystemEventOK  %+v", 200, o.Payload)
 }
-func (o *DeleteCheckSystemEventOK) GetPayload() *models.SystemEvent {
+func (o *DeleteCheckSystemEventOK) GetPayload() *DeleteCheckSystemEventOKBody {
 	return o.Payload
 }
 
 func (o *DeleteCheckSystemEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.SystemEvent)
+	o.Payload = new(DeleteCheckSystemEventOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*DeleteCheckSystemEventOKBody A system event logs changes made to a check
+swagger:model DeleteCheckSystemEventOKBody
+*/
+type DeleteCheckSystemEventOKBody struct {
+
+	// creator
+	// Required: true
+	Creator *DeleteCheckSystemEventOKBodyCreator `json:"creator"`
+
+	// description
+	// Required: true
+	Description *DeleteCheckSystemEventOKBodyDescription `json:"description"`
+
+	// Duration of the system event in seconds
+	Duration float64 `json:"duration,omitempty"`
+
+	// The unique id for the system event
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// When the event took place (UTC)
+	// Required: true
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp"`
+
+	// The title for the system event
+	// Example: Check Edited
+	// Required: true
+	Title *string `json:"title"`
+}
+
+// Validate validates this delete check system event o k body
+func (o *DeleteCheckSystemEventOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreator(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTitle(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) validateCreator(formats strfmt.Registry) error {
+
+	if err := validate.Required("deleteCheckSystemEventOK"+"."+"creator", "body", o.Creator); err != nil {
+		return err
+	}
+
+	if o.Creator != nil {
+		if err := o.Creator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("deleteCheckSystemEventOK" + "." + "creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) validateDescription(formats strfmt.Registry) error {
+
+	if err := validate.Required("deleteCheckSystemEventOK"+"."+"description", "body", o.Description); err != nil {
+		return err
+	}
+
+	if o.Description != nil {
+		if err := o.Description.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("deleteCheckSystemEventOK" + "." + "description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("deleteCheckSystemEventOK"+"."+"id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("deleteCheckSystemEventOK"+"."+"timestamp", "body", o.Timestamp); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("deleteCheckSystemEventOK"+"."+"timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) validateTitle(formats strfmt.Registry) error {
+
+	if err := validate.Required("deleteCheckSystemEventOK"+"."+"title", "body", o.Title); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this delete check system event o k body based on the context it is used
+func (o *DeleteCheckSystemEventOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCreator(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateDescription(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) contextValidateCreator(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Creator != nil {
+		if err := o.Creator.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("deleteCheckSystemEventOK" + "." + "creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *DeleteCheckSystemEventOKBody) contextValidateDescription(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Description != nil {
+		if err := o.Description.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("deleteCheckSystemEventOK" + "." + "description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBody) UnmarshalBinary(b []byte) error {
+	var res DeleteCheckSystemEventOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*DeleteCheckSystemEventOKBodyCreator delete check system event o k body creator
+swagger:model DeleteCheckSystemEventOKBodyCreator
+*/
+type DeleteCheckSystemEventOKBodyCreator struct {
+
+	// The unique id for the creator
+	ID int32 `json:"id,omitempty"`
+
+	// A URL to the user's gravatar image, if available
+	// Example: https://secure.gravatar.com/avatar/0.jpg?r=g\u0026d=mm\u0026s=60
+	ImageURL string `json:"image_url,omitempty"`
+
+	// The name of the creator
+	// Example: Jane Doe
+	Name string `json:"name,omitempty"`
+
+	// The type of the creator
+	// Example: User
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this delete check system event o k body creator
+func (o *DeleteCheckSystemEventOKBodyCreator) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this delete check system event o k body creator based on context it is used
+func (o *DeleteCheckSystemEventOKBodyCreator) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBodyCreator) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBodyCreator) UnmarshalBinary(b []byte) error {
+	var res DeleteCheckSystemEventOKBodyCreator
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*DeleteCheckSystemEventOKBodyDescription delete check system event o k body description
+swagger:model DeleteCheckSystemEventOKBodyDescription
+*/
+type DeleteCheckSystemEventOKBodyDescription struct {
+
+	// A detailed list describing the event
+	// Example: ["Name changed","Steps changed"]
+	Detail []string `json:"detail"`
+
+	// A summary of the event
+	// Example: Jane Doe made the following changes:
+	Summary string `json:"summary,omitempty"`
+}
+
+// Validate validates this delete check system event o k body description
+func (o *DeleteCheckSystemEventOKBodyDescription) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this delete check system event o k body description based on context it is used
+func (o *DeleteCheckSystemEventOKBodyDescription) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBodyDescription) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteCheckSystemEventOKBodyDescription) UnmarshalBinary(b []byte) error {
+	var res DeleteCheckSystemEventOKBodyDescription
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

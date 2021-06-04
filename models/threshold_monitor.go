@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -18,7 +19,26 @@ import (
 //
 // swagger:model threshold_monitor
 type ThresholdMonitor struct {
-	ThresholdMonitorInput
+
+	// How to compare the result to the threshold value
+	// Example: less_than
+	// Enum: [less_than equals greater_than]
+	ComparisonType string `json:"comparison_type,omitempty"`
+
+	// Trigger threshold on pages matching this string
+	//               e.g."*.rigor.com" (this would not match the top-level domain "rigor.com"), "rigor.com/app.js"
+	// Example: rigor.com/example
+	Matcher string `json:"matcher,omitempty"`
+
+	// The name of the metric to monitor
+	// Example: dom_load_time
+	// Enum: [first_byte_time_ms dom_interactive_time_ms dom_load_time_ms dom_complete_time_ms start_render_ms onload_time_ms visually_complete_ms fully_loaded_time_ms first_paint_time_ms first_contentful_paint_time_ms first_meaningful_paint_time_ms first_interactive_time_ms first_cpu_idle_time_ms first_request_dns_time_ms first_request_connect_time_ms first_request_ssl_time_ms first_request_send_time_ms first_request_wait_time_ms first_request_receive_time_ms speed_index requests content_bytes html_files html_bytes image_files image_bytes javascript_files javascript_bytes css_files css_bytes video_files video_bytes font_files font_bytes other_files other_bytes client_errors connection_errors server_errors errors run_count success_count failure_count lighthouse_performance_score availability downtime total_blocking_time_ms largest_contentful_paint_time_ms cumulative_layout_shift]
+	MetricName string `json:"metric_name,omitempty"`
+
+	// The threshold value needed to trigger a failure.
+	//               Format should be in milliseconds, bytes, or count depending on `metric_name`.
+	// Example: 3000
+	Value int64 `json:"value,omitempty"`
 
 	// When the Threshold Monitor was created (UTC)
 	// Example: 2021-05-25T17:54:05Z
@@ -34,11 +54,26 @@ type ThresholdMonitor struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *ThresholdMonitor) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 ThresholdMonitorInput
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		ComparisonType string `json:"comparison_type,omitempty"`
+
+		Matcher string `json:"matcher,omitempty"`
+
+		MetricName string `json:"metric_name,omitempty"`
+
+		Value int64 `json:"value,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.ThresholdMonitorInput = aO0
+
+	m.ComparisonType = dataAO0.ComparisonType
+
+	m.Matcher = dataAO0.Matcher
+
+	m.MetricName = dataAO0.MetricName
+
+	m.Value = dataAO0.Value
 
 	// AO1
 	var dataAO1 struct {
@@ -61,11 +96,29 @@ func (m *ThresholdMonitor) UnmarshalJSON(raw []byte) error {
 func (m ThresholdMonitor) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.ThresholdMonitorInput)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		ComparisonType string `json:"comparison_type,omitempty"`
+
+		Matcher string `json:"matcher,omitempty"`
+
+		MetricName string `json:"metric_name,omitempty"`
+
+		Value int64 `json:"value,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.ComparisonType = m.ComparisonType
+
+	dataAO0.Matcher = m.Matcher
+
+	dataAO0.MetricName = m.MetricName
+
+	dataAO0.Value = m.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		CreatedAt strfmt.DateTime `json:"created_at,omitempty"`
 
@@ -88,8 +141,11 @@ func (m ThresholdMonitor) MarshalJSON() ([]byte, error) {
 func (m *ThresholdMonitor) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with ThresholdMonitorInput
-	if err := m.ThresholdMonitorInput.Validate(formats); err != nil {
+	if err := m.validateComparisonType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetricName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -104,6 +160,74 @@ func (m *ThresholdMonitor) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var thresholdMonitorTypeComparisonTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["less_than","equals","greater_than"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		thresholdMonitorTypeComparisonTypePropEnum = append(thresholdMonitorTypeComparisonTypePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ThresholdMonitor) validateComparisonTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, thresholdMonitorTypeComparisonTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ThresholdMonitor) validateComparisonType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ComparisonType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateComparisonTypeEnum("comparison_type", "body", m.ComparisonType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var thresholdMonitorTypeMetricNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["first_byte_time_ms","dom_interactive_time_ms","dom_load_time_ms","dom_complete_time_ms","start_render_ms","onload_time_ms","visually_complete_ms","fully_loaded_time_ms","first_paint_time_ms","first_contentful_paint_time_ms","first_meaningful_paint_time_ms","first_interactive_time_ms","first_cpu_idle_time_ms","first_request_dns_time_ms","first_request_connect_time_ms","first_request_ssl_time_ms","first_request_send_time_ms","first_request_wait_time_ms","first_request_receive_time_ms","speed_index","requests","content_bytes","html_files","html_bytes","image_files","image_bytes","javascript_files","javascript_bytes","css_files","css_bytes","video_files","video_bytes","font_files","font_bytes","other_files","other_bytes","client_errors","connection_errors","server_errors","errors","run_count","success_count","failure_count","lighthouse_performance_score","availability","downtime","total_blocking_time_ms","largest_contentful_paint_time_ms","cumulative_layout_shift"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		thresholdMonitorTypeMetricNamePropEnum = append(thresholdMonitorTypeMetricNamePropEnum, v)
+	}
+}
+
+// property enum
+func (m *ThresholdMonitor) validateMetricNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, thresholdMonitorTypeMetricNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ThresholdMonitor) validateMetricName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MetricName) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateMetricNameEnum("metric_name", "body", m.MetricName); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -133,18 +257,8 @@ func (m *ThresholdMonitor) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this threshold monitor based on the context it is used
+// ContextValidate validates this threshold monitor based on context it is used
 func (m *ThresholdMonitor) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	// validation for a type composition with ThresholdMonitorInput
-	if err := m.ThresholdMonitorInput.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

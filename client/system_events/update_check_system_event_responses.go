@@ -6,13 +6,15 @@ package system_events
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // UpdateCheckSystemEventReader is a Reader for the UpdateCheckSystemEvent structure.
@@ -44,24 +46,374 @@ func NewUpdateCheckSystemEventOK() *UpdateCheckSystemEventOK {
 OK
 */
 type UpdateCheckSystemEventOK struct {
-	Payload *models.SystemEvent
+	Payload *UpdateCheckSystemEventOKBody
 }
 
 func (o *UpdateCheckSystemEventOK) Error() string {
 	return fmt.Sprintf("[PUT /v2/checks/{check_id}/system_events/{id}][%d] updateCheckSystemEventOK  %+v", 200, o.Payload)
 }
-func (o *UpdateCheckSystemEventOK) GetPayload() *models.SystemEvent {
+func (o *UpdateCheckSystemEventOK) GetPayload() *UpdateCheckSystemEventOKBody {
 	return o.Payload
 }
 
 func (o *UpdateCheckSystemEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.SystemEvent)
+	o.Payload = new(UpdateCheckSystemEventOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*UpdateCheckSystemEventBody update check system event body
+swagger:model UpdateCheckSystemEventBody
+*/
+type UpdateCheckSystemEventBody struct {
+
+	// A summary of the event
+	// Example: Jane Doe made the following changes:
+	Summary string `json:"summary,omitempty"`
+
+	// When the event took place
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp,omitempty"`
+
+	// A title for the event
+	// Example: New Deployment: V2.1
+	Title string `json:"title,omitempty"`
+}
+
+// Validate validates this update check system event body
+func (o *UpdateCheckSystemEventBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateCheckSystemEventBody) validateTimestamp(formats strfmt.Registry) error {
+	if swag.IsZero(o.Timestamp) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("system_event"+"."+"timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this update check system event body based on context it is used
+func (o *UpdateCheckSystemEventBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *UpdateCheckSystemEventBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *UpdateCheckSystemEventBody) UnmarshalBinary(b []byte) error {
+	var res UpdateCheckSystemEventBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*UpdateCheckSystemEventOKBody A system event logs changes made to a check
+swagger:model UpdateCheckSystemEventOKBody
+*/
+type UpdateCheckSystemEventOKBody struct {
+
+	// creator
+	// Required: true
+	Creator *UpdateCheckSystemEventOKBodyCreator `json:"creator"`
+
+	// description
+	// Required: true
+	Description *UpdateCheckSystemEventOKBodyDescription `json:"description"`
+
+	// Duration of the system event in seconds
+	Duration float64 `json:"duration,omitempty"`
+
+	// The unique id for the system event
+	// Required: true
+	ID *int32 `json:"id"`
+
+	// When the event took place (UTC)
+	// Required: true
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp"`
+
+	// The title for the system event
+	// Example: Check Edited
+	// Required: true
+	Title *string `json:"title"`
+}
+
+// Validate validates this update check system event o k body
+func (o *UpdateCheckSystemEventOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCreator(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTitle(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) validateCreator(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateCheckSystemEventOK"+"."+"creator", "body", o.Creator); err != nil {
+		return err
+	}
+
+	if o.Creator != nil {
+		if err := o.Creator.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateCheckSystemEventOK" + "." + "creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) validateDescription(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateCheckSystemEventOK"+"."+"description", "body", o.Description); err != nil {
+		return err
+	}
+
+	if o.Description != nil {
+		if err := o.Description.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateCheckSystemEventOK" + "." + "description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateCheckSystemEventOK"+"."+"id", "body", o.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateCheckSystemEventOK"+"."+"timestamp", "body", o.Timestamp); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("updateCheckSystemEventOK"+"."+"timestamp", "body", "date-time", o.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) validateTitle(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateCheckSystemEventOK"+"."+"title", "body", o.Title); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update check system event o k body based on the context it is used
+func (o *UpdateCheckSystemEventOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCreator(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateDescription(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) contextValidateCreator(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Creator != nil {
+		if err := o.Creator.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateCheckSystemEventOK" + "." + "creator")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *UpdateCheckSystemEventOKBody) contextValidateDescription(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Description != nil {
+		if err := o.Description.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateCheckSystemEventOK" + "." + "description")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBody) UnmarshalBinary(b []byte) error {
+	var res UpdateCheckSystemEventOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*UpdateCheckSystemEventOKBodyCreator update check system event o k body creator
+swagger:model UpdateCheckSystemEventOKBodyCreator
+*/
+type UpdateCheckSystemEventOKBodyCreator struct {
+
+	// The unique id for the creator
+	ID int32 `json:"id,omitempty"`
+
+	// A URL to the user's gravatar image, if available
+	// Example: https://secure.gravatar.com/avatar/0.jpg?r=g\u0026d=mm\u0026s=60
+	ImageURL string `json:"image_url,omitempty"`
+
+	// The name of the creator
+	// Example: Jane Doe
+	Name string `json:"name,omitempty"`
+
+	// The type of the creator
+	// Example: User
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this update check system event o k body creator
+func (o *UpdateCheckSystemEventOKBodyCreator) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this update check system event o k body creator based on context it is used
+func (o *UpdateCheckSystemEventOKBodyCreator) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBodyCreator) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBodyCreator) UnmarshalBinary(b []byte) error {
+	var res UpdateCheckSystemEventOKBodyCreator
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*UpdateCheckSystemEventOKBodyDescription update check system event o k body description
+swagger:model UpdateCheckSystemEventOKBodyDescription
+*/
+type UpdateCheckSystemEventOKBodyDescription struct {
+
+	// A detailed list describing the event
+	// Example: ["Name changed","Steps changed"]
+	Detail []string `json:"detail"`
+
+	// A summary of the event
+	// Example: Jane Doe made the following changes:
+	Summary string `json:"summary,omitempty"`
+}
+
+// Validate validates this update check system event o k body description
+func (o *UpdateCheckSystemEventOKBodyDescription) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this update check system event o k body description based on context it is used
+func (o *UpdateCheckSystemEventOKBodyDescription) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBodyDescription) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *UpdateCheckSystemEventOKBodyDescription) UnmarshalBinary(b []byte) error {
+	var res UpdateCheckSystemEventOKBodyDescription
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

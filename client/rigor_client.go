@@ -10,11 +10,11 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/greatestusername/synthetics-go-client/client/checks"
-	"github.com/greatestusername/synthetics-go-client/client/comparison_reports"
-	"github.com/greatestusername/synthetics-go-client/client/http_checks"
-	"github.com/greatestusername/synthetics-go-client/client/real_browser_checks"
-	"github.com/greatestusername/synthetics-go-client/client/system_events"
+	"rigor/client/checks"
+	"rigor/client/comparison_reports"
+	"rigor/client/http_checks"
+	"rigor/client/real_browser_checks"
+	"rigor/client/system_events"
 )
 
 // Default rigor HTTP client.

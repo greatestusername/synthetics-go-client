@@ -6,6 +6,7 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -13,8 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
 )
 
 // ExportRealBrowserCheckReader is a Reader for the ExportRealBrowserCheck structure.
@@ -40,9 +39,9 @@ func (o *ExportRealBrowserCheckReader) ReadResponse(response runtime.ClientRespo
 func NewExportRealBrowserCheckOK() *ExportRealBrowserCheckOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &ExportRealBrowserCheckOK{
@@ -61,7 +60,7 @@ type ExportRealBrowserCheckOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -71,17 +70,17 @@ type ExportRealBrowserCheckOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.RealBrowserCheckExport
+	Payload *ExportRealBrowserCheckOKBody
 }
 
 func (o *ExportRealBrowserCheckOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/real_browsers/{id}/export][%d] exportRealBrowserCheckOK  %+v", 200, o.Payload)
 }
-func (o *ExportRealBrowserCheckOK) GetPayload() *models.RealBrowserCheckExport {
+func (o *ExportRealBrowserCheckOK) GetPayload() *ExportRealBrowserCheckOKBody {
 	return o.Payload
 }
 
@@ -120,12 +119,53 @@ func (o *ExportRealBrowserCheckOK) readResponse(response runtime.ClientResponse,
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.RealBrowserCheckExport)
+	o.Payload = new(ExportRealBrowserCheckOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*ExportRealBrowserCheckOKBody A Real Browser check converted to a Selenium SIDE script
+swagger:model ExportRealBrowserCheckOKBody
+*/
+type ExportRealBrowserCheckOKBody struct {
+
+	// The endpoint to get the converted script
+	// Example: /v2/checks/real_browsers/1/export.side
+	Path string `json:"path,omitempty"`
+
+	// A list of warnings about the exported script
+	Warnings []string `json:"warnings"`
+}
+
+// Validate validates this export real browser check o k body
+func (o *ExportRealBrowserCheckOKBody) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this export real browser check o k body based on context it is used
+func (o *ExportRealBrowserCheckOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *ExportRealBrowserCheckOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *ExportRealBrowserCheckOKBody) UnmarshalBinary(b []byte) error {
+	var res ExportRealBrowserCheckOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

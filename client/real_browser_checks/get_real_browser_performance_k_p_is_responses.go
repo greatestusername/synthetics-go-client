@@ -6,13 +6,17 @@ package real_browser_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // GetRealBrowserPerformanceKPIsReader is a Reader for the GetRealBrowserPerformanceKPIs structure.
@@ -44,24 +48,653 @@ func NewGetRealBrowserPerformanceKPIsOK() *GetRealBrowserPerformanceKPIsOK {
 Real Browser Performance KPI data.
 */
 type GetRealBrowserPerformanceKPIsOK struct {
-	Payload *models.PerformanceKpiSeriesCollection
+	Payload *GetRealBrowserPerformanceKPIsOKBody
 }
 
 func (o *GetRealBrowserPerformanceKPIsOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/real_browsers/{id}/performance_kpis/data][%d] getRealBrowserPerformanceKPIsOK  %+v", 200, o.Payload)
 }
-func (o *GetRealBrowserPerformanceKPIsOK) GetPayload() *models.PerformanceKpiSeriesCollection {
+func (o *GetRealBrowserPerformanceKPIsOK) GetPayload() *GetRealBrowserPerformanceKPIsOKBody {
 	return o.Payload
 }
 
 func (o *GetRealBrowserPerformanceKPIsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.PerformanceKpiSeriesCollection)
+	o.Payload = new(GetRealBrowserPerformanceKPIsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetRealBrowserPerformanceKPIsOKBody get real browser performance k p is o k body
+swagger:model GetRealBrowserPerformanceKPIsOKBody
+*/
+type GetRealBrowserPerformanceKPIsOKBody struct {
+
+	// The unique ID for the check.
+	// Example: 1
+	CheckID int32 `json:"check_id,omitempty"`
+
+	// The start time for the timeframe (UTC)
+	// Example: 2021-05-25T16:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// An object containing information about the metrics requested
+	// Example: {"mark.myCustomMark":{"description":"mark","label":"myCustomMark","unit":"milliseconds"},"requests":{"description":"The number of resources requested","label":"Resource count","unit":"count"},"start_render_ms":{"description":"Time until the first pixel of content is drawn","label":"Start Render","unit":"milliseconds"}}
+	Metrics interface{} `json:"metrics,omitempty"`
+
+	// The predefined timeframe, if provided.
+	// Example: last_hour
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month month_to_date last_month last_3_months last_6_months last_12_months]
+	Range string `json:"range,omitempty"`
+
+	// An array of data sets
+	Series []*GetRealBrowserPerformanceKPIsOKBodySeriesItems0 `json:"series"`
+
+	// The end time for the timeframe (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+}
+
+// Validate validates this get real browser performance k p is o k body
+func (o *GetRealBrowserPerformanceKPIsOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateRange(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSeries(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBody) validateFrom(formats strfmt.Registry) error {
+	if swag.IsZero(o.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("getRealBrowserPerformanceKPIsOK"+"."+"from", "body", "date-time", o.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getRealBrowserPerformanceKPIsOKBodyTypeRangePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["last_hour","last_4_hours","last_8_hours","last_12_hours","last_24_hours","yesterday","today","last_7_days","last_30_days","this_week","last_week","this_month","month_to_date","last_month","last_3_months","last_6_months","last_12_months"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getRealBrowserPerformanceKPIsOKBodyTypeRangePropEnum = append(getRealBrowserPerformanceKPIsOKBodyTypeRangePropEnum, v)
+	}
+}
+
+const (
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLastHour captures enum value "last_hour"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLastHour string = "last_hour"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast4Hours captures enum value "last_4_hours"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast4Hours string = "last_4_hours"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast8Hours captures enum value "last_8_hours"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast8Hours string = "last_8_hours"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast12Hours captures enum value "last_12_hours"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast12Hours string = "last_12_hours"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast24Hours captures enum value "last_24_hours"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast24Hours string = "last_24_hours"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeYesterday captures enum value "yesterday"
+	GetRealBrowserPerformanceKPIsOKBodyRangeYesterday string = "yesterday"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeToday captures enum value "today"
+	GetRealBrowserPerformanceKPIsOKBodyRangeToday string = "today"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast7Days captures enum value "last_7_days"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast7Days string = "last_7_days"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast30Days captures enum value "last_30_days"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast30Days string = "last_30_days"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeThisWeek captures enum value "this_week"
+	GetRealBrowserPerformanceKPIsOKBodyRangeThisWeek string = "this_week"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLastWeek captures enum value "last_week"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLastWeek string = "last_week"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeThisMonth captures enum value "this_month"
+	GetRealBrowserPerformanceKPIsOKBodyRangeThisMonth string = "this_month"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeMonthToDate captures enum value "month_to_date"
+	GetRealBrowserPerformanceKPIsOKBodyRangeMonthToDate string = "month_to_date"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLastMonth captures enum value "last_month"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLastMonth string = "last_month"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast3Months captures enum value "last_3_months"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast3Months string = "last_3_months"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast6Months captures enum value "last_6_months"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast6Months string = "last_6_months"
+
+	// GetRealBrowserPerformanceKPIsOKBodyRangeLast12Months captures enum value "last_12_months"
+	GetRealBrowserPerformanceKPIsOKBodyRangeLast12Months string = "last_12_months"
+)
+
+// prop value enum
+func (o *GetRealBrowserPerformanceKPIsOKBody) validateRangeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getRealBrowserPerformanceKPIsOKBodyTypeRangePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBody) validateRange(formats strfmt.Registry) error {
+	if swag.IsZero(o.Range) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateRangeEnum("getRealBrowserPerformanceKPIsOK"+"."+"range", "body", o.Range); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBody) validateSeries(formats strfmt.Registry) error {
+	if swag.IsZero(o.Series) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Series); i++ {
+		if swag.IsZero(o.Series[i]) { // not required
+			continue
+		}
+
+		if o.Series[i] != nil {
+			if err := o.Series[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserPerformanceKPIsOK" + "." + "series" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBody) validateTo(formats strfmt.Registry) error {
+	if swag.IsZero(o.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("getRealBrowserPerformanceKPIsOK"+"."+"to", "body", "date-time", o.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser performance k p is o k body based on the context it is used
+func (o *GetRealBrowserPerformanceKPIsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateSeries(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBody) contextValidateSeries(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Series); i++ {
+
+		if o.Series[i] != nil {
+			if err := o.Series[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getRealBrowserPerformanceKPIsOK" + "." + "series" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserPerformanceKPIsOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserPerformanceKPIsOKBodySeriesItems0 get real browser performance k p is o k body series items0
+swagger:model GetRealBrowserPerformanceKPIsOKBodySeriesItems0
+*/
+type GetRealBrowserPerformanceKPIsOKBodySeriesItems0 struct {
+
+	// The country for this series (if grouping by `country` or `location`).
+	// Example: United States
+	Country string `json:"country,omitempty"`
+
+	// An array of data points for this series
+	// Min Items: 1
+	Data []*GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0 `json:"data"`
+
+	// The location for this series (if grouping by `location`).
+	// Example: N. Virginia
+	Location string `json:"location,omitempty"`
+
+	// The page position for this series (if grouping by `page`). Page positions begin at 0 and increment with each new page load. For example, if the check visits three pages, the first page will return position `0`, the second page will return position `1`, and the third page will return position `2`.
+	// Example: 0
+	Position int32 `json:"position,omitempty"`
+
+	// The country for this series (if grouping by `world_region`, `country` or `location`).
+	// Example: North America
+	WorldRegion string `json:"world_region,omitempty"`
+}
+
+// Validate validates this get real browser performance k p is o k body series items0
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) validateData(formats strfmt.Registry) error {
+	if swag.IsZero(o.Data) { // not required
+		return nil
+	}
+
+	iDataSize := int64(len(o.Data))
+
+	if err := validate.MinItems("data", "body", iDataSize, 1); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Data); i++ {
+		if swag.IsZero(o.Data[i]) { // not required
+			continue
+		}
+
+		if o.Data[i] != nil {
+			if err := o.Data[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser performance k p is o k body series items0 based on the context it is used
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Data); i++ {
+
+		if o.Data[i] != nil {
+			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserPerformanceKPIsOKBodySeriesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0 A single data point containing key-value pairs of metric names and their values
+// Example: {"custom_timings":[{"entry_type":"mark","name":"myCustomMark","value":150.5},{"entry_type":"mark","name":"myCustomMark","value":321}],"first_request_server_ip":"104.28.17.124","requests":123,"run_count":1,"run_id":1,"start_render_ms":1000,"success_count":1,"time":"2021-05-25T17:54:05Z","url":"https://rigor.com"}
+swagger:model GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0
+*/
+type GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0 struct {
+
+	// custom timings
+	CustomTimings []*GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0 `json:"custom_timings"`
+
+	// The IP address of the first request for the page if grouping by `page` or the IP address of the first request for the first page of the run if not grouping
+	// Example: 104.28.17.124
+	FirstRequestServerIP string `json:"first_request_server_ip,omitempty"`
+
+	// The number of runs aggregated in this data point
+	// Example: 1
+	// Required: true
+	RunCount *int32 `json:"run_count"`
+
+	// The unique ID for this run (if the interval provided was blank)
+	RunID int32 `json:"run_id,omitempty"`
+
+	// The number of successful runs aggregated in this data point
+	// Example: 1
+	// Required: true
+	SuccessCount *int32 `json:"success_count"`
+
+	// The timestamp for this run (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Required: true
+	// Format: date-time
+	Time *strfmt.DateTime `json:"time"`
+
+	// The URL for the page if grouping by `page` or the URL for the first page of the run if not grouping
+	// Example: https://rigor.com/
+	URL string `json:"url,omitempty"`
+}
+
+// Validate validates this get real browser performance k p is o k body series items0 data items0
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateCustomTimings(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateRunCount(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSuccessCount(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) validateCustomTimings(formats strfmt.Registry) error {
+	if swag.IsZero(o.CustomTimings) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.CustomTimings); i++ {
+		if swag.IsZero(o.CustomTimings[i]) { // not required
+			continue
+		}
+
+		if o.CustomTimings[i] != nil {
+			if err := o.CustomTimings[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) validateRunCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("run_count", "body", o.RunCount); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) validateSuccessCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("success_count", "body", o.SuccessCount); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) validateTime(formats strfmt.Registry) error {
+
+	if err := validate.Required("time", "body", o.Time); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("time", "body", "date-time", o.Time.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get real browser performance k p is o k body series items0 data items0 based on the context it is used
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateCustomTimings(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) contextValidateCustomTimings(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.CustomTimings); i++ {
+
+		if o.CustomTimings[i] != nil {
+			if err := o.CustomTimings[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("custom_timings" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0 A custom `mark` or `measure`
+swagger:model GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0
+*/
+type GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0 struct {
+
+	// entry type
+	// Example: mark
+	// Enum: [mark measure]
+	EntryType string `json:"entry_type,omitempty"`
+
+	// The name of this `mark` or `measure`
+	// Example: myCustomMark
+	Name string `json:"name,omitempty"`
+
+	// For `mark`s, the value is the amount of time in milliseconds between the beginning of the page load and the `startTime` of the `mark`. For `measurement`s, the value is the duration of the `measurement` in milliseconds.
+	// Example: 123.4
+	Value float64 `json:"value,omitempty"`
+}
+
+// Validate validates this get real browser performance k p is o k body series items0 data items0 custom timings items0
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateEntryType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var getRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0TypeEntryTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["mark","measure"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0TypeEntryTypePropEnum = append(getRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0TypeEntryTypePropEnum, v)
+	}
+}
+
+const (
+
+	// GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0EntryTypeMark captures enum value "mark"
+	GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0EntryTypeMark string = "mark"
+
+	// GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0EntryTypeMeasure captures enum value "measure"
+	GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0EntryTypeMeasure string = "measure"
+)
+
+// prop value enum
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) validateEntryTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0TypeEntryTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) validateEntryType(formats strfmt.Registry) error {
+	if swag.IsZero(o.EntryType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateEntryTypeEnum("entry_type", "body", o.EntryType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get real browser performance k p is o k body series items0 data items0 custom timings items0 based on context it is used
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0) UnmarshalBinary(b []byte) error {
+	var res GetRealBrowserPerformanceKPIsOKBodySeriesItems0DataItems0CustomTimingsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

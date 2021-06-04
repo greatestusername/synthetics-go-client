@@ -11,13 +11,27 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // PointWithLocations point with locations
 //
 // swagger:model point_with_locations
 type PointWithLocations struct {
-	Point
+
+	// The start timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+
+	// The value for the data point. May be run-level or aggregate data.
+	// Example: 99.3
+	Value float64 `json:"value,omitempty"`
 
 	// A list of location IDs the check ran from during this point's timeframe
 	Locations []int32 `json:"locations"`
@@ -26,11 +40,22 @@ type PointWithLocations struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *PointWithLocations) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 Point
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.Point = aO0
+
+	m.From = dataAO0.From
+
+	m.To = dataAO0.To
+
+	m.Value = dataAO0.Value
 
 	// AO1
 	var dataAO1 struct {
@@ -49,11 +74,25 @@ func (m *PointWithLocations) UnmarshalJSON(raw []byte) error {
 func (m PointWithLocations) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.Point)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.From = m.From
+
+	dataAO0.To = m.To
+
+	dataAO0.Value = m.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		Locations []int32 `json:"locations"`
 	}
@@ -72,8 +111,11 @@ func (m PointWithLocations) MarshalJSON() ([]byte, error) {
 func (m *PointWithLocations) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	// validation for a type composition with Point
-	if err := m.Point.Validate(formats); err != nil {
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -83,18 +125,34 @@ func (m *PointWithLocations) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this point with locations based on the context it is used
+func (m *PointWithLocations) validateFrom(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PointWithLocations) validateTo(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", m.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this point with locations based on context it is used
 func (m *PointWithLocations) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	// validation for a type composition with Point
-	if err := m.Point.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

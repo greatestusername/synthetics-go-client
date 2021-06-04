@@ -19,14 +19,37 @@ import (
 //
 // swagger:model real_browser_check_run_collection
 type RealBrowserCheckRunCollection struct {
-	Pagination
+
+	// Current page number
+	// Example: 2
+	CurrentPage int32 `json:"current_page,omitempty"`
+
+	// Next page number (null if none)
+	// Example: 3
+	NextPage int32 `json:"next_page,omitempty"`
+
+	// Number of results for each page
+	// Example: 50
+	PerPage int32 `json:"per_page,omitempty"`
+
+	// Previous page number (null if none)
+	// Example: 1
+	PreviousPage int32 `json:"previous_page,omitempty"`
+
+	// Total number of results across all pages
+	// Example: 105
+	TotalCount int32 `json:"total_count,omitempty"`
+
+	// Total number of pages
+	// Example: 3
+	TotalPages int32 `json:"total_pages,omitempty"`
 
 	// The unique ID for the check
 	// Example: 1
 	CheckID int32 `json:"check_id,omitempty"`
 
 	// runs
-	Runs []*RbcRunCollectionItem `json:"runs"`
+	Runs []*RealBrowserCheckRunCollectionRunsItems0 `json:"runs"`
 
 	// timeframe
 	Timeframe *RealBrowserCheckRunCollectionAO1Timeframe `json:"timeframe,omitempty"`
@@ -35,17 +58,40 @@ type RealBrowserCheckRunCollection struct {
 // UnmarshalJSON unmarshals this object from a JSON structure
 func (m *RealBrowserCheckRunCollection) UnmarshalJSON(raw []byte) error {
 	// AO0
-	var aO0 Pagination
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	var dataAO0 struct {
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		NextPage int32 `json:"next_page,omitempty"`
+
+		PerPage int32 `json:"per_page,omitempty"`
+
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		TotalPages int32 `json:"total_pages,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
 		return err
 	}
-	m.Pagination = aO0
+
+	m.CurrentPage = dataAO0.CurrentPage
+
+	m.NextPage = dataAO0.NextPage
+
+	m.PerPage = dataAO0.PerPage
+
+	m.PreviousPage = dataAO0.PreviousPage
+
+	m.TotalCount = dataAO0.TotalCount
+
+	m.TotalPages = dataAO0.TotalPages
 
 	// AO1
 	var dataAO1 struct {
 		CheckID int32 `json:"check_id,omitempty"`
 
-		Runs []*RbcRunCollectionItem `json:"runs"`
+		Runs []*RealBrowserCheckRunCollectionRunsItems0 `json:"runs"`
 
 		Timeframe *RealBrowserCheckRunCollectionAO1Timeframe `json:"timeframe,omitempty"`
 	}
@@ -66,15 +112,41 @@ func (m *RealBrowserCheckRunCollection) UnmarshalJSON(raw []byte) error {
 func (m RealBrowserCheckRunCollection) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.Pagination)
-	if err != nil {
-		return nil, err
+	var dataAO0 struct {
+		CurrentPage int32 `json:"current_page,omitempty"`
+
+		NextPage int32 `json:"next_page,omitempty"`
+
+		PerPage int32 `json:"per_page,omitempty"`
+
+		PreviousPage int32 `json:"previous_page,omitempty"`
+
+		TotalCount int32 `json:"total_count,omitempty"`
+
+		TotalPages int32 `json:"total_pages,omitempty"`
 	}
-	_parts = append(_parts, aO0)
+
+	dataAO0.CurrentPage = m.CurrentPage
+
+	dataAO0.NextPage = m.NextPage
+
+	dataAO0.PerPage = m.PerPage
+
+	dataAO0.PreviousPage = m.PreviousPage
+
+	dataAO0.TotalCount = m.TotalCount
+
+	dataAO0.TotalPages = m.TotalPages
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
 	var dataAO1 struct {
 		CheckID int32 `json:"check_id,omitempty"`
 
-		Runs []*RbcRunCollectionItem `json:"runs"`
+		Runs []*RealBrowserCheckRunCollectionRunsItems0 `json:"runs"`
 
 		Timeframe *RealBrowserCheckRunCollectionAO1Timeframe `json:"timeframe,omitempty"`
 	}
@@ -96,11 +168,6 @@ func (m RealBrowserCheckRunCollection) MarshalJSON() ([]byte, error) {
 // Validate validates this real browser check run collection
 func (m *RealBrowserCheckRunCollection) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	// validation for a type composition with Pagination
-	if err := m.Pagination.Validate(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateRuns(formats); err != nil {
 		res = append(res, err)
@@ -162,11 +229,6 @@ func (m *RealBrowserCheckRunCollection) validateTimeframe(formats strfmt.Registr
 // ContextValidate validate this real browser check run collection based on the context it is used
 func (m *RealBrowserCheckRunCollection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
-
-	// validation for a type composition with Pagination
-	if err := m.Pagination.ContextValidate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.contextValidateRuns(ctx, formats); err != nil {
 		res = append(res, err)
@@ -307,6 +369,77 @@ func (m *RealBrowserCheckRunCollectionAO1Timeframe) MarshalBinary() ([]byte, err
 // UnmarshalBinary interface implementation
 func (m *RealBrowserCheckRunCollectionAO1Timeframe) UnmarshalBinary(b []byte) error {
 	var res RealBrowserCheckRunCollectionAO1Timeframe
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// RealBrowserCheckRunCollectionRunsItems0 real browser check run collection runs items0
+//
+// swagger:model RealBrowserCheckRunCollectionRunsItems0
+type RealBrowserCheckRunCollectionRunsItems0 struct {
+
+	// The unique ID for the check run
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// A short code representing the location for this run
+	// Example: na-us-virginia
+	RegionCode string `json:"region_code,omitempty"`
+
+	// A sharable link that can be viewed by anyone
+	// Example: https://monitoring.rigor.com/share/64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c*OzE7Mg==
+	ShareLink string `json:"share_link,omitempty"`
+
+	// Time when the check run started (UTC)
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp,omitempty"`
+}
+
+// Validate validates this real browser check run collection runs items0
+func (m *RealBrowserCheckRunCollectionRunsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *RealBrowserCheckRunCollectionRunsItems0) validateTimestamp(formats strfmt.Registry) error {
+	if swag.IsZero(m.Timestamp) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("timestamp", "body", "date-time", m.Timestamp.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this real browser check run collection runs items0 based on context it is used
+func (m *RealBrowserCheckRunCollectionRunsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *RealBrowserCheckRunCollectionRunsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *RealBrowserCheckRunCollectionRunsItems0) UnmarshalBinary(b []byte) error {
+	var res RealBrowserCheckRunCollectionRunsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

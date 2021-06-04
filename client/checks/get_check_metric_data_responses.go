@@ -6,15 +6,17 @@ package checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // GetCheckMetricDataReader is a Reader for the GetCheckMetricData structure.
@@ -40,9 +42,9 @@ func (o *GetCheckMetricDataReader) ReadResponse(response runtime.ClientResponse,
 func NewGetCheckMetricDataOK() *GetCheckMetricDataOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &GetCheckMetricDataOK{
@@ -60,7 +62,7 @@ type GetCheckMetricDataOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +72,17 @@ type GetCheckMetricDataOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.MonitoringCheckMetricData
+	Payload *GetCheckMetricDataOKBody
 }
 
 func (o *GetCheckMetricDataOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/{id}/metrics/data][%d] getCheckMetricDataOK  %+v", 200, o.Payload)
 }
-func (o *GetCheckMetricDataOK) GetPayload() *models.MonitoringCheckMetricData {
+func (o *GetCheckMetricDataOK) GetPayload() *GetCheckMetricDataOKBody {
 	return o.Payload
 }
 
@@ -119,12 +121,774 @@ func (o *GetCheckMetricDataOK) readResponse(response runtime.ClientResponse, con
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.MonitoringCheckMetricData)
+	o.Payload = new(GetCheckMetricDataOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetCheckMetricDataOKBody Check data for the metric
+swagger:model GetCheckMetricDataOKBody
+*/
+type GetCheckMetricDataOKBody struct {
+
+	// The start time for the timeframe (UTC)
+	// Example: 2021-05-25T16:54:05Z
+	// Required: true
+	// Format: date-time
+	From *strfmt.DateTime `json:"from"`
+
+	// The unique ID for the check
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// A list of location IDs the check ran from during this timeframe
+	// Example: [1,2]
+	Locations []int32 `json:"locations"`
+
+	// A list of the metric names included in series
+	// Example: ["percentage_uptime"]
+	// Required: true
+	Names []string `json:"names"`
+
+	// The predefined timeframe, if provided
+	// Enum: [last_hour last_4_hours last_8_hours last_12_hours last_24_hours yesterday today last_7_days last_30_days this_week last_week this_month month_to_date last_month last_3_months last_6_months last_12_months]
+	Range string `json:"range,omitempty"`
+
+	// An array of data sets, one for each metric
+	// Required: true
+	Series []*GetCheckMetricDataOKBodySeriesItems0 `json:"series"`
+
+	// Aggregate data for each metric, over the given timeframe
+	// Example: {"percentage_uptime":99.3}
+	Summary interface{} `json:"summary,omitempty"`
+
+	// The end time for the timeframe (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Required: true
+	// Format: date-time
+	To *strfmt.DateTime `json:"to"`
+}
+
+// Validate validates this get check metric data o k body
+func (o *GetCheckMetricDataOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateNames(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateRange(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateSeries(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) validateFrom(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckMetricDataOK"+"."+"from", "body", o.From); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("getCheckMetricDataOK"+"."+"from", "body", "date-time", o.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckMetricDataOKBodyNamesItemsEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricDataOKBodyNamesItemsEnum = append(getCheckMetricDataOKBodyNamesItemsEnum, v)
+	}
+}
+
+func (o *GetCheckMetricDataOKBody) validateNamesItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricDataOKBodyNamesItemsEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) validateNames(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckMetricDataOK"+"."+"names", "body", o.Names); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Names); i++ {
+
+		// value enum
+		if err := o.validateNamesItemsEnum("getCheckMetricDataOK"+"."+"names"+"."+strconv.Itoa(i), "body", o.Names[i]); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+var getCheckMetricDataOKBodyTypeRangePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["last_hour","last_4_hours","last_8_hours","last_12_hours","last_24_hours","yesterday","today","last_7_days","last_30_days","this_week","last_week","this_month","month_to_date","last_month","last_3_months","last_6_months","last_12_months"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricDataOKBodyTypeRangePropEnum = append(getCheckMetricDataOKBodyTypeRangePropEnum, v)
+	}
+}
+
+const (
+
+	// GetCheckMetricDataOKBodyRangeLastHour captures enum value "last_hour"
+	GetCheckMetricDataOKBodyRangeLastHour string = "last_hour"
+
+	// GetCheckMetricDataOKBodyRangeLast4Hours captures enum value "last_4_hours"
+	GetCheckMetricDataOKBodyRangeLast4Hours string = "last_4_hours"
+
+	// GetCheckMetricDataOKBodyRangeLast8Hours captures enum value "last_8_hours"
+	GetCheckMetricDataOKBodyRangeLast8Hours string = "last_8_hours"
+
+	// GetCheckMetricDataOKBodyRangeLast12Hours captures enum value "last_12_hours"
+	GetCheckMetricDataOKBodyRangeLast12Hours string = "last_12_hours"
+
+	// GetCheckMetricDataOKBodyRangeLast24Hours captures enum value "last_24_hours"
+	GetCheckMetricDataOKBodyRangeLast24Hours string = "last_24_hours"
+
+	// GetCheckMetricDataOKBodyRangeYesterday captures enum value "yesterday"
+	GetCheckMetricDataOKBodyRangeYesterday string = "yesterday"
+
+	// GetCheckMetricDataOKBodyRangeToday captures enum value "today"
+	GetCheckMetricDataOKBodyRangeToday string = "today"
+
+	// GetCheckMetricDataOKBodyRangeLast7Days captures enum value "last_7_days"
+	GetCheckMetricDataOKBodyRangeLast7Days string = "last_7_days"
+
+	// GetCheckMetricDataOKBodyRangeLast30Days captures enum value "last_30_days"
+	GetCheckMetricDataOKBodyRangeLast30Days string = "last_30_days"
+
+	// GetCheckMetricDataOKBodyRangeThisWeek captures enum value "this_week"
+	GetCheckMetricDataOKBodyRangeThisWeek string = "this_week"
+
+	// GetCheckMetricDataOKBodyRangeLastWeek captures enum value "last_week"
+	GetCheckMetricDataOKBodyRangeLastWeek string = "last_week"
+
+	// GetCheckMetricDataOKBodyRangeThisMonth captures enum value "this_month"
+	GetCheckMetricDataOKBodyRangeThisMonth string = "this_month"
+
+	// GetCheckMetricDataOKBodyRangeMonthToDate captures enum value "month_to_date"
+	GetCheckMetricDataOKBodyRangeMonthToDate string = "month_to_date"
+
+	// GetCheckMetricDataOKBodyRangeLastMonth captures enum value "last_month"
+	GetCheckMetricDataOKBodyRangeLastMonth string = "last_month"
+
+	// GetCheckMetricDataOKBodyRangeLast3Months captures enum value "last_3_months"
+	GetCheckMetricDataOKBodyRangeLast3Months string = "last_3_months"
+
+	// GetCheckMetricDataOKBodyRangeLast6Months captures enum value "last_6_months"
+	GetCheckMetricDataOKBodyRangeLast6Months string = "last_6_months"
+
+	// GetCheckMetricDataOKBodyRangeLast12Months captures enum value "last_12_months"
+	GetCheckMetricDataOKBodyRangeLast12Months string = "last_12_months"
+)
+
+// prop value enum
+func (o *GetCheckMetricDataOKBody) validateRangeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricDataOKBodyTypeRangePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) validateRange(formats strfmt.Registry) error {
+	if swag.IsZero(o.Range) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateRangeEnum("getCheckMetricDataOK"+"."+"range", "body", o.Range); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) validateSeries(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckMetricDataOK"+"."+"series", "body", o.Series); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Series); i++ {
+		if swag.IsZero(o.Series[i]) { // not required
+			continue
+		}
+
+		if o.Series[i] != nil {
+			if err := o.Series[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckMetricDataOK" + "." + "series" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) validateTo(formats strfmt.Registry) error {
+
+	if err := validate.Required("getCheckMetricDataOK"+"."+"to", "body", o.To); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("getCheckMetricDataOK"+"."+"to", "body", "date-time", o.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check metric data o k body based on the context it is used
+func (o *GetCheckMetricDataOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateSeries(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBody) contextValidateSeries(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Series); i++ {
+
+		if o.Series[i] != nil {
+			if err := o.Series[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckMetricDataOK" + "." + "series" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBody) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricDataOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckMetricDataOKBodySeriesItems0 The data for the metric
+swagger:model GetCheckMetricDataOKBodySeriesItems0
+*/
+type GetCheckMetricDataOKBodySeriesItems0 struct {
+
+	// The format of the data for this metric.
+	// Example: percent
+	// Enum: [milliseconds count percent]
+	Format string `json:"format,omitempty"`
+
+	// A readable label for the metric, in Title Case.
+	// Example: Percentage Uptime
+	// Enum: [Mean Response Time Maximum Response Time Minimum Response Time Response Time Standard Deviation Run Count Error Count Percentage Uptime Percentage Downtime SLA Percentage]
+	Label string `json:"label,omitempty"`
+
+	// The name of the metric, in snake_case.
+	// Example: percentage_uptime
+	// Enum: [average_response_time max_response_time min_response_time standard_deviation run_count error_count percentage_uptime percentage_downtime sla_percentage]
+	Name string `json:"name,omitempty"`
+
+	// An array of data points
+	// Min Items: 0
+	Points []*GetCheckMetricDataOKBodySeriesItems0PointsItems0 `json:"points"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *GetCheckMetricDataOKBodySeriesItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.Format = dataAO0.Format
+
+	o.Label = dataAO0.Label
+
+	o.Name = dataAO0.Name
+
+	// AO1
+	var dataAO1 struct {
+		Points []*GetCheckMetricDataOKBodySeriesItems0PointsItems0 `json:"points"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Points = dataAO1.Points
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o GetCheckMetricDataOKBodySeriesItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+
+	dataAO0.Format = o.Format
+
+	dataAO0.Label = o.Label
+
+	dataAO0.Name = o.Name
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Points []*GetCheckMetricDataOKBodySeriesItems0PointsItems0 `json:"points"`
+	}
+
+	dataAO1.Points = o.Points
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this get check metric data o k body series items0
+func (o *GetCheckMetricDataOKBodySeriesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validatePoints(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var getCheckMetricDataOKBodySeriesItems0TypeFormatPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","percent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricDataOKBodySeriesItems0TypeFormatPropEnum = append(getCheckMetricDataOKBodySeriesItems0TypeFormatPropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateFormatEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricDataOKBodySeriesItems0TypeFormatPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateFormat(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Format) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateFormatEnum("format", "body", o.Format); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckMetricDataOKBodySeriesItems0TypeLabelPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Mean Response Time","Maximum Response Time","Minimum Response Time","Response Time Standard Deviation","Run Count","Error Count","Percentage Uptime","Percentage Downtime","SLA Percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricDataOKBodySeriesItems0TypeLabelPropEnum = append(getCheckMetricDataOKBodySeriesItems0TypeLabelPropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateLabelEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricDataOKBodySeriesItems0TypeLabelPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateLabel(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Label) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateLabelEnum("label", "body", o.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckMetricDataOKBodySeriesItems0TypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricDataOKBodySeriesItems0TypeNamePropEnum = append(getCheckMetricDataOKBodySeriesItems0TypeNamePropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricDataOKBodySeriesItems0TypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0) validateName(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Name) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateNameEnum("name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0) validatePoints(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Points) { // not required
+		return nil
+	}
+
+	iPointsSize := int64(len(o.Points))
+
+	if err := validate.MinItems("points", "body", iPointsSize, 0); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(o.Points); i++ {
+		if swag.IsZero(o.Points[i]) { // not required
+			continue
+		}
+
+		if o.Points[i] != nil {
+			if err := o.Points[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("points" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check metric data o k body series items0 based on the context it is used
+func (o *GetCheckMetricDataOKBodySeriesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidatePoints(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0) contextValidatePoints(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Points); i++ {
+
+		if o.Points[i] != nil {
+			if err := o.Points[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("points" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBodySeriesItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBodySeriesItems0) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricDataOKBodySeriesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckMetricDataOKBodySeriesItems0PointsItems0 get check metric data o k body series items0 points items0
+swagger:model GetCheckMetricDataOKBodySeriesItems0PointsItems0
+*/
+type GetCheckMetricDataOKBodySeriesItems0PointsItems0 struct {
+
+	// The start timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+
+	// The value for the data point. May be run-level or aggregate data.
+	// Example: 99.3
+	Value float64 `json:"value,omitempty"`
+
+	// A list of location IDs the check ran from during this point's timeframe
+	Locations []int32 `json:"locations"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.From = dataAO0.From
+
+	o.To = dataAO0.To
+
+	o.Value = dataAO0.Value
+
+	// AO1
+	var dataAO1 struct {
+		Locations []int32 `json:"locations"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Locations = dataAO1.Locations
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o GetCheckMetricDataOKBodySeriesItems0PointsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		From strfmt.DateTime `json:"from,omitempty"`
+
+		To strfmt.DateTime `json:"to,omitempty"`
+
+		Value float64 `json:"value,omitempty"`
+	}
+
+	dataAO0.From = o.From
+
+	dataAO0.To = o.To
+
+	dataAO0.Value = o.Value
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Locations []int32 `json:"locations"`
+	}
+
+	dataAO1.Locations = o.Locations
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this get check metric data o k body series items0 points items0
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) validateFrom(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", o.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) validateTo(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", o.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this get check metric data o k body series items0 points items0 based on context it is used
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricDataOKBodySeriesItems0PointsItems0) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricDataOKBodySeriesItems0PointsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

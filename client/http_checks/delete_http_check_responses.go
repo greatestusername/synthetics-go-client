@@ -6,13 +6,17 @@ package http_checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DeleteHTTPCheckReader is a Reader for the DeleteHTTPCheck structure.
@@ -44,24 +48,256 @@ func NewDeleteHTTPCheckOK() *DeleteHTTPCheckOK {
 Successful deletion
 */
 type DeleteHTTPCheckOK struct {
-	Payload *models.APISuccessResponse
+	Payload *DeleteHTTPCheckOKBody
 }
 
 func (o *DeleteHTTPCheckOK) Error() string {
 	return fmt.Sprintf("[DELETE /v2/checks/http/{id}][%d] deleteHttpCheckOK  %+v", 200, o.Payload)
 }
-func (o *DeleteHTTPCheckOK) GetPayload() *models.APISuccessResponse {
+func (o *DeleteHTTPCheckOK) GetPayload() *DeleteHTTPCheckOKBody {
 	return o.Payload
 }
 
 func (o *DeleteHTTPCheckOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.APISuccessResponse)
+	o.Payload = new(DeleteHTTPCheckOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*DeleteHTTPCheckOKBody A success message
+swagger:model DeleteHTTPCheckOKBody
+*/
+type DeleteHTTPCheckOKBody struct {
+
+	// A collection of error messages
+	Errors []*DeleteHTTPCheckOKBodyErrorsItems0 `json:"errors"`
+
+	// A high-level status message
+	Message string `json:"message,omitempty"`
+
+	// result
+	// Enum: [success error]
+	Result string `json:"result,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *DeleteHTTPCheckOKBody) UnmarshalJSON(raw []byte) error {
+	// DeleteHTTPCheckOKBodyAO0
+	var dataDeleteHTTPCheckOKBodyAO0 struct {
+		Errors []*DeleteHTTPCheckOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataDeleteHTTPCheckOKBodyAO0); err != nil {
+		return err
+	}
+
+	o.Errors = dataDeleteHTTPCheckOKBodyAO0.Errors
+
+	o.Message = dataDeleteHTTPCheckOKBodyAO0.Message
+
+	o.Result = dataDeleteHTTPCheckOKBodyAO0.Result
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o DeleteHTTPCheckOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataDeleteHTTPCheckOKBodyAO0 struct {
+		Errors []*DeleteHTTPCheckOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+
+	dataDeleteHTTPCheckOKBodyAO0.Errors = o.Errors
+
+	dataDeleteHTTPCheckOKBodyAO0.Message = o.Message
+
+	dataDeleteHTTPCheckOKBodyAO0.Result = o.Result
+
+	jsonDataDeleteHTTPCheckOKBodyAO0, errDeleteHTTPCheckOKBodyAO0 := swag.WriteJSON(dataDeleteHTTPCheckOKBodyAO0)
+	if errDeleteHTTPCheckOKBodyAO0 != nil {
+		return nil, errDeleteHTTPCheckOKBodyAO0
+	}
+	_parts = append(_parts, jsonDataDeleteHTTPCheckOKBodyAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this delete HTTP check o k body
+func (o *DeleteHTTPCheckOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateErrors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResult(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteHTTPCheckOKBody) validateErrors(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Errors) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Errors); i++ {
+		if swag.IsZero(o.Errors[i]) { // not required
+			continue
+		}
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteHttpCheckOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var deleteHttpCheckOKBodyTypeResultPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["success","error"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deleteHttpCheckOKBodyTypeResultPropEnum = append(deleteHttpCheckOKBodyTypeResultPropEnum, v)
+	}
+}
+
+// property enum
+func (o *DeleteHTTPCheckOKBody) validateResultEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deleteHttpCheckOKBodyTypeResultPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *DeleteHTTPCheckOKBody) validateResult(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Result) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateResultEnum("deleteHttpCheckOK"+"."+"result", "body", o.Result); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this delete HTTP check o k body based on the context it is used
+func (o *DeleteHTTPCheckOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateErrors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteHTTPCheckOKBody) contextValidateErrors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Errors); i++ {
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteHttpCheckOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteHTTPCheckOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteHTTPCheckOKBody) UnmarshalBinary(b []byte) error {
+	var res DeleteHTTPCheckOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*DeleteHTTPCheckOKBodyErrorsItems0 delete HTTP check o k body errors items0
+swagger:model DeleteHTTPCheckOKBodyErrorsItems0
+*/
+type DeleteHTTPCheckOKBodyErrorsItems0 struct {
+
+	// Additional detail about the error, if available
+	Description string `json:"description,omitempty"`
+
+	// A summary of the error
+	Title string `json:"title,omitempty"`
+}
+
+// Validate validates this delete HTTP check o k body errors items0
+func (o *DeleteHTTPCheckOKBodyErrorsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this delete HTTP check o k body errors items0 based on context it is used
+func (o *DeleteHTTPCheckOKBodyErrorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteHTTPCheckOKBodyErrorsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteHTTPCheckOKBodyErrorsItems0) UnmarshalBinary(b []byte) error {
+	var res DeleteHTTPCheckOKBodyErrorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

@@ -47,7 +47,7 @@ type MonitoringCheckLocationMetricData struct {
 
 	// An array of data sets, one for each location
 	// Required: true
-	Series []*LocationMetricSeries `json:"series"`
+	Series []*MonitoringCheckLocationMetricDataSeriesItems0 `json:"series"`
 
 	// Aggregate data for each location, over the given timeframe
 	// Example: {"percentage_uptime":99.3}
@@ -308,6 +308,583 @@ func (m *MonitoringCheckLocationMetricData) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *MonitoringCheckLocationMetricData) UnmarshalBinary(b []byte) error {
 	var res MonitoringCheckLocationMetricData
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckLocationMetricDataSeriesItems0 The data for one location
+//
+// swagger:model MonitoringCheckLocationMetricDataSeriesItems0
+type MonitoringCheckLocationMetricDataSeriesItems0 struct {
+
+	// The unique ID for the location
+	ID int32 `json:"id,omitempty"`
+
+	// The name of the location
+	Name string `json:"name,omitempty"`
+
+	// A readable code representing the location
+	RegionCode string `json:"region_code,omitempty"`
+
+	// The region the location is in
+	WorldRegion string `json:"world_region,omitempty"`
+
+	// metrics
+	Metrics []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0 `json:"metrics"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		ID int32 `json:"id,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		RegionCode string `json:"region_code,omitempty"`
+
+		WorldRegion string `json:"world_region,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.ID = dataAO0.ID
+
+	m.Name = dataAO0.Name
+
+	m.RegionCode = dataAO0.RegionCode
+
+	m.WorldRegion = dataAO0.WorldRegion
+
+	// AO1
+	var dataAO1 struct {
+		Metrics []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0 `json:"metrics"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Metrics = dataAO1.Metrics
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MonitoringCheckLocationMetricDataSeriesItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		ID int32 `json:"id,omitempty"`
+
+		Name string `json:"name,omitempty"`
+
+		RegionCode string `json:"region_code,omitempty"`
+
+		WorldRegion string `json:"world_region,omitempty"`
+	}
+
+	dataAO0.ID = m.ID
+
+	dataAO0.Name = m.Name
+
+	dataAO0.RegionCode = m.RegionCode
+
+	dataAO0.WorldRegion = m.WorldRegion
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Metrics []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0 `json:"metrics"`
+	}
+
+	dataAO1.Metrics = m.Metrics
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this monitoring check location metric data series items0
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateMetrics(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) validateMetrics(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Metrics) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Metrics); i++ {
+		if swag.IsZero(m.Metrics[i]) { // not required
+			continue
+		}
+
+		if m.Metrics[i] != nil {
+			if err := m.Metrics[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("metrics" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check location metric data series items0 based on the context it is used
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMetrics(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) contextValidateMetrics(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Metrics); i++ {
+
+		if m.Metrics[i] != nil {
+			if err := m.Metrics[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("metrics" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckLocationMetricDataSeriesItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0 The metric data for the location
+//
+// swagger:model MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0
+type MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0 struct {
+
+	// The format of the data for this metric.
+	// Example: percent
+	// Enum: [milliseconds count percent]
+	Format string `json:"format,omitempty"`
+
+	// A readable label for the metric, in Title Case.
+	// Example: Percentage Uptime
+	// Enum: [Mean Response Time Maximum Response Time Minimum Response Time Response Time Standard Deviation Run Count Error Count Percentage Uptime Percentage Downtime SLA Percentage]
+	Label string `json:"label,omitempty"`
+
+	// The name of the metric, in snake_case.
+	// Example: percentage_uptime
+	// Enum: [average_response_time max_response_time min_response_time standard_deviation run_count error_count percentage_uptime percentage_downtime sla_percentage]
+	Name string `json:"name,omitempty"`
+
+	// An array of data points
+	// Min Items: 0
+	Points []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0 `json:"points"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	m.Format = dataAO0.Format
+
+	m.Label = dataAO0.Label
+
+	m.Name = dataAO0.Name
+
+	// AO1
+	var dataAO1 struct {
+		Points []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0 `json:"points"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Points = dataAO1.Points
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+
+	dataAO0.Format = m.Format
+
+	dataAO0.Label = m.Label
+
+	dataAO0.Name = m.Name
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Points []*MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0 `json:"points"`
+	}
+
+	dataAO1.Points = m.Points
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this monitoring check location metric data series items0 metrics items0
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePoints(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeFormatPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","percent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeFormatPropEnum = append(monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeFormatPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateFormatEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeFormatPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateFormat(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Format) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateFormatEnum("format", "body", m.Format); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeLabelPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Mean Response Time","Maximum Response Time","Minimum Response Time","Response Time Standard Deviation","Run Count","Error Count","Percentage Uptime","Percentage Downtime","SLA Percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeLabelPropEnum = append(monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeLabelPropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateLabelEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeLabelPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateLabel(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Label) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateLabelEnum("label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeNamePropEnum = append(monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeNamePropEnum, v)
+	}
+}
+
+// property enum
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, monitoringCheckLocationMetricDataSeriesItems0MetricsItems0TypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validateName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNameEnum("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) validatePoints(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Points) { // not required
+		return nil
+	}
+
+	iPointsSize := int64(len(m.Points))
+
+	if err := validate.MinItems("points", "body", iPointsSize, 0); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Points); i++ {
+		if swag.IsZero(m.Points[i]) { // not required
+			continue
+		}
+
+		if m.Points[i] != nil {
+			if err := m.Points[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("points" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this monitoring check location metric data series items0 metrics items0 based on the context it is used
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePoints(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) contextValidatePoints(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Points); i++ {
+
+		if m.Points[i] != nil {
+			if err := m.Points[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("points" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0 A single data point. May be a single run or the mean across multiple runs.
+//
+// swagger:model MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0
+type MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0 struct {
+
+	// The start timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The end timestamp for the data point (UTC)
+	// Example: 2021-05-25T17:54:05Z
+	// Format: date-time
+	To strfmt.DateTime `json:"to,omitempty"`
+
+	// The value for the data point. May be run-level or aggregate data.
+	// Example: 99.3
+	Value float64 `json:"value,omitempty"`
+}
+
+// Validate validates this monitoring check location metric data series items0 metrics items0 points items0
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) validateFrom(formats strfmt.Registry) error {
+	if swag.IsZero(m.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) validateTo(formats strfmt.Registry) error {
+	if swag.IsZero(m.To) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("to", "body", "date-time", m.To.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this monitoring check location metric data series items0 metrics items0 points items0 based on context it is used
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0) UnmarshalBinary(b []byte) error {
+	var res MonitoringCheckLocationMetricDataSeriesItems0MetricsItems0PointsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

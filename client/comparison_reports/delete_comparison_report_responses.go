@@ -6,15 +6,17 @@ package comparison_reports
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // DeleteComparisonReportReader is a Reader for the DeleteComparisonReport structure.
@@ -40,9 +42,9 @@ func (o *DeleteComparisonReportReader) ReadResponse(response runtime.ClientRespo
 func NewDeleteComparisonReportOK() *DeleteComparisonReportOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &DeleteComparisonReportOK{
@@ -60,7 +62,7 @@ type DeleteComparisonReportOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +72,17 @@ type DeleteComparisonReportOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.APISuccessResponse
+	Payload *DeleteComparisonReportOKBody
 }
 
 func (o *DeleteComparisonReportOK) Error() string {
 	return fmt.Sprintf("[DELETE /v2/comparison_reports/{id}][%d] deleteComparisonReportOK  %+v", 200, o.Payload)
 }
-func (o *DeleteComparisonReportOK) GetPayload() *models.APISuccessResponse {
+func (o *DeleteComparisonReportOK) GetPayload() *DeleteComparisonReportOKBody {
 	return o.Payload
 }
 
@@ -119,12 +121,244 @@ func (o *DeleteComparisonReportOK) readResponse(response runtime.ClientResponse,
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.APISuccessResponse)
+	o.Payload = new(DeleteComparisonReportOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*DeleteComparisonReportOKBody A success message
+swagger:model DeleteComparisonReportOKBody
+*/
+type DeleteComparisonReportOKBody struct {
+
+	// A collection of error messages
+	Errors []*DeleteComparisonReportOKBodyErrorsItems0 `json:"errors"`
+
+	// A high-level status message
+	Message string `json:"message,omitempty"`
+
+	// result
+	// Enum: [success error]
+	Result string `json:"result,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *DeleteComparisonReportOKBody) UnmarshalJSON(raw []byte) error {
+	// DeleteComparisonReportOKBodyAO0
+	var dataDeleteComparisonReportOKBodyAO0 struct {
+		Errors []*DeleteComparisonReportOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataDeleteComparisonReportOKBodyAO0); err != nil {
+		return err
+	}
+
+	o.Errors = dataDeleteComparisonReportOKBodyAO0.Errors
+
+	o.Message = dataDeleteComparisonReportOKBodyAO0.Message
+
+	o.Result = dataDeleteComparisonReportOKBodyAO0.Result
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o DeleteComparisonReportOKBody) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 1)
+
+	var dataDeleteComparisonReportOKBodyAO0 struct {
+		Errors []*DeleteComparisonReportOKBodyErrorsItems0 `json:"errors"`
+
+		Message string `json:"message,omitempty"`
+
+		Result string `json:"result,omitempty"`
+	}
+
+	dataDeleteComparisonReportOKBodyAO0.Errors = o.Errors
+
+	dataDeleteComparisonReportOKBodyAO0.Message = o.Message
+
+	dataDeleteComparisonReportOKBodyAO0.Result = o.Result
+
+	jsonDataDeleteComparisonReportOKBodyAO0, errDeleteComparisonReportOKBodyAO0 := swag.WriteJSON(dataDeleteComparisonReportOKBodyAO0)
+	if errDeleteComparisonReportOKBodyAO0 != nil {
+		return nil, errDeleteComparisonReportOKBodyAO0
+	}
+	_parts = append(_parts, jsonDataDeleteComparisonReportOKBodyAO0)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this delete comparison report o k body
+func (o *DeleteComparisonReportOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateErrors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateResult(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteComparisonReportOKBody) validateErrors(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Errors) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Errors); i++ {
+		if swag.IsZero(o.Errors[i]) { // not required
+			continue
+		}
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteComparisonReportOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+var deleteComparisonReportOKBodyTypeResultPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["success","error"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deleteComparisonReportOKBodyTypeResultPropEnum = append(deleteComparisonReportOKBodyTypeResultPropEnum, v)
+	}
+}
+
+// property enum
+func (o *DeleteComparisonReportOKBody) validateResultEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deleteComparisonReportOKBodyTypeResultPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *DeleteComparisonReportOKBody) validateResult(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Result) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateResultEnum("deleteComparisonReportOK"+"."+"result", "body", o.Result); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this delete comparison report o k body based on the context it is used
+func (o *DeleteComparisonReportOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateErrors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeleteComparisonReportOKBody) contextValidateErrors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Errors); i++ {
+
+		if o.Errors[i] != nil {
+			if err := o.Errors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("deleteComparisonReportOK" + "." + "errors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteComparisonReportOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteComparisonReportOKBody) UnmarshalBinary(b []byte) error {
+	var res DeleteComparisonReportOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*DeleteComparisonReportOKBodyErrorsItems0 delete comparison report o k body errors items0
+swagger:model DeleteComparisonReportOKBodyErrorsItems0
+*/
+type DeleteComparisonReportOKBodyErrorsItems0 struct {
+
+	// Additional detail about the error, if available
+	Description string `json:"description,omitempty"`
+
+	// A summary of the error
+	Title string `json:"title,omitempty"`
+}
+
+// Validate validates this delete comparison report o k body errors items0
+func (o *DeleteComparisonReportOKBodyErrorsItems0) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this delete comparison report o k body errors items0 based on context it is used
+func (o *DeleteComparisonReportOKBodyErrorsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *DeleteComparisonReportOKBodyErrorsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *DeleteComparisonReportOKBodyErrorsItems0) UnmarshalBinary(b []byte) error {
+	var res DeleteComparisonReportOKBodyErrorsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

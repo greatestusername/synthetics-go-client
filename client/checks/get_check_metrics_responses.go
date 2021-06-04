@@ -6,15 +6,17 @@ package checks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/greatestusername/synthetics-go-client/models"
+	"github.com/go-openapi/validate"
 )
 
 // GetCheckMetricsReader is a Reader for the GetCheckMetrics structure.
@@ -40,9 +42,9 @@ func (o *GetCheckMetricsReader) ReadResponse(response runtime.ClientResponse, co
 func NewGetCheckMetricsOK() *GetCheckMetricsOK {
 	var (
 		// initialize headers with default values
-		xRateLimitLimitDefault = int64(5000)
+		xRateLimitLimitDefault = int64("5000")
 
-		xRateLimitResetDefault = int64(1621968845)
+		xRateLimitResetDefault = int64("1621968845")
 	)
 
 	return &GetCheckMetricsOK{
@@ -60,7 +62,7 @@ type GetCheckMetricsOK struct {
 
 	/* The number of requests a user is allowed per hour. Users are identified by IP address.
 
-	   Default: 5000
+	   Default: "5000"
 	*/
 	XRateLimitLimit int64
 
@@ -70,17 +72,17 @@ type GetCheckMetricsOK struct {
 
 	/* When the current rate limit window resets (in UTC epoch seconds).
 
-	   Default: 1621968845
+	   Default: "1621968845"
 	*/
 	XRateLimitReset int64
 
-	Payload *models.MonitoringCheckMetrics
+	Payload *GetCheckMetricsOKBody
 }
 
 func (o *GetCheckMetricsOK) Error() string {
 	return fmt.Sprintf("[GET /v2/checks/{id}/metrics][%d] getCheckMetricsOK  %+v", 200, o.Payload)
 }
-func (o *GetCheckMetricsOK) GetPayload() *models.MonitoringCheckMetrics {
+func (o *GetCheckMetricsOK) GetPayload() *GetCheckMetricsOKBody {
 	return o.Payload
 }
 
@@ -119,12 +121,437 @@ func (o *GetCheckMetricsOK) readResponse(response runtime.ClientResponse, consum
 		o.XRateLimitReset = valxRateLimitReset
 	}
 
-	o.Payload = new(models.MonitoringCheckMetrics)
+	o.Payload = new(GetCheckMetricsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
+	return nil
+}
+
+/*GetCheckMetricsOKBody A list of available metrics for the check
+swagger:model GetCheckMetricsOKBody
+*/
+type GetCheckMetricsOKBody struct {
+
+	// The unique ID for the check
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// A list of metrics
+	Metrics []*GetCheckMetricsOKBodyMetricsItems0 `json:"metrics"`
+}
+
+// Validate validates this get check metrics o k body
+func (o *GetCheckMetricsOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateMetrics(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBody) validateMetrics(formats strfmt.Registry) error {
+	if swag.IsZero(o.Metrics) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(o.Metrics); i++ {
+		if swag.IsZero(o.Metrics[i]) { // not required
+			continue
+		}
+
+		if o.Metrics[i] != nil {
+			if err := o.Metrics[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckMetricsOK" + "." + "metrics" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check metrics o k body based on the context it is used
+func (o *GetCheckMetricsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateMetrics(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBody) contextValidateMetrics(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Metrics); i++ {
+
+		if o.Metrics[i] != nil {
+			if err := o.Metrics[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getCheckMetricsOK" + "." + "metrics" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricsOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricsOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckMetricsOKBodyMetricsItems0 An available metric for the check
+swagger:model GetCheckMetricsOKBodyMetricsItems0
+*/
+type GetCheckMetricsOKBodyMetricsItems0 struct {
+
+	// The format of the data for this metric.
+	// Example: percent
+	// Enum: [milliseconds count percent]
+	Format string `json:"format,omitempty"`
+
+	// A readable label for the metric, in Title Case.
+	// Example: Percentage Uptime
+	// Enum: [Mean Response Time Maximum Response Time Minimum Response Time Response Time Standard Deviation Run Count Error Count Percentage Uptime Percentage Downtime SLA Percentage]
+	Label string `json:"label,omitempty"`
+
+	// The name of the metric, in snake_case.
+	// Example: percentage_uptime
+	// Enum: [average_response_time max_response_time min_response_time standard_deviation run_count error_count percentage_uptime percentage_downtime sla_percentage]
+	Name string `json:"name,omitempty"`
+
+	// links
+	Links *GetCheckMetricsOKBodyMetricsItems0AO1Links `json:"links,omitempty"`
+}
+
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (o *GetCheckMetricsOKBodyMetricsItems0) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO0); err != nil {
+		return err
+	}
+
+	o.Format = dataAO0.Format
+
+	o.Label = dataAO0.Label
+
+	o.Name = dataAO0.Name
+
+	// AO1
+	var dataAO1 struct {
+		Links *GetCheckMetricsOKBodyMetricsItems0AO1Links `json:"links,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	o.Links = dataAO1.Links
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (o GetCheckMetricsOKBodyMetricsItems0) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	var dataAO0 struct {
+		Format string `json:"format,omitempty"`
+
+		Label string `json:"label,omitempty"`
+
+		Name string `json:"name,omitempty"`
+	}
+
+	dataAO0.Format = o.Format
+
+	dataAO0.Label = o.Label
+
+	dataAO0.Name = o.Name
+
+	jsonDataAO0, errAO0 := swag.WriteJSON(dataAO0)
+	if errAO0 != nil {
+		return nil, errAO0
+	}
+	_parts = append(_parts, jsonDataAO0)
+	var dataAO1 struct {
+		Links *GetCheckMetricsOKBodyMetricsItems0AO1Links `json:"links,omitempty"`
+	}
+
+	dataAO1.Links = o.Links
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
+// Validate validates this get check metrics o k body metrics items0
+func (o *GetCheckMetricsOKBodyMetricsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateFormat(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateLinks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var getCheckMetricsOKBodyMetricsItems0TypeFormatPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["milliseconds","count","percent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricsOKBodyMetricsItems0TypeFormatPropEnum = append(getCheckMetricsOKBodyMetricsItems0TypeFormatPropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateFormatEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricsOKBodyMetricsItems0TypeFormatPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateFormat(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Format) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateFormatEnum("format", "body", o.Format); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckMetricsOKBodyMetricsItems0TypeLabelPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Mean Response Time","Maximum Response Time","Minimum Response Time","Response Time Standard Deviation","Run Count","Error Count","Percentage Uptime","Percentage Downtime","SLA Percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricsOKBodyMetricsItems0TypeLabelPropEnum = append(getCheckMetricsOKBodyMetricsItems0TypeLabelPropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateLabelEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricsOKBodyMetricsItems0TypeLabelPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateLabel(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Label) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateLabelEnum("label", "body", o.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var getCheckMetricsOKBodyMetricsItems0TypeNamePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["average_response_time","max_response_time","min_response_time","standard_deviation","run_count","error_count","percentage_uptime","percentage_downtime","sla_percentage"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		getCheckMetricsOKBodyMetricsItems0TypeNamePropEnum = append(getCheckMetricsOKBodyMetricsItems0TypeNamePropEnum, v)
+	}
+}
+
+// property enum
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateNameEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, getCheckMetricsOKBodyMetricsItems0TypeNamePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateName(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Name) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := o.validateNameEnum("name", "body", o.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetCheckMetricsOKBodyMetricsItems0) validateLinks(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.Links) { // not required
+		return nil
+	}
+
+	if o.Links != nil {
+		if err := o.Links.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get check metrics o k body metrics items0 based on the context it is used
+func (o *GetCheckMetricsOKBodyMetricsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateLinks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCheckMetricsOKBodyMetricsItems0) contextValidateLinks(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Links != nil {
+		if err := o.Links.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("links")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricsOKBodyMetricsItems0) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricsOKBodyMetricsItems0) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricsOKBodyMetricsItems0
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
+}
+
+/*GetCheckMetricsOKBodyMetricsItems0AO1Links get check metrics o k body metrics items0 a o1 links
+swagger:model GetCheckMetricsOKBodyMetricsItems0AO1Links
+*/
+type GetCheckMetricsOKBodyMetricsItems0AO1Links struct {
+
+	// A link to the data for this metric
+	// Example: https://monitoring-api.rigor.com/v2/checks/1/metrics?name=average_response_time
+	Self string `json:"self,omitempty"`
+}
+
+// Validate validates this get check metrics o k body metrics items0 a o1 links
+func (o *GetCheckMetricsOKBodyMetricsItems0AO1Links) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get check metrics o k body metrics items0 a o1 links based on context it is used
+func (o *GetCheckMetricsOKBodyMetricsItems0AO1Links) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetCheckMetricsOKBodyMetricsItems0AO1Links) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetCheckMetricsOKBodyMetricsItems0AO1Links) UnmarshalBinary(b []byte) error {
+	var res GetCheckMetricsOKBodyMetricsItems0AO1Links
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }
